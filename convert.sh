@@ -4,7 +4,7 @@ OUTPUT_FILE="domains.json"
 OUTPUT_SRS_FILE="domains.srs"
 echo "Удаление старых файлов..."
 rm -f "$INPUT_FILE" "$OUTPUT_FILE" "$OUTPUT_SRS_FILE"
-URL="https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst"
+URL="https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst?$(date +%s)"
 echo "Скачивание списка доменов..."
 wget -q -O "$INPUT_FILE" "$URL"
 if [ $? -ne 0 ]; then
@@ -21,8 +21,7 @@ while read -r domain; do
     fi
 done < "$INPUT_FILE"
 domain_list=$(echo "$domain_list" | sed 's/,$//')
-domain_suffix_list=$(echo "$domain_suffix_list" | sed 's/,$//')
-echo "Создание JSON файла с правилами..."
+domain_suffix_list=$(echo "$domain_suffix_list" | sed 's/,$//')echo "Создание JSON файла с правилами..."
 cat <<EOF > "$OUTPUT_FILE"
 {
   "version": 2,
