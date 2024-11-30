@@ -24,17 +24,32 @@ jobs:
           rm result1.txt result2.txt inside-raw.lst youtube.lst domains.lst 2>/dev/null || true
 
           # Первый скрипт
-          echo "Running first domain comparison script..."
+          echo "Running first domain comparison script..." | tee -a comparison_result.txt
           wget https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/inside-raw.lst
           wget https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst  # Обновленная ссылка
           grep -v -f <(grep '^\\.' domains.lst | sed 's/^\\.//') inside-raw.lst | grep -v -f domains.lst > result1.txt
 
           # Второй скрипт
-          echo "Running second domain comparison script..."
+          echo "Running second domain comparison script..." | tee -a comparison_result.txt
           rm result.txt inside-raw.lst raw.lst 2>/dev/null || true  # Удаляем старые временные файлы перед запуском второго скрипта
           wget -O youtube.lst "https://iplist.opencck.org/?format=text&data=domains&site=youtube.com"
           wget https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst  # Обновленная ссылка
           grep -v -f <(grep '^\\.' domains.lst | sed 's/^\\.//') youtube.lst | grep -v -f domains.lst > result2.txt
+          
+          # Очищаем экран для удобства
           clear
-          cat result1.txt
-          cat result2.txt
+
+          # Записываем результаты в файл с разделами и пояснениями
+          echo "============================" | tee -a comparison_result.txt
+          echo "First domain comparison result:" | tee -a comparison_result.txt
+          echo "============================" | tee -a comparison_result.txt
+          cat result1.txt | tee -a comparison_result.txt
+          
+          echo "============================" | tee -a comparison_result.txt
+          echo "Second domain comparison result:" | tee -a comparison_result.txt
+          echo "============================" | tee -a comparison_result.txt
+          cat result2.txt | tee -a comparison_result.txt
+
+          # Завершаем вывод
+          echo "============================" | tee -a comparison_result.txt
+          echo "Domain comparison completed successfully!" | tee -a comparison_result.txt
