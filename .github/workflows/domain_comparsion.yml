@@ -1,0 +1,37 @@
+name: Domain Comparison Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  compare-domains:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Set up environment
+        run: sudo apt-get update && sudo apt-get install -y wget grep
+
+      - name: Run first domain comparison script
+        run: |
+          rm result.txt inside-raw.lst raw.lst 2>/dev/null || true
+          wget https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/inside-raw.lst
+          wget https://git.raywari.ru/raws/domains/raw.lst
+          grep -v -f <(grep '^\\.' raw.lst | sed 's/^\\.//') inside-raw.lst | grep -v -f raw.lst > result.txt
+          rm inside-raw.lst raw.lst
+          clear
+          cat result.txt
+          rm result.txt 2>/dev/null || true
+
+      - name: Run second domain comparison script
+        run: |
+          rm result.txt inside-raw.lst raw.lst 2>/dev/null || true
+          wget -O inside-raw.lst "https://iplist.opencck.org/?format=text&data=domains&site=youtube.com"
+          wget https://git.raywari.ru/raws/domains/raw.lst
+          grep -v -f <(grep '^\\.' raw.lst | sed 's/^\\.//') inside-raw.lst | grep -v -f raw.lst > result.txt
+          rm inside-raw.lst raw.lst
+          clear
+          cat result.txt
+          rm result.txt 2>/dev/null || true
