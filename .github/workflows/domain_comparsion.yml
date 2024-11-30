@@ -1,19 +1,16 @@
-name: Domain Comparison Workflow
-
-on:
-  workflow_dispatch:
-
 jobs:
   compare-domains:
     runs-on: ubuntu-latest
-    
+    env:
+      TERM: xterm
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        
-      - name: Set TERM environment variable
+
+      - name: Set up environment
         run: |
-          export TERM=xterm  # Устанавливаем переменную TERM
+          echo "Setting up the environment"
           sudo apt-get update && sudo apt-get install -y wget grep
 
       - name: Run domain comparison scripts
