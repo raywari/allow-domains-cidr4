@@ -2,7 +2,7 @@ import sublist3r
 
 # Функция для поиска поддоменов с брутфорсом
 def find_subdomains(domain):
-    # Включаем брутфорс и указываем поисковые системы
+    # Включаем брутфорс, указываем поисковые системы, отключаем цветной вывод
     subdomains = sublist3r.main(domain, 40, None, True, ['google', 'bing', 'yahoo'], False)
     return subdomains
 
