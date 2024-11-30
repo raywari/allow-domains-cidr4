@@ -1,0 +1,45 @@
+name: Auto-sort domains.lst
+
+on:
+  push:
+    paths:
+      - 'domains.lst' # Триггерится только при изменении domains.lst
+
+jobs:
+  sort-domains:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Шаг 1: Проверить репозиторий
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Шаг 2: Убедиться, что файл отсортирован
+    - name: Sort domains.lst
+      run: |
+        if [ -f domains.lst ]; then
+          sort -u domains.lst -o domains.lst
+        else
+          echo "Файл domains.lst отсутствует"
+          exit 1
+        fi
+
+    # Шаг 3: Проверить, есть ли изменения
+    - name: Check for changes
+      id: check_changes
+      run: |
+        if git diff --quiet; then
+          echo "no_changes=true" >> $GITHUB_ENV
+        else
+          echo "no_changes=false" >> $GITHUB_ENV
+        fi
+
+    # Шаг 4: Коммитить изменения, если они есть
+    - name: Commit changes
+      if: env.no_changes == 'false'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add domains.lst
+        git commit -m "Автосортировка domains.lst"
+        git push
