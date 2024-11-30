@@ -1,6 +1,7 @@
 name: Auto-sort domains.lst
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'domains.lst' # Триггерится только при изменении domains.lst
