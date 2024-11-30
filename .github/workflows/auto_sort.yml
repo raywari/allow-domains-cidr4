@@ -19,7 +19,7 @@ jobs:
     - name: Sort domains.lst
       run: |
         if [ -f domains.lst ]; then
-          LC_COLLATE=C sort -u domains.lst -o domains.lst
+          LC_COLLATE=C sort -f -u domains.lst -o domains.lst
         else
           echo "Файл domains.lst отсутствует"
           exit 1
