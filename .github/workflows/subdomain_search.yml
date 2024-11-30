@@ -1,0 +1,40 @@
+name: Search Subdomains
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Позволяет запускать вручную через интерфейс GitHub Actions
+
+jobs:
+  search_subdomains:
+    runs-on: ubuntu-latest  # Используем последнюю версию Ubuntu, доступную на GitHub Actions
+    
+    steps:
+      # Шаг 1: Клонировать репозиторий
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Шаг 2: Установить Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # Установите нужную версию Python
+
+      # Шаг 3: Установить зависимости
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install sublist3r
+
+      # Шаг 4: Запустить скрипт
+      - name: Run subdomain search script
+        run: |
+          python subdomain_search.py
+
+      # Шаг 5: Добавить вывод в артефакт
+      - name: Upload subdomain results
+        uses: actions/upload-artifact@v3
+        with:
+          name: subdomain-results
+          path: subdomain_search.py
