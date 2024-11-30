@@ -4,13 +4,14 @@ import sublist3r
 def find_subdomains(domain):
     # Включаем брутфорс, указываем поисковые системы, отключаем цветной вывод
     subdomains = sublist3r.main(
-        domain, 40,               # Количество потоков
+        domain,
+        threads=40,               # Количество потоков
         savefile=None,            # Не сохраняем в файл
         ports=None,               # Не указываем порты для сканирования
         silent=False,             # Выводим процесс
         verbose=True,             # Показываем результаты в реальном времени
         enable_bruteforce=True,   # Включаем брутфорс
-        engines=['google', 'bing', 'yahoo']  # Используем поисковые системы
+        engines='google,bing,yahoo'  # Используем поисковые системы как строку, разделенную запятой
     )
     return subdomains
 
