@@ -19,13 +19,13 @@ jobs:
       - name: Run domain comparison scripts
         run: |
           # Удаляем временные файлы перед выполнением
-          rm result.txt result2.txt inside-raw.lst youtube.lst raw.lst 2>/dev/null || true
+          rm result.txt result2.txt inside-raw.lst youtube.lst domains.lst 2>/dev/null || true
 
           # Первый скрипт
           echo "Running first domain comparison script..."
           wget https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/inside-raw.lst
-          wget -O raw.lst https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst  # Обновленная ссылка
-          grep -v -f <(grep '^\\.' raw.lst | sed 's/^\\.//') inside-raw.lst | grep -v -f raw.lst > result1.txt
+          wget https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst  # Обновленная ссылка
+          grep -v -f <(grep '^\\.' raw.lst | sed 's/^\\.//') inside-raw.lst | grep -v -f domains.lst > result1.txt
           clear
           cat result1.txt
 
@@ -33,7 +33,7 @@ jobs:
           echo "Running second domain comparison script..."
           rm result.txt inside-raw.lst raw.lst 2>/dev/null || true  # Удаляем старые временные файлы перед запуском второго скрипта
           wget -O youtube.lst "https://iplist.opencck.org/?format=text&data=domains&site=youtube.com"
-          wget -O raw.lst https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst  # Обновленная ссылка
-          grep -v -f <(grep '^\\.' raw.lst | sed 's/^\\.//') youtube.lst | grep -v -f raw.lst > result2.txt
+          wget https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst  # Обновленная ссылка
+          grep -v -f <(grep '^\\.' raw.lst | sed 's/^\\.//') youtube.lst | grep -v -f domains.lst > result2.txt
           clear
           cat result2.txt
