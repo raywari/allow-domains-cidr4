@@ -1,8 +1,4 @@
 .chatgpt.com
-yt-video-upload.l.google.com
-ytimg.l.google.com
-proactivebackend-pa.googleapis.com
-discord-attachments-uploads-prd.storage.googleapis.com
 .discord.gg
 .discord.media
 .discordapp.com
@@ -171,6 +167,7 @@ devops.com
 digitalocean.com
 dis.gd
 discord-activities.com
+discord-attachments-uploads-prd.storage.googleapis.com
 discord.co
 discord.com
 discord.design
@@ -529,6 +526,7 @@ postimees.ee
 pravda.com.ua
 privatekeys.pw
 prnt.sc
+proactivebackend-pa.googleapis.com
 proekt.media
 prosleduetmedia.com
 prostovpn.org
@@ -822,11 +820,13 @@ youtubego.com
 youtubei.googleapis.com
 youtubekids.com
 youtubemobilesupport.com
+yt-video-upload.l.google.com
 yt.be
 yt1.googleusercontent.com
 yt2.googleusercontent.com
 yt3.googleusercontent.com
 ytimg.com
+ytimg.l.google.com
 zahav.ru
 zannn.top
 zedge.net
