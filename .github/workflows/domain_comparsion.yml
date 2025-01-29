@@ -5,7 +5,7 @@ jobs:
   compare-domains:
     runs-on: ubuntu-latest
     env:
-      TERM: xterm  # Устанавливаем переменную TERM для всех шагов
+      TERM: xterm
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -16,23 +16,26 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get update && sudo apt-get install -y wget grep
       - name: Run domain comparison scripts
         run: |
-          # Удаляем временные файлы перед выполнением
           rm result1.txt result2.txt inside-raw.lst youtube.lst domains.lst 2>/dev/null || true
+          
           # Первый скрипт
           echo "Running first domain comparison script..." | tee -a comparison_result.txt
           wget https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/inside-raw.lst
-          wget https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst  # Обновленная ссылка
-          grep -v -f <(grep '^\\.' domains.lst | sed 's/^\\.//') inside-raw.lst | grep -v -f domains.lst > result1.txt
+          wget https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst
+          
+          # Обработка wildcard и исключение субдоменов
+          grep -vE -f <(grep '^\\.' domains.lst | sed -e 's/^\\.//' -e 's/\./\\\\./g' -e 's/^/^.*\\\\./' -e 's/$/$/') inside-raw.lst | grep -v -f domains.lst > result1.txt
+          
           # Второй скрипт
           echo "Running second domain comparison script..." | tee -a comparison_result.txt
-          rm result.txt inside-raw.lst raw.lst 2>/dev/null || true  # Удаляем старые временные файлы перед запуском второго скрипта
+          rm result.txt inside-raw.lst raw.lst 2>/dev/null || true
           wget -O youtube.lst "https://iplist.opencck.org/?format=text&data=domains&site=youtube.com"
-          wget https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst  # Обновленная ссылка
-          grep -v -f <(grep '^\\.' domains.lst | sed 's/^\\.//') youtube.lst | grep -v -f domains.lst > result2.txt
+          wget https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst
           
-          # Очищаем экран для удобства
+          # Аналогичная обработка для второго списка
+          grep -vE -f <(grep '^\\.' domains.lst | sed -e 's/^\\.//' -e 's/\./\\\\./g' -e 's/^/^.*\\\\./' -e 's/$/$/') youtube.lst | grep -v -f domains.lst > result2.txt
+          
           clear
-          # Записываем результаты в файл с разделами и пояснениями
           echo "============================" | tee -a comparison_result.txt
           echo "First domain comparison result:" | tee -a comparison_result.txt
           echo "============================" | tee -a comparison_result.txt
@@ -42,6 +45,5 @@ jobs:
           echo "Second domain comparison result:" | tee -a comparison_result.txt
           echo "============================" | tee -a comparison_result.txt
           cat result2.txt | tee -a comparison_result.txt
-          # Завершаем вывод
           echo "============================" | tee -a comparison_result.txt
           echo "Domain comparison completed successfully!" | tee -a comparison_result.txt
