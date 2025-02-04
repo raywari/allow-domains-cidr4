@@ -21,21 +21,31 @@ jobs:
 
       - name: Set up environment
         run: |
-          sudo DEBIAN_FRONTEND=noninteractive apt-get update && sudo apt-get install -y wget grep
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update 
+          sudo apt-get install -y wget grep
 
       - name: Run domain comparison
         run: |
+          # Удаляем предыдущие версии файлов
+          rm -f domains.lst* inside-raw.lst*
+          
+          # Скачиваем свежие версии
           wget -q https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
           wget -q https://raw.githubusercontent.com/raywari/allow-domains-cidr4/main/domains.lst
 
-          # Process domains and save to compared.txt
+          # Обработка доменов
           grep -vE -f <(grep '^\\.' domains.lst | sed -e 's/^\\.//' -e 's/\./\\\\./g' -e 's/^/^.*\\\\./' -e 's/$/$/') inside-raw.lst \
           | grep -v -f domains.lst > compared.txt
+
+      - name: Cleanup temp files
+        run: |
+          # Удаляем временные файлы
+          rm -f domains.lst inside-raw.lst
 
       - name: Commit and push results
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add compared.txt
-          git commit -m "Autoupdate compared.txt: $(date +'%d-%m.%Y')"
+          git commit -m "Autoupdate compared.txt: $(date +'%d-%m.%Y')" || echo "No changes to commit"
           git push
