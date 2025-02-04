@@ -1,6 +1,8 @@
 name: Domain Comparison Workflow
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 10 * * *'  # 13:00 MSK (UTC+3)
 jobs:
   compare-domains:
     runs-on: ubuntu-latest
@@ -9,41 +11,31 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Clear compared.txt
+        run: >-
+          echo -n > compared.txt
+
       - name: Set up environment
         run: |
-          echo "Setting up the environment"
           sudo DEBIAN_FRONTEND=noninteractive apt-get update && sudo apt-get install -y wget grep
-      - name: Run domain comparison scripts
+
+      - name: Run domain comparison
         run: |
-          rm result1.txt result2.txt inside-raw.lst youtube.lst domains.lst 2>/dev/null || true
-          
-          # Первый скрипт
-          echo "Running first domain comparison script..." | tee -a comparison_result.txt
-          wget https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/inside-raw.lst
-          wget https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst
-          
-          # Обработка wildcard и исключение субдоменов
-          grep -vE -f <(grep '^\\.' domains.lst | sed -e 's/^\\.//' -e 's/\./\\\\./g' -e 's/^/^.*\\\\./' -e 's/$/$/') inside-raw.lst | grep -v -f domains.lst > result1.txt
-          
-          # Второй скрипт
-          echo "Running second domain comparison script..." | tee -a comparison_result.txt
-          rm result.txt inside-raw.lst raw.lst 2>/dev/null || true
-          wget -O youtube.lst "https://iplist.opencck.org/?format=text&data=domains&site=youtube.com"
-          wget https://raw.githubusercontent.com/raywari/allow-domains-cidr4/refs/heads/main/domains.lst
-          
-          # Аналогичная обработка для второго списка
-          grep -vE -f <(grep '^\\.' domains.lst | sed -e 's/^\\.//' -e 's/\./\\\\./g' -e 's/^/^.*\\\\./' -e 's/$/$/') youtube.lst | grep -v -f domains.lst > result2.txt
-          
-          clear
-          echo "============================" | tee -a comparison_result.txt
-          echo "First domain comparison result:" | tee -a comparison_result.txt
-          echo "============================" | tee -a comparison_result.txt
-          cat result1.txt | tee -a comparison_result.txt
-          
-          echo "============================" | tee -a comparison_result.txt
-          echo "Second domain comparison result:" | tee -a comparison_result.txt
-          echo "============================" | tee -a comparison_result.txt
-          cat result2.txt | tee -a comparison_result.txt
-          echo "============================" | tee -a comparison_result.txt
-          echo "Domain comparison completed successfully!" | tee -a comparison_result.txt
+          wget -q https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
+          wget -q https://raw.githubusercontent.com/raywari/allow-domains-cidr4/main/domains.lst
+
+          # Process domains and save to compared.txt
+          grep -vE -f <(grep '^\\.' domains.lst | sed -e 's/^\\.//' -e 's/\./\\\\./g' -e 's/^/^.*\\\\./' -e 's/$/$/') inside-raw.lst \
+          | grep -v -f domains.lst > compared.txt
+
+      - name: Commit and push results
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add compared.txt
+          git commit -m "Autoupdate compared.txt: $(date +'%Y-%m-%d %H:%M')"
+          git push
