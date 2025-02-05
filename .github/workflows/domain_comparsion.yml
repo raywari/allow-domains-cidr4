@@ -2,50 +2,64 @@ name: Domain Comparison Workflow
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 10 * * *'  # 13:00 MSK (UTC+3)
+    - cron: '0 10 * * *'
 jobs:
   compare-domains:
     runs-on: ubuntu-latest
-    env:
-      TERM: xterm
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          persist-credentials: true
-          fetch-depth: 0
 
-      - name: Clear compared.txt
-        run: >-
-          echo -n > compared.txt
-
-      - name: Set up environment
+      - name: Prepare directories
         run: |
-          sudo DEBIAN_FRONTEND=noninteractive apt-get update 
-          sudo apt-get install -y wget grep
+          mkdir -p compared
+          rm -f compared/missing_domains.txt compared/presence_domains.txt
 
-      - name: Run domain comparison
+      - name: Install dependencies
+        run: sudo apt-get install -y wget grep
+
+      - name: Download lists
         run: |
-          # Удаляем предыдущие версии файлов
-          rm -f domains.lst* inside-raw.lst*
-          
-          # Скачиваем свежие версии
-          wget -q https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
-          wget -q https://raw.githubusercontent.com/raywari/allow-domains-cidr4/main/domains.lst
+          wget -q -O inside-raw.lst https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
+          wget -q -O domains.lst https://raw.githubusercontent.com/raywari/allow-domains-cidr4/main/domains.lst
 
-          # Обработка доменов
-          grep -vE -f <(grep '^\\.' domains.lst | sed -e 's/^\\.//' -e 's/\./\\\\./g' -e 's/^/^.*\\\\./' -e 's/$/$/') inside-raw.lst \
-          | grep -v -f domains.lst > compared.txt
-
-      - name: Cleanup temp files
+      - name: Generate missing domains
         run: |
-          # Удаляем временные файлы
-          rm -f domains.lst inside-raw.lst
+          while IFS= read -r domain; do
+            # Проверяем все возможные варианты:
+            # 1. Точное совпадение
+            # 2. Совпадение как поддомен
+            # 3. Совпадение родительского домена
+            if ! grep -q -x "$domain" domains.lst && \
+               ! grep -q "^\\.${domain#.}" domains.lst && \
+               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); 
+                   for(i=2;i<=n;i++) {parent=a[i]; 
+                   for(j=i+1;j<=n;j++) parent=parent"."a[j]; 
+                   if ($0 ~ "^\\."parent"$") exit 0}} 
+                   END {exit 1}' domains.lst; then
+              echo "$domain" >> compared/missing_domains.txt
+            fi
+          done < inside-raw.lst
 
-      - name: Commit and push results
+      - name: Generate presence domains
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add compared.txt
-          git commit -m "Autoupdate compared.txt: $(date +'%d.%m.%Y')" || echo "No changes to commit"
+          while IFS= read -r domain; do
+            # Аналогичная проверка в обратную сторону
+            if ! grep -q -x "$domain" inside-raw.lst && \
+               ! grep -q "^\\.${domain#.}" inside-raw.lst && \
+               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); 
+                   for(i=2;i<=n;i++) {parent=a[i]; 
+                   for(j=i+1;j<=n;j++) parent=parent"."a[j]; 
+                   if ($0 ~ "^\\."parent"$") exit 0}} 
+                   END {exit 1}' inside-raw.lst; then
+              echo "$domain" >> compared/presence_domains.txt
+            fi
+          done < domains.lst
+
+      - name: Commit results
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add compared/*
+          git commit -m "Update domain comparisons: $(date +%Y-%m-%d)" || echo "No changes"
           git push
