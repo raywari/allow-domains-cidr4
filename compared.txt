@@ -5,7 +5,6 @@ abercrombie.com
 adminforge.de
 adobe.com
 adultmult.tv
-ai.com
 alza.hu
 amedia.site
 anilibria.uno
@@ -26,7 +25,6 @@ baikal-journal.ru
 bcbits.com
 bitdefender.com
 blinkshot.io
-brawlstarsgame.com
 broadcom.com
 broncosportforum.com
 btdig.com
@@ -77,7 +75,6 @@ foxnews.com
 framer.com
 gamedistribution.com
 gaming.amazon.com
-gemini.google.com
 global.fncstatic.com
 gofundme.com
 gr-assets.com
@@ -87,7 +84,6 @@ hackernoon.com
 hackmd.io
 halooglasi.com
 hdkinoteatr.com
-hdrezka.me
 hentai-foundry.com
 herokucdn.com
 hollisterco.com
@@ -134,7 +130,6 @@ nflximg.com
 nflxsearch.net
 nflxso.net
 ngrok.com
-nhentai.com
 nhl.com
 nippon.com
 notion-static.com
@@ -145,7 +140,6 @@ notion.so
 novaline.fm
 nxp.com
 ocstore.com
-oculus.com
 omnissa.com
 onfastspring.com
 onshape.com
@@ -156,8 +150,6 @@ pkgs.tailscale.com
 platform.activestate.com
 playboy.com
 plugshare.com
-pornhub.com
-pornhub.org
 pravda.com
 premierleague.com
 primevideo.com
@@ -205,7 +197,6 @@ unscreen.com
 vagrantcloud.com
 vice.com
 vmware.com
-voidboost.cc
 volkswagen-classic-parts.com
 vpnpay.io
 w.atwiki.jp
