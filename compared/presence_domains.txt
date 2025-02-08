@@ -13,6 +13,11 @@
 .linkedin.com
 .muscdn.com
 .musical.ly
+.notion-static.com
+.notion.com
+.notion.site
+.notion.so
+.notionusercontent.com
 .openai.com
 .pexels.com
 .phncdn.com
@@ -129,6 +134,7 @@ groza.media
 gstatic.com
 howlongtobeat.com
 hrw.org
+http-inputs-notion.splunkcloud.com
 huawei.com
 hwbot.org
 hyperhost.ua
@@ -163,6 +169,7 @@ lostfilmtv5.site
 m3u.in
 macpaw.com
 macvendors.com
+makenotion.zendesk.com
 mattermost.com
 mbed.com
 mdza.io
@@ -183,6 +190,8 @@ neputin.org
 newstudio.tv
 nordvpn.com
 notifications-pa.googleapis.com
+notion-emojis.s3-us-west-2.amazonaws.com
+notionusercontent.com
 ns-1475.awsdns-56.org
 ns-1574.awsdns-04.co.uk
 ns-440.awsdns-55.com
@@ -209,8 +218,6 @@ pcbway.ru
 php.su
 piccy.info
 pixiv.net
-play.google.com
-play.google.ru
 porsche.com
 postfix.org
 protonmail.ch
