@@ -64,7 +64,6 @@ atlassian.com
 auphonic.com
 aws.amazon.com
 bard.google.com
-bbci.co.uk
 bgpmon.net
 bing.com
 bitbucket.org

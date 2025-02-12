@@ -28,6 +28,7 @@ assets.heroku.com
 attachments.f95zone.to
 baikal-journal.ru
 bcbits.com
+bestchange.ru
 bitdefender.com
 blinkshot.io
 broadcom.com
@@ -230,6 +231,7 @@ trueblackmetalradio.com
 turbobit.net
 tuta.com
 tuta.io
+typing.com
 ui.ill.in.ua
 ukr.net
 ukrtelcdn.net
