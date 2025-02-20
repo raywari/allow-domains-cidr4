@@ -5,7 +5,6 @@ a-msedge.net
 acctcdnmsftuswe2.azureedge.net
 acctcdnvzeuno.azureedge.net
 adguard-dns.com
-adguard.com
 agentura.ru
 alberta.ca
 amazonaws.com
@@ -146,7 +145,6 @@ mrakopedia.net
 nasvsehtoshnit.ru
 neputin.org
 newstudio.tv
-nordvpn.com
 notifications-pa.googleapis.com
 notion-emojis.s3-us-west-2.amazonaws.com
 notionusercontent.com

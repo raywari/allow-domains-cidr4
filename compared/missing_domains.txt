@@ -75,6 +75,7 @@ e621.net
 edu-cisco.org
 eggertspiele.de
 elevenlabs.io
+epidemz.net.co
 extremetech.com
 f1.com
 f95-zone.to
@@ -93,6 +94,7 @@ gamedistribution.com
 gaming.amazon.com
 gdb.rferl.org
 geolocation.onetrust.com
+ghostrc.game.idtech.services
 global.fncstatic.com
 gofundme.com
 gr-assets.com
@@ -178,6 +180,7 @@ pkgs.tailscale.com
 platform.activestate.com
 playboy.com
 plugshare.com
+politico.eu
 polymarket.com
 pravda.com
 premierleague.com
@@ -189,6 +192,7 @@ quickconnect.to
 quora.com.cdn.cloudflare.net
 r4.err.ee
 recraft.ai
+remna.st
 render-state.to
 rentry.co
 research.net
@@ -213,6 +217,7 @@ sklatchiki.ru
 sky.com
 skycdp.com
 slashlib.me
+smartbear.co
 smartdeploy.com
 sovetromantica.com
 squadbustersgame.com
@@ -225,9 +230,11 @@ surfshark.com
 surveymonkey.com
 swissinfo.ch
 synoforum.com
+telegraph.co.uk
 temu.com
 threema.ch
 timberland.de
+tmdb.com
 trueblackmetalradio.com
 turbobit.net
 tuta.com
