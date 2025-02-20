@@ -19,7 +19,7 @@ jobs:
     - name: Compile ruleset srs
       run: |
          docker run --rm \
-         -v ${{ github.workspace }}:/app/source \  # монтировать в другую папку
+         -v ${{ github.workspace }}:/app \  # монтировать в другую папку
          itdoginfo/compilesrs:0.1.11
 
     - name: Push lists
