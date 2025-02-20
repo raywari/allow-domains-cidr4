@@ -12,7 +12,9 @@ jobs:
 
       - name: Prepare directories
         run: |
-          mkdir -p domain_categories/compared
+          mkdir -p domain_categories
+          cd domain_categories
+          mkdir -p compared
           rm -f domain_categories/compared/missing_domains.txt domain_categories/compared/presence_domains.txt
 
       - name: Install dependencies
