@@ -14,6 +14,6 @@ RUN pip install --no-cache-dir tldextract
 
 WORKDIR /app
 
-COPY scripts/convert.py /app/convert.py
+COPY convert.py /app/convert.py
 
 CMD ["python3", "convert.py"]
