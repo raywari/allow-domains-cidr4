@@ -12,10 +12,10 @@ jobs:
 
       - name: Prepare directories
         run: |
-          mkdir -p domain_categories
-          cd domain_categories
+          mkdir -p domain-categories
+          cd domain-categories
           mkdir -p compared
-          rm -f domain_categories/compared/missing_domains.txt domain_categories/compared/presence_domains.txt
+          rm -f domain-categories/compared/missing_domains.txt domain-categories/compared/presence_domains.txt
 
       - name: Install dependencies
         run: sudo apt-get install -y wget grep
@@ -39,7 +39,7 @@ jobs:
                    for(j=i+1;j<=n;j++) parent=parent"."a[j]; 
                    if ($0 ~ "^\\."parent"$") exit 0}} 
                    END {exit 1}' domains.lst; then
-              echo "$domain" >> domain_categories/compared/missing_domains.txt
+              echo "$domain" >> domain-categories/compared/missing_domains.txt
             fi
           done < inside-raw.lst
 
@@ -54,7 +54,7 @@ jobs:
                    for(j=i+1;j<=n;j++) parent=parent"."a[j]; 
                    if ($0 ~ "^\\."parent"$") exit 0}} 
                    END {exit 1}' inside-raw.lst; then
-              echo "$domain" >> domain_categories/compared/presence_domains.txt
+              echo "$domain" >> domain-categories/compared/presence_domains.txt
             fi
           done < domains.lst
 
@@ -62,6 +62,6 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add domain_categories/compared/*
+          git add domain-categories/compared/*
           git commit -m "Update domain comparisons: $(date +%Y-%m-%d)" || echo "No changes"
           git push
