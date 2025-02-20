@@ -10,7 +10,7 @@ import subprocess
 # Пути к файлам
 domains_file = 'domains.lst'  # В корне
 subnets_file = 'cidr4/summary/raw.lst'  # Подсети
-output_srs = 'compiled_rules.srs'  # Итоговый файл в корне
+output_srs = 'domains-cidr4.srs'  # Итоговый файл в корне
 
 def domains_from_file(filepath):
     domains = []
@@ -70,9 +70,6 @@ def generate_srs_combined(domains, subnets, output_json_directory='JSON', compil
         print(f"Error while processing: {e}")
 
 if __name__ == '__main__':
-    # Чтение доменов и подсетей
     domains = domains_from_file(domains_file)
     subnets = subnets_from_file(subnets_file)
-
-    # Генерация итогового .srs файла
     generate_srs_combined(domains, subnets)
