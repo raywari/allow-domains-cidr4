@@ -12,8 +12,8 @@ jobs:
 
       - name: Prepare directories
         run: |
-          mkdir -p categories/compared
-          rm -f categories/compared/missing_domains.txt categories/compared/presence_domains.txt
+          mkdir -p domain_categories/compared
+          rm -f domain_categories/compared/missing_domains.txt domain_categories/compared/presence_domains.txt
 
       - name: Install dependencies
         run: sudo apt-get install -y wget grep
@@ -37,7 +37,7 @@ jobs:
                    for(j=i+1;j<=n;j++) parent=parent"."a[j]; 
                    if ($0 ~ "^\\."parent"$") exit 0}} 
                    END {exit 1}' domains.lst; then
-              echo "$domain" >> categories/compared/missing_domains.txt
+              echo "$domain" >> domain_categories/compared/missing_domains.txt
             fi
           done < inside-raw.lst
 
@@ -52,7 +52,7 @@ jobs:
                    for(j=i+1;j<=n;j++) parent=parent"."a[j]; 
                    if ($0 ~ "^\\."parent"$") exit 0}} 
                    END {exit 1}' inside-raw.lst; then
-              echo "$domain" >> categories/compared/presence_domains.txt
+              echo "$domain" >> domain_categories/compared/presence_domains.txt
             fi
           done < domains.lst
 
