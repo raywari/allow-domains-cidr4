@@ -15,7 +15,8 @@ jobs:
           mkdir -p domain-categories
           cd domain-categories
           mkdir -p compared
-          rm -f domain-categories/compared/missing_domains.txt domain-categories/compared/presence_domains.txt
+          cd compared
+          rm missing_domains.txt presence_domains.txt
 
       - name: Install dependencies
         run: sudo apt-get install -y wget grep
