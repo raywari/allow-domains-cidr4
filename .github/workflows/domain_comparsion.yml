@@ -26,14 +26,13 @@ jobs:
       - name: Generate missing domains
         run: |
           while IFS= read -r domain; do
+            # Проверяем, покрывается ли домен каким-либо суффиксом из domains.lst
             covered=0
-            suffix=$domain
-            while [ -n "$suffix" ]; do
+            echo "$domain" | awk -F'.' '{for(i=1;i<=NF;i++){line="";for(j=i;j<=NF;j++)line=line (j==i?"":".") $j; print line}}' | while IFS= read -r suffix; do
               if grep -q -x "$suffix" domains.lst; then
                 covered=1
                 break
               fi
-              suffix=${suffix#*.}
             done
             if [ $covered -eq 0 ]; then
               echo "$domain" >> domain-categories/compared/missing_domains.txt
