@@ -12,8 +12,11 @@ jobs:
 
       - name: Prepare directories
         run: |
-          mkdir -p domain-categories/compared
-          rm -f domain-categories/compared/missing_domains.txt domain-categories/compared/presence_domains.txt
+          mkdir -p domain-categories
+          cd domain-categories
+          mkdir -p compared
+          cd compared
+          rm missing_domains.txt presence_domains.txt
 
       - name: Install dependencies
         run: sudo apt-get install -y wget grep
@@ -26,15 +29,17 @@ jobs:
       - name: Generate missing domains
         run: |
           while IFS= read -r domain; do
-            # Проверяем, покрывается ли домен каким-либо суффиксом из domains.lst
-            covered=0
-            echo "$domain" | awk -F'.' '{for(i=1;i<=NF;i++){line="";for(j=i;j<=NF;j++)line=line (j==i?"":".") $j; print line}}' | while IFS= read -r suffix; do
-              if grep -q -x "$suffix" domains.lst; then
-                covered=1
-                break
-              fi
-            done
-            if [ $covered -eq 0 ]; then
+            # Проверяем все возможные варианты:
+            # 1. Точное совпадение
+            # 2. Совпадение как поддомен
+            # 3. Совпадение родительского домена
+            if ! grep -q -x "$domain" domains.lst && \
+               ! grep -q "^\\.${domain#.}" domains.lst && \
+               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); 
+                   for(i=2;i<=n;i++) {parent=a[i]; 
+                   for(j=i+1;j<=n;j++) parent=parent"."a[j]; 
+                   if ($0 ~ "^\\."parent"$") exit 0}} 
+                   END {exit 1}' domains.lst; then
               echo "$domain" >> domain-categories/compared/missing_domains.txt
             fi
           done < inside-raw.lst
@@ -42,7 +47,14 @@ jobs:
       - name: Generate presence domains
         run: |
           while IFS= read -r domain; do
-            if ! grep -q -x "$domain" inside-raw.lst; then
+            # Аналогичная проверка в обратную сторону
+            if ! grep -q -x "$domain" inside-raw.lst && \
+               ! grep -q "^\\.${domain#.}" inside-raw.lst && \
+               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); 
+                   for(i=2;i<=n;i++) {parent=a[i]; 
+                   for(j=i+1;j<=n;j++) parent=parent"."a[j]; 
+                   if ($0 ~ "^\\."parent"$") exit 0}} 
+                   END {exit 1}' inside-raw.lst; then
               echo "$domain" >> domain-categories/compared/presence_domains.txt
             fi
           done < domains.lst
