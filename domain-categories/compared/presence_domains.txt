@@ -72,7 +72,6 @@ firefly-ps.adobe.io
 firefly.adobe.com
 fork.pet
 fpt2.microsoft.com
-game.brawlstarsgame.com
 gateway.bingviz.microsoftapp.net
 geni.us
 genius.com
