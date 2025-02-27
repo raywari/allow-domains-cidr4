@@ -6,6 +6,7 @@ acctcdnmsftuswe2.azureedge.net
 acctcdnvzeuno.azureedge.net
 adguard-dns.com
 agentura.ru
+aistudio.google.com
 alberta.ca
 amazonaws.com
 amd.com
@@ -45,6 +46,8 @@ cloudflare-dns.com
 copilot-proxy.githubusercontent.com
 czx.to
 d.docs.live.net
+deepmind.com
+deepmind.google
 deezer.com
 delfi.ee
 devops.com
@@ -72,7 +75,13 @@ firefly-ps.adobe.io
 firefly.adobe.com
 fork.pet
 fpt2.microsoft.com
+full:ai.google.dev
+full:alkalicore-pa.clients6.google.com
+full:alkalimakersuite-pa.clients6.google.com
 gateway.bingviz.microsoftapp.net
+geller-pa.googleapis.com
+generativeai.google
+generativelanguage.googleapis.com
 geni.us
 genius.com
 ggpht.cn
@@ -125,6 +134,7 @@ m3u.in
 macpaw.com
 macvendors.com
 makenotion.zendesk.com
+makersuite.google.com
 mattermost.com
 mbed.com
 mdza.io
