@@ -183,6 +183,7 @@ php.su
 piccy.info
 pixabay.com
 pixiv.net
+play.google.com
 porsche.com
 postfix.org
 protonmail.ch
