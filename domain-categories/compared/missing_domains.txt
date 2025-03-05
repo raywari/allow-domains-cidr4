@@ -19,6 +19,7 @@ bcbits.com
 bestchange.ru
 bitdefender.com
 blinkshot.io
+botnadzor.org
 broadcom.com
 broncosportforum.com
 btdig.com
@@ -39,7 +40,9 @@ coingate.com
 coinpayments.net
 coinsbee.com
 community.sophos.com
+contabo.com
 coomer.su
+corsair.com
 coursera.org
 credly.com
 csskor.ill.in.ua
@@ -67,6 +70,7 @@ flibusta.net
 flipboard.com
 flourish.studio
 footballapi.pulselive.com
+forum.netgate.com
 forum.ru-board.com
 foxnews.com
 framer.com
@@ -177,6 +181,7 @@ rus.delfi.ee
 rus.jauns.lv
 rutracker.wiki
 sdxcentral.com
+sentry.io
 sephora.com
 shop.gameloft.com
 signal.org
@@ -200,10 +205,13 @@ surfshark.com
 surveymonkey.com
 swissinfo.ch
 synoforum.com
+talosintelligence.com
 telegraph.co.uk
+tempmail.plus
 temu.com
 threema.ch
 timberland.de
+torrenteditor.com
 trueblackmetalradio.com
 turbobit.net
 tuta.com
