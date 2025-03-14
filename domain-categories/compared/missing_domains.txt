@@ -1,3 +1,4 @@
+.ua
 4pna.com
 7tv.app
 7tv.io
@@ -157,7 +158,6 @@ omnissa.com
 onfastspring.com
 onshape.com
 oracle.com
-pcmag.com
 phncdn.com.sds.rncdn7.com
 pimpletv.ru
 piratbit.top
