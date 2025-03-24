@@ -64,7 +64,6 @@ edgeservices.bing.com
 ehorussia.com
 elastic.co
 err.ee
-etsy.com
 f95zone.to
 fastly.net
 feedcdn.sapphire.microsoftapp.net

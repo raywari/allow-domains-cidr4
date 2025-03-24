@@ -20,6 +20,8 @@ bcbits.com
 bestchange.ru
 bitdefender.com
 blinkshot.io
+booth.pm
+booth.pximg.net
 botnadzor.org
 broadcom.com
 broncosportforum.com
@@ -132,7 +134,9 @@ megapeer.vip
 metal-archives.com
 mixcloud.com
 more.fm
+mssg.me
 multporn.net
+myheritage.com
 myjetbrains.com
 neo4j.com
 netflix.ca
@@ -190,6 +194,8 @@ rule34.art
 rus.delfi.ee
 rus.jauns.lv
 rutracker.wiki
+sci-hub.se
+sci-hub.st
 sdxcentral.com
 sentry.io
 sephora.com
