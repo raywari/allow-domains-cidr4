@@ -63,6 +63,8 @@ edge.microsoft.com
 edgeservices.bing.com
 ehorussia.com
 elastic.co
+envato.com
+envatousercontent.com
 err.ee
 f95zone.to
 fastly.net
@@ -199,6 +201,7 @@ refactoring.guru
 refinitiv.com
 research.uber.com
 resp.app
+reuters.com
 rferl.org
 riafan.ru
 rpt.usuppliers.uber.com
