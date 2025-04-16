@@ -4,6 +4,9 @@ a-msedge.net
 acctcdnmsftuswe2.azureedge.net
 acctcdnvzeuno.azureedge.net
 adguard-dns.com
+adobe.io
+adobedtm.com
+adobelogin.com
 agentura.ru
 aistudio.google.com
 alberta.ca
