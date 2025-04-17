@@ -46,6 +46,7 @@ citrix.com
 clamav.net
 cloudflare-dns.com
 copilot-proxy.githubusercontent.com
+cub.rip
 czx.to
 d.docs.live.net
 deepmind.com
