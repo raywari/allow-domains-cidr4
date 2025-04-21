@@ -1,5 +1,6 @@
 2ip.io
 4pda.ru
+4pda.ws
 a-msedge.net
 acctcdnmsftuswe2.azureedge.net
 acctcdnvzeuno.azureedge.net
