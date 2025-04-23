@@ -1,4 +1,4 @@
-name: Create lists
+name: Create srs
 
 on:
   push:
