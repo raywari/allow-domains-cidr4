@@ -28,7 +28,7 @@ jobs:
 
           echo "Файл $output_file успешно создан."
 
-          sort -u "$output_file"
+          sort -u "$output_file" -o "$output_file"
 
       - name: Commit and push changes
         run: |
