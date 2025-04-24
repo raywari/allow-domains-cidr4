@@ -28,6 +28,8 @@ jobs:
 
           echo "Файл $output_file успешно создан."
 
+          sort -u "$output_file"
+
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
