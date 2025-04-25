@@ -1,4 +1,4 @@
-name: Auto-sort domains.lst
+name: Domains list automation
 
 on:
   workflow_dispatch:
