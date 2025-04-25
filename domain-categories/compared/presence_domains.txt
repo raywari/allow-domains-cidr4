@@ -252,6 +252,7 @@ stulchik.net
 sydney.bing.com
 sysdig.com
 t-ru.org
+techpowerup.com
 terrasoft.ua
 theins.info
 thepiratebay.org
@@ -261,6 +262,7 @@ timberland.com
 tjournal.ru
 torproject.org
 torrent.by
+tpucdn.com
 tracker.wf
 translyaciya.com
 ufile.io
