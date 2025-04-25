@@ -4,43 +4,45 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'domains.lst' # Триггерится только при изменении domains.lst
+      - 'domains.lst'
 
 jobs:
-  sort-domains:
+  process-domains:
     runs-on: ubuntu-latest
 
     steps:
-    # Шаг 1: Проверить репозиторий
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # Шаг 2: Убедиться, что файл отсортирован
-    - name: Sort domains.lst
-      run: |
-        if [ -f domains.lst ]; then
-          LC_COLLATE=C sort -f -u domains.lst -o domains.lst
-        else
-          echo "Файл domains.lst отсутствует"
-          exit 1
-        fi
+      - name: Sort domains.lst
+        run: |
+          if [ -f domains.lst ]; then
+            LC_COLLATE=C sort -f -u domains.lst -o domains.lst
+            echo "domains.lst отсортирован."
+          else
+            echo "Файл domains.lst отсутствует."
+            exit 1
+          fi
 
-    # Шаг 3: Проверить, есть ли изменения
-    - name: Check for changes
-      id: check_changes
-      run: |
-        if git diff --quiet; then
-          echo "no_changes=true" >> $GITHUB_ENV
-        else
-          echo "no_changes=false" >> $GITHUB_ENV
-        fi
+      - name: Transform domains.lst to domains_nekobox.lst
+        run: |
+          input_file="domains.lst"
+          output_file="domains_nekobox.lst"
 
-    # Шаг 4: Коммитить изменения, если они есть
-    - name: Commit changes
-      if: env.no_changes == 'false'
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add domains.lst
-        git commit -m "Автосортировка domains.lst"
-        git push
+          if [ ! -f "$input_file" ]; then
+            echo "Файл $input_file не найден."
+            exit 1
+          fi
+
+          sed 's/^/domain:/' "$input_file" > "$output_file"
+          sort -u "$output_file" -o "$output_file"
+
+          echo "Файл $output_file успешно создан."
+
+      - name: Commit changes if any
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add domains.lst domains_nekobox.lst
+          git commit -m "Автообновление domains.lst и domains_nekobox.lst" || echo "Нет изменений для коммита"
+          git push
