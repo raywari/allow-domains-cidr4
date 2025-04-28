@@ -3,6 +3,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 10 * * *'
+  push:
+    paths:
+      - 'domains.lst'
 jobs:
   compare-domains:
     runs-on: ubuntu-latest
