@@ -43,7 +43,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git pull origin main --rebase
           git add domains.lst domains_nekobox.lst
           git commit -m "Автообновление domains.lst и domains_nekobox.lst" || echo "Нет изменений для коммита"
+          git pull --rebase
           git push
