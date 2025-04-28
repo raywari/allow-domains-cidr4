@@ -113,6 +113,7 @@ ill.in.ua
 in.appcenter.ms
 intellij.net
 island-of-pleasure.site
+itdog.info
 jabra.com
 jauns.lv
 kemono.party
@@ -150,6 +151,7 @@ meraki.com
 microchip.com
 mindfactory.de
 mobile.events.data.microsoft.com
+modsfire.com
 mongodb.org
 monster.ie
 mouser.com
