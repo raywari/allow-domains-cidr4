@@ -69,9 +69,12 @@ jobs:
 
       - name: Commit results
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git pull origin main --rebase
-          git add domain-categories/compared/*
-          git commit -m "Update domain comparisons: $(date +%Y-%m-%d)" || echo "No changes"
-          git push
+         git config --global user.name "github-actions"
+         git config --global user.email "actions@github.com"
+         git add -A
+         git commit -m "Temp commit for rebase" || echo "No initial changes"
+         git pull origin main --rebase
+         git reset HEAD~1 --soft || echo "Nothing to reset
+         git add domain-categories/compared/*
+         git commit -m "Update domain comparisons: $(date +%Y-%m-%d)" || echo "No changes"
+         git push
