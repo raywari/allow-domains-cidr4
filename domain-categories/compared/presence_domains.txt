@@ -28,8 +28,6 @@ androidpolice.com
 anidub.pro
 antiwar.in
 api.github.com
-api16-core-ie.tiktokv.eu
-api16-normal-ie.tiktokv.eu
 aplawrence.com
 appspot.com
 appstorrent.ru
@@ -53,7 +51,6 @@ bosch-home.com
 bradyid.com
 brave.com
 browser.events.data.microsoft.com
-bsync-ie.tiktokv.eu
 bt.booktracker.work
 buckaroo.nl
 bungiestore.com
@@ -170,12 +167,10 @@ lgincdnmsftuswe2.azureedge.net
 lgincdnvzeuno.azureedge.net
 lh3.googleusercontent.com
 libgen.rs
-libra16-normal-ie.tiktokv.eu
 linuxiac.com
 live.net
 localbitcoins.com
 location.microsoft.com
-log16-normal-ie.tiktokv.eu
 lostfilm.run
 lostfilm.top
 lostfilm.win
@@ -203,7 +198,6 @@ mongodb.org
 monster.ie
 mouser.com
 mrakopedia.net
-mssdk16-normal-ie.tiktokv.eu
 musemuse.cn
 nasvsehtoshnit.ru
 neputin.org
@@ -326,7 +320,6 @@ rferl.org
 riafan.ru
 rpt.usuppliers.uber.com
 rsf.org
-rtlog16-normal-ie.tiktokv.eu
 ruckuswireless.com
 rulate.ru
 rule34.xxx
@@ -415,11 +408,11 @@ tiktokcdn.com.rocket-cdn.com
 tiktokglobalshop.com
 tiktokv.com.c.worldfcdn.com
 tiktokv.com.c.worldfcdn2.com
+tiktokv.eu
 tiktokw.eu
 timberland.com
 tjournal.ru
 tlivecdn.com
-tnc16-normal-ie.tiktokv.eu
 torproject.org
 torrent.by
 torrindex.net
@@ -437,7 +430,6 @@ ttoversea.net
 ttoverseaus.net
 ubnt.com
 ufile.io
-ug-attribution-ie.tiktokv.eu
 ui.com
 underver.se
 unian.net
@@ -445,7 +437,6 @@ uniongang.tv
 v16-tiktokcdn-com.akamaized.net
 vbcdn.com
 vbcdn.net
-vcs16-normal-ie.tiktokv.eu
 vectorworks.net
 velocidrone.com
 veritas.com
@@ -466,8 +457,6 @@ vroid.pixiv.help
 vrv.co
 vyos.io
 watchguard.com
-webcast-ws16-normal-ie.tiktokv.eu
-webcast16-normal-ie.tiktokv.eu
 wetransfer.com
 wheather.com
 whispersystems.org
