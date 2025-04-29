@@ -67,7 +67,8 @@ jobs:
               kept["$domain"]=1
             fi
           done
-          mv "$tmp" "$input_file"
+          sort -u "$tmp" "$input_file"
+          rm "$tmp"
           echo "Поддомены до 99 уровней отфильтрованы (in-place)."
 
       # --- Генерация domains_nekobox.lst ---
