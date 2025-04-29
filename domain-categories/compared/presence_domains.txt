@@ -1,6 +1,4 @@
 2ip.io
-2ip.ru
-2ip.sru
 4pda.ru
 4pda.ws
 a-msedge.net
