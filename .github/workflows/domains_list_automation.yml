@@ -30,6 +30,46 @@ jobs:
             exit 1
           fi
 
+      # --- Фильтрация поддоменов (in-place) ---
+      - name: Filter subdomains in-place
+        run: |
+          input_file="domains.lst"
+          tmp=$(mktemp)
+          mapfile -t domains < "$input_file"
+          IFS=$'\n' sorted=($(printf '%s\n' "${domains[@]}" \
+            | awk -F. '{print NF-1, $0}' \
+            | sort -n \
+            | cut -d' ' -f2-))
+          unset IFS
+          get_parents() {
+            local domain=$1
+            local parents=()
+            local i=0
+            while [[ $domain = *.* ]] && (( i < 99 )); do
+              domain=${domain#*.}
+              parents+=("$domain")
+              ((i++))
+            done
+            echo "${parents[@]}"
+          }
+          declare -A kept
+          for domain in "${sorted[@]}"; do
+            parents=($(get_parents "$domain"))
+            skip=false
+            for p in "${parents[@]}"; do
+              if [[ -n "${kept[$p]}" ]]; then
+                skip=true
+                break
+              fi
+            done
+            if ! $skip; then
+              echo "$domain" >> "$tmp"
+              kept["$domain"]=1
+            fi
+          done
+          mv "$tmp" "$input_file"
+          echo "Поддомены до 99 уровней отфильтрованы (in-place)."
+
       # --- Генерация domains_nekobox.lst ---
       - name: Transform domains.lst to domains_nekobox.lst
         run: |
@@ -49,15 +89,12 @@ jobs:
       # --- Сравнение доменов ---
       - name: Prepare and compare domain lists
         run: |
-          # Подготовка директорий
           mkdir -p domain-categories/compared
           rm -f domain-categories/compared/missing_domains.txt domain-categories/compared/presence_domains.txt
 
-          # Загрузка списков для сравнения
           wget -q -O inside-raw.lst https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
           wget -q -O external-domains.lst https://raw.githubusercontent.com/raywari/allow-domains-cidr4/main/domains.lst
 
-          # Генерация списка отсутствующих доменов
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" external-domains.lst && \
                ! grep -q "^\\.${domain#.}" external-domains.lst && \
@@ -66,7 +103,6 @@ jobs:
             fi
           done < inside-raw.lst
 
-          # Генерация списка присутствующих доменов
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" inside-raw.lst && \
                ! grep -q "^\\.${domain#.}" inside-raw.lst && \
@@ -75,7 +111,6 @@ jobs:
             fi
           done < external-domains.lst
 
-          # Сортировка и удаление дублей
           sort -u domain-categories/compared/missing_domains.txt -o domain-categories/compared/missing_domains.txt
           sort -u domain-categories/compared/presence_domains.txt -o domain-categories/compared/presence_domains.txt
 
