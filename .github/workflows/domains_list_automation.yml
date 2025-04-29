@@ -94,12 +94,13 @@ jobs:
           rm -f domain-categories/compared/missing_domains.txt domain-categories/compared/presence_domains.txt
 
           wget -q -O inside-raw.lst https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
-          wget -q -O external-domains.lst https://raw.githubusercontent.com/raywari/allow-domains-cidr4/main/domains.lst
+
+          cp domains.lst my-domains.lst
 
           while IFS= read -r domain; do
-            if ! grep -q -x "$domain" external-domains.lst && \
-               ! grep -q "^\\.${domain#.}" external-domains.lst && \
-               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' external-domains.lst; then
+            if ! grep -q -x "$domain" my-domains.lst && \
+               ! grep -q "^\\.${domain#.}" my-domains.lst && \
+               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' my-domains.lst; then
               echo "$domain" >> domain-categories/compared/missing_domains.txt
             fi
           done < inside-raw.lst
@@ -110,7 +111,7 @@ jobs:
                ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' inside-raw.lst; then
               echo "$domain" >> domain-categories/compared/presence_domains.txt
             fi
-          done < external-domains.lst
+          done < my-domains.lst
 
           sort -u domain-categories/compared/missing_domains.txt -o domain-categories/compared/missing_domains.txt
           sort -u domain-categories/compared/presence_domains.txt -o domain-categories/compared/presence_domains.txt
