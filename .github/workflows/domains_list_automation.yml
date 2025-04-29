@@ -117,12 +117,22 @@ jobs:
 
           echo "Сравнение доменных списков завершено."
 
-      # --- Финальный коммит ---
-      - name: Commit and push changes
+      # --- Коммит для .lst файлов ---
+      - name: Commit and push .lst changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add domains.lst domains_nekobox.lst domain-categories/compared/*
-          git commit -m "Автоматическое обновление и сравнение доменных списков: $(date +'%Y-%m-%d')" || echo "Нет изменений для коммита"
+          git add domains.lst domains_nekobox.lst
+          git commit -m "Обновление domains.lst" || echo "Нет изменений для коммита"
+          git pull --rebase
+          git push
+
+      # --- Коммит для compared ---
+      - name: Commit and push compared changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add domain-categories/compared/*
+          git commit -m "Автоматическое сравнение: $(date +'%Y-%m-%d')" || echo "Нет изменений для коммита"
           git pull --rebase
           git push
