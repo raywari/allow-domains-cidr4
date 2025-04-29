@@ -74,8 +74,6 @@ domain:antiwar.in
 domain:aol.com
 domain:api.github.com
 domain:api.service-kp.com
-domain:api16-core-ie.tiktokv.eu
-domain:api16-normal-ie.tiktokv.eu
 domain:aplawrence.com
 domain:appspot.com
 domain:appstorrent.ru
@@ -132,7 +130,6 @@ domain:brawlstarsgame.com
 domain:broadcom.com
 domain:broncosportforum.com
 domain:browser.events.data.microsoft.com
-domain:bsync-ie.tiktokv.eu
 domain:bt.booktracker.work
 domain:btdig.com
 domain:btod.com
@@ -530,7 +527,6 @@ domain:lgincdnvzeuno.azureedge.net
 domain:lh3.googleusercontent.com
 domain:libgen.li
 domain:libgen.rs
-domain:libra16-normal-ie.tiktokv.eu
 domain:licdn.com
 domain:lidarr.audio
 domain:lifehacker.com
@@ -545,7 +541,6 @@ domain:liveuamap.com
 domain:localbitcoins.com
 domain:locals.md
 domain:location.microsoft.com
-domain:log16-normal-ie.tiktokv.eu
 domain:lolz.guru
 domain:lookerstudio.google.com
 domain:lostfilm.run
@@ -604,7 +599,6 @@ domain:moscowtimes.ru
 domain:mouser.com
 domain:mouser.fi
 domain:mrakopedia.net
-domain:mssdk16-normal-ie.tiktokv.eu
 domain:mssg.me
 domain:mullvad.net
 domain:multporn.net
@@ -872,7 +866,6 @@ domain:roar-review.com
 domain:root-nation.com
 domain:rpt.usuppliers.uber.com
 domain:rsf.org
-domain:rtlog16-normal-ie.tiktokv.eu
 domain:rublacklist.net
 domain:ruckuswireless.com
 domain:rulate.ru
@@ -1083,6 +1076,7 @@ domain:tiktokglobalshop.com
 domain:tiktokv.com
 domain:tiktokv.com.c.worldfcdn.com
 domain:tiktokv.com.c.worldfcdn2.com
+domain:tiktokv.eu
 domain:tiktokv.us
 domain:tiktokw.eu
 domain:tiktokw.us
@@ -1093,7 +1087,6 @@ domain:tlivecdn.com
 domain:tmdb-image-prod.b-cdn.net
 domain:tmdb.com
 domain:tmdb.org
-domain:tnc16-normal-ie.tiktokv.eu
 domain:torproject.org
 domain:torrent.by
 domain:torrenteditor.com
@@ -1145,7 +1138,6 @@ domain:ua
 domain:uaudio.com
 domain:ubnt.com
 domain:ufile.io
-domain:ug-attribution-ie.tiktokv.eu
 domain:ui.com
 domain:ukr.net
 domain:ukr.radio
@@ -1160,7 +1152,6 @@ domain:v16-tiktokcdn-com.akamaized.net
 domain:vagrantcloud.com
 domain:vbcdn.com
 domain:vbcdn.net
-domain:vcs16-normal-ie.tiktokv.eu
 domain:vectorworks.net
 domain:veeam.com
 domain:velocidrone.com
@@ -1204,8 +1195,6 @@ domain:walmart.com
 domain:watchguard.com
 domain:watermarkremover.io
 domain:weather.com
-domain:webcast-ws16-normal-ie.tiktokv.eu
-domain:webcast16-normal-ie.tiktokv.eu
 domain:webnames.ca
 domain:webtoons.com
 domain:weebly.com
