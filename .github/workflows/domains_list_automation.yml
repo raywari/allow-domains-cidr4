@@ -1,19 +1,25 @@
-name: Domains list automation
+name: Domains Automation and Comparison
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 10 * * *'
   push:
     paths:
       - 'domains.lst'
 
 jobs:
-  process-domains:
+  process-and-compare-domains:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: sudo apt-get install -y wget grep
+
+      # --- Сортировка domains.lst ---
       - name: Sort domains.lst
         run: |
           if [ -f domains.lst ]; then
@@ -24,6 +30,7 @@ jobs:
             exit 1
           fi
 
+      # --- Генерация domains_nekobox.lst ---
       - name: Transform domains.lst to domains_nekobox.lst
         run: |
           input_file="domains.lst"
@@ -39,11 +46,47 @@ jobs:
 
           echo "Файл $output_file успешно создан."
 
-      - name: Commit changes if any
+      # --- Сравнение доменов ---
+      - name: Prepare and compare domain lists
+        run: |
+          # Подготовка директорий
+          mkdir -p domain-categories/compared
+          rm -f domain-categories/compared/missing_domains.txt domain-categories/compared/presence_domains.txt
+
+          # Загрузка списков для сравнения
+          wget -q -O inside-raw.lst https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
+          wget -q -O external-domains.lst https://raw.githubusercontent.com/raywari/allow-domains-cidr4/main/domains.lst
+
+          # Генерация списка отсутствующих доменов
+          while IFS= read -r domain; do
+            if ! grep -q -x "$domain" external-domains.lst && \
+               ! grep -q "^\\.${domain#.}" external-domains.lst && \
+               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' external-domains.lst; then
+              echo "$domain" >> domain-categories/compared/missing_domains.txt
+            fi
+          done < inside-raw.lst
+
+          # Генерация списка присутствующих доменов
+          while IFS= read -r domain; do
+            if ! grep -q -x "$domain" inside-raw.lst && \
+               ! grep -q "^\\.${domain#.}" inside-raw.lst && \
+               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' inside-raw.lst; then
+              echo "$domain" >> domain-categories/compared/presence_domains.txt
+            fi
+          done < external-domains.lst
+
+          # Сортировка и удаление дублей
+          sort -u domain-categories/compared/missing_domains.txt -o domain-categories/compared/missing_domains.txt
+          sort -u domain-categories/compared/presence_domains.txt -o domain-categories/compared/presence_domains.txt
+
+          echo "Сравнение доменных списков завершено."
+
+      # --- Финальный коммит ---
+      - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add domains.lst domains_nekobox.lst
-          git commit -m "Автообновление domains.lst и domains_nekobox.lst" || echo "Нет изменений для коммита"
+          git add domains.lst domains_nekobox.lst domain-categories/compared/*
+          git commit -m "Автоматическое обновление и сравнение доменных списков: $(date +'%Y-%m-%d')" || echo "Нет изменений для коммита"
           git pull --rebase
           git push
