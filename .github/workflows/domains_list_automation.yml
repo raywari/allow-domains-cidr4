@@ -67,7 +67,7 @@ jobs:
               kept["$domain"]=1
             fi
           done
-          sort -u "$tmp" "$input_file"
+          sort -u "$tmp" -o "$input_file"
           rm "$tmp"
           echo "Поддомены до 99 уровней отфильтрованы (in-place)."
 
