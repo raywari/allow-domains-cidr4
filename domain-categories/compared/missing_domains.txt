@@ -6,6 +6,7 @@ api.theins.info
 api.themoviedb.org
 atn.ua
 attachments.f95zone.to
+booth.pximg.net
 builds.parsec.app
 chat.openai.com.cdn.cloudflare.net
 csskor.ill.in.ua
