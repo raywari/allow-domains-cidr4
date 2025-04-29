@@ -72,7 +72,7 @@ jobs:
           echo "Поддомены до 99 уровней отфильтрованы (in-place)."
 
       # --- Генерация domains_nekobox.lst ---
-      - name: Transform domains.lst to domains_nekobox.lst
+      - name: Generate domains_nekobox.lst
         run: |
           input_file="domains.lst"
           output_file="domains_nekobox.lst"
@@ -84,6 +84,26 @@ jobs:
 
           sed 's/^/domain:/' "$input_file" > "$output_file"
           sort -u "$output_file" -o "$output_file"
+
+          echo "Файл $output_file успешно создан."
+
+      # --- Объединение domains.lst и cidr4/summary/raw.lst ---
+      - name: Generate domains_and_cidr4.lst
+        run: |
+          output_file="domains_and_cidr4.lst"
+          : > "$output_file"
+
+          if [ -f "domains.lst" ]; then
+            cat domains.lst >> "$output_file"
+          else
+            echo "domains.lst не найден."
+          fi
+
+          if [ -f "cidr4/summary/raw.lst" ]; then
+            cat cidr4/summary/raw.lst >> "$output_file"
+          else
+            echo "cidr4/summary/raw.lst не найден."
+          fi
 
           echo "Файл $output_file успешно создан."
 
@@ -123,7 +143,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add domains.lst domains_nekobox.lst
+          git add domains.lst domains_nekobox.lst domains_and_cidr4.lst
           git commit -m "Обновление domains.lst" || echo "Нет изменений для коммита"
           git push
 
