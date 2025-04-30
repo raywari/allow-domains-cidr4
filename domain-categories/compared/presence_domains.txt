@@ -111,7 +111,6 @@ g2a.com
 gateway.bingviz.microsoftapp.net
 geller-pa.googleapis.com
 generativeai.google
-generativelanguage.googleapis.com
 geni.us
 genius.com
 ggpht.cn
@@ -156,7 +155,6 @@ kemono.party
 kinobase.org
 kinokopilka.pro
 kinovod.pro
-kinozal.me
 kpapp.link
 lampa.mx
 leica-geosystems.com
@@ -311,7 +309,6 @@ radarr.video
 redis.com
 redtube.com
 reestrgov.ru
-refactoring.guru
 refinitiv.com
 research.uber.com
 resp.app
@@ -413,7 +410,6 @@ tiktokw.eu
 timberland.com
 tjournal.ru
 tlivecdn.com
-torproject.org
 torrent.by
 torrindex.net
 tpucdn.com

@@ -6,6 +6,7 @@ api.theins.info
 api.themoviedb.org
 atn.ua
 attachments.f95zone.to
+bitnami.com
 booth.pximg.net
 builds.parsec.app
 chat.openai.com.cdn.cloudflare.net
@@ -20,11 +21,14 @@ image.tmdb.org
 interfax.com.ua
 jskor.ill.in.ua
 kor.ill.in.ua
+kym-cdn.com
 mail-api.proton.me
+manus.im
 mbk-news.appspot.com
 neformat.com.ua
 newsroom.porsche.com
 olx.ua
+opensanctions.org
 patriot.dp.ua
 pkgs.tailscale.com
 portal.lviv.ua
@@ -35,6 +39,7 @@ rbc.ua
 rf.dobrochan.net
 rus.delfi.ee
 rus.jauns.lv
+startpage.com
 static.lostfilm.top
 svidomi.in.ua
 svoi.kr.ua
