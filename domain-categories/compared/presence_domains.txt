@@ -127,7 +127,6 @@ groza.media
 gstatic.com
 gtagarage.com
 gts.byteoversea.net
-gvt1.com
 hath.network
 hbomax.com
 hdrezka.cm
@@ -316,6 +315,8 @@ reuters.com
 rferl.org
 riafan.ru
 rpt.usuppliers.uber.com
+rr3.sn-pouxga5o-vu2l.gvt1.com
+rr3.sn-pouxga5o-vu2s.gvt1.com
 rsf.org
 ruckuswireless.com
 rulate.ru
