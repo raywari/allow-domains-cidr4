@@ -119,13 +119,34 @@ jobs:
 
           echo "Сравнение доменных списков завершено."
 
+      # --- Генерация domains-without-yt.lst ---
+      - name: Generate domains-without-yt.lst excluding YouTube domains
+        run: |
+          input_file="domains.lst"
+          exclude_file="domain-categories/youtube/youtube_domains.lst"
+          output_file="domains-without-yt.lst"
+
+          if [ ! -f "$input_file" ]; then
+            echo "Файл $input_file не найден."
+            exit 1
+          fi
+
+          if [ ! -f "$exclude_file" ]; then
+            echo "Файл $exclude_file не найден."
+            exit 1
+          fi
+
+          grep -vxFf "$exclude_file" "$input_file" | sort -u > "$output_file"
+
+          echo "Файл $output_file успешно создан."
+
       # --- Коммит для .lst файлов ---
       - name: Commit and push .lst changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add domains.lst domains_nekobox.lst
-          git commit -m "Обновление domains.lst" || echo "Нет изменений для коммита"
+          git add domains.lst domains_nekobox.lst domains-without-yt.lst
+          git commit -m "Обновление доменных .lst файлов" || echo "Нет изменений для коммита"
           git push
 
       # --- Коммит для compared ---
