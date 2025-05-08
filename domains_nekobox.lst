@@ -42,8 +42,11 @@ domain:agents.media
 domain:agentura.ru
 domain:ahrefs.com
 domain:ai.com
+domain:ai.google.dev
 domain:aistudio.google.com
 domain:alberta.ca
+domain:alkalicore-pa.clients6.google.com
+domain:alkalimakersuite-pa.clients6.google.com
 domain:allegro.pl
 domain:alphacoders.com
 domain:alza.hu
@@ -347,9 +350,6 @@ domain:framer.com
 domain:freedomletters.org
 domain:freeimages.com
 domain:freemedia.io
-domain:full:ai.google.dev
-domain:full:alkalicore-pa.clients6.google.com
-domain:full:alkalimakersuite-pa.clients6.google.com
 domain:g2a.com
 domain:gagadget.com
 domain:gamedistribution.com
