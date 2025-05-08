@@ -49,10 +49,12 @@ bing.com
 bitbucket.org
 bitcoin.org
 bitru.org
+boombeach.com
 boosteroid.com
 bosch-home.com
 bradyid.com
 brave.com
+brawlstars.com
 browser.events.data.microsoft.com
 bt.booktracker.work
 buckaroo.nl
@@ -66,6 +68,9 @@ ce1-048-404gv.video-ik-ok-ii.xyz
 certifytheweb.com
 citrix.com
 clamav.net
+clash.com
+clashmini.com
+clashroyale.com
 cloudflare-dns.com
 cloudflare-ech.com
 copilot-proxy.githubusercontent.com
@@ -108,6 +113,7 @@ fex.net
 fork.pet
 fpt2.microsoft.com
 g2a.com
+gamesfirsthelsinki.com
 gateway.bingviz.microsoftapp.net
 geller-pa.googleapis.com
 gemini.google
@@ -131,6 +137,8 @@ gtagarage.com
 gts.byteoversea.net
 habrastorage.org
 hath.network
+hayday.com
+haydaygame.com
 hbomax.com
 hdrezka.cm
 hentaichan.live
@@ -190,6 +198,7 @@ meraki.com
 messenger.com
 microchip.com
 mindfactory.de
+mo.co
 mobile.events.data.microsoft.com
 modsfire.com
 mongodb.org
@@ -339,6 +348,7 @@ screamingfrog.co.uk
 search.externulls.com
 searchfloor.org
 sebeanus.online
+seeurlpcl.com
 self.events.data.microsoft.com
 serpstat.com
 serv01001.xyz
@@ -372,6 +382,7 @@ spotifycharts.com
 spotifycodes.com
 spotifyforbrands.com
 spotifyjobs.com
+squadbusters.com
 srv.voidnetwork.cloud
 stalker2.com
 static-ah.xhcdn.com
@@ -385,6 +396,12 @@ store.externulls.com
 stream.voidboost.in
 streamable.com
 stulchik.net
+supercell.helpshift.com
+supercell.net
+supercellcreators.com
+supercellgames.com
+supercellid.com
+supercellstore.com
 sysdig.com
 t-invariant.org
 t-ru.org
