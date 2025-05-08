@@ -150,8 +150,6 @@ jobs:
             done
           } > categories/Compared-Domains/presence-domains.txt
 
-          rm -f *.lst missing_*.txt presence_*.txt my-domains.lst tmp
-
           echo "Сравнение завершено."
 
       - name: Generate domains-without-yt.lst
