@@ -118,6 +118,7 @@ domain:bing.com
 domain:bitbucket.org
 domain:bitcoin.org
 domain:bitdefender.com
+domain:bitnami.com
 domain:bitru.org
 domain:blackseanews.net
 domain:blinkshot.io
@@ -438,7 +439,6 @@ domain:htmhell.dev
 domain:http-inputs-notion.splunkcloud.com
 domain:huawei.com
 domain:hwbot.org
-domain:i.yting.com
 domain:ibm.com
 domain:ibytedtos.com
 domain:ic-vt-nss.xhcdn.com
@@ -562,6 +562,7 @@ domain:malwarebytes.com
 domain:mangadex.org
 domain:mangahub.ru
 domain:mangapark.net
+domain:manus.im
 domain:mashable.com
 domain:mattermost.com
 domain:max.com
@@ -998,6 +999,7 @@ domain:squareup.com
 domain:squietpc.com
 domain:srv.voidnetwork.cloud
 domain:stalker2.com
+domain:startpage.com
 domain:static-ah.xhcdn.com
 domain:static-nss.xhcdn.com
 domain:static.voidboost.com
@@ -1263,6 +1265,7 @@ domain:yt2.googleusercontent.com
 domain:yt3.googleusercontent.com
 domain:ytimg.com
 domain:ytimg.l.google.com
+domain:yting.com
 domain:yummyani.me
 domain:yummyanime.tv
 domain:zahav.ru
