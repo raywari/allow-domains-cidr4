@@ -88,26 +88,32 @@ jobs:
           input_file="domains.lst"
           output_file="domains-nekobox.lst"
 
-          if [ ! -f "$input_file" ]; then
+          if [ -f "$input_file" ]; then
+            sed 's/^/domain:/' "$input_file" > "$output_file"
+            sort -u "$output_file" -o "$output_file"
+            echo "Файл $output_file успешно создан."
+          else
             echo "Файл $input_file не найден."
             exit 1
           fi
 
-          sed 's/^/domain:/' "$input_file" > "$output_file"
-          sort -u "$output_file" -o "$output_file"
-
-          echo "Файл $output_file успешно создан."
-
       # --- Сравнение доменов ---
       - name: Prepare and compare domain lists
         run: |
-          mkdir -p categories/Compared-Domains
-          rm -f categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
+          # Определение URL-адресов списков
+          INSIDE_RAW_URL="https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst"
+          COMMUNITY_URL="https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst"
 
-          wget -q -O inside-raw.lst https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
+          rm -f categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
+          touch categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
+
+          # Загрузка списков
+          wget -q -O inside-raw.lst "$INSIDE_RAW_URL" || { echo "Ошибка загрузки inside-raw.lst"; exit 1; }
+          wget -q -O community.lst "$COMMUNITY_URL" || { echo "Ошибка загрузки community.lst"; exit 1; }
 
           cp domains.lst my-domains.lst
 
+          # Сравнение с inside-raw.lst (missing)
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" my-domains.lst && \
                ! grep -q "^\\.${domain#.}" my-domains.lst && \
@@ -116,6 +122,16 @@ jobs:
             fi
           done < inside-raw.lst
 
+          # Сравнение с community.lst (missing)
+          while IFS= read -r domain; do
+            if ! grep -q -x "$domain" my-domains.lst && \
+               ! grep -q "^\\.${domain#.}" my-domains.lst && \
+               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' my-domains.lst; then
+              echo "$domain" >> categories/Compared-Domains/missing-domains.txt
+            fi
+          done < community.lst
+
+          # Сравнение с inside-raw.lst (presence)
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" inside-raw.lst && \
                ! grep -q "^\\.${domain#.}" inside-raw.lst && \
@@ -124,10 +140,24 @@ jobs:
             fi
           done < my-domains.lst
 
+          # Сравнение с community.lst (presence)
+          while IFS= read -r domain; do
+            if ! grep -q -x "$domain" community.lst && \
+               ! grep -q "^\\.${domain#.}" community.lst && \
+               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' community.lst; then
+              echo "$domain" >> categories/Compared-Domains/presence-domains.txt
+            fi
+          done < my-domains.lst
+
+          # Сортировка и устранение дубликатов
           sort -u categories/Compared-Domains/missing-domains.txt -o categories/Compared-Domains/missing-domains.txt
           sort -u categories/Compared-Domains/presence-domains.txt -o categories/Compared-Domains/presence-domains.txt
 
-          echo "Сравнение доменных списков завершено."
+          # Удаление доменов с TLD .ua
+          grep -v '\.ua$' categories/Compared-Domains/missing-domains.txt > tmp.txt && mv tmp.txt categories/Compared-Domains/missing-domains.txt
+          grep -v '\.ua$' categories/Compared-Domains/presence-domains.txt > tmp.txt && mv tmp.txt categories/Compared-Domains/presence-domains.txt
+
+          echo "Сравнение доменных списков завершено, домены с TLD .ua удалены."
 
       # --- Генерация domains-without-yt.lst ---
       - name: Generate domains-without-yt.lst excluding YouTube domains
@@ -136,19 +166,13 @@ jobs:
           exclude_file="categories/Services/youtube/youtube-domains.lst"
           output_file="domains-without-yt.lst"
 
-          if [ ! -f "$input_file" ]; then
+          if [ -f "$input_file" ]; then
+            grep -vxFf "$exclude_file" "$input_file" | sort -u > "$output_file"
+            echo "Файл $output_file успешно создан."
+          else
             echo "Файл $input_file не найден."
             exit 1
           fi
-
-          if [ ! -f "$exclude_file" ]; then
-            echo "Файл $exclude_file не найден."
-            exit 1
-          fi
-
-          grep -vxFf "$exclude_file" "$input_file" | sort -u > "$output_file"
-
-          echo "Файл $output_file успешно создан."
 
       # --- Коммит для .lst файлов ---
       - name: Commit and push .lst changes
