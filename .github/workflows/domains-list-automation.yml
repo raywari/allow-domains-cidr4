@@ -207,7 +207,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add categories/Compared-Domains/*
+          git add categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
           git commit -m "Автоматическое сравнение: $(date +'%Y-%m-%d')" || echo "Нет изменений для коммита"
           git pull --rebase origin main
           git push origin main
