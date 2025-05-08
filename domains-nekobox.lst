@@ -124,12 +124,14 @@ domain:blackseanews.net
 domain:blinkshot.io
 domain:bluehost.com
 domain:booktracker.org
+domain:boombeach.com
 domain:boosteroid.com
 domain:booth.pm
 domain:bosch-home.com
 domain:botnadzor.org
 domain:bradyid.com
 domain:brave.com
+domain:brawlstars.com
 domain:brawlstarsgame.com
 domain:broadcom.com
 domain:broncosportforum.com
@@ -174,7 +176,10 @@ domain:chess.com
 domain:cisco.com
 domain:citrix.com
 domain:clamav.net
+domain:clash.com
+domain:clashmini.com
 domain:clashofclans.com
+domain:clashroyale.com
 domain:clashroyaleapp.com
 domain:claude.ai
 domain:clickup.com
@@ -354,6 +359,7 @@ domain:freemedia.io
 domain:g2a.com
 domain:gagadget.com
 domain:gamedistribution.com
+domain:gamesfirsthelsinki.com
 domain:gamesrepack.com
 domain:gaming.amazon.com
 domain:gateway.bingviz.microsoftapp.net
@@ -414,6 +420,8 @@ domain:hackmd.io
 domain:halooglasi.com
 domain:hashicorp.com
 domain:hath.network
+domain:hayday.com
+domain:haydaygame.com
 domain:hbomax.com
 domain:hdkinoteatr.com
 domain:hdrezka.ac
@@ -591,6 +599,7 @@ domain:middlewareinventory.com
 domain:mignews.com
 domain:mindfactory.de
 domain:mixcloud.com
+domain:mo.co
 domain:mobile.events.data.microsoft.com
 domain:modsfire.com
 domain:mongodb.com
@@ -917,6 +926,7 @@ domain:search.externulls.com
 domain:searchfloor.org
 domain:seasonvar.ru
 domain:sebeanus.online
+domain:seeurlpcl.com
 domain:selezen.org
 domain:self.events.data.microsoft.com
 domain:semnasem.org
@@ -994,6 +1004,7 @@ domain:spotifyforbrands.com
 domain:spotifyjobs.com
 domain:spreadthesign.com
 domain:sputnikipogrom.com
+domain:squadbusters.com
 domain:squadbustersgame.com
 domain:squareup.com
 domain:squietpc.com
@@ -1018,6 +1029,12 @@ domain:streamable.com
 domain:stulchik.net
 domain:suggestqueries.google.com
 domain:supercell.com
+domain:supercell.helpshift.com
+domain:supercell.net
+domain:supercellcreators.com
+domain:supercellgames.com
+domain:supercellid.com
+domain:supercellstore.com
 domain:support.xerox.com
 domain:surfshark.com
 domain:surveymonkey.com
