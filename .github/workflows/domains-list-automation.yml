@@ -196,7 +196,8 @@ jobs:
           git config --local user.name "GitHub Action"
           git add domains.lst domains-nekobox.lst domains-without-yt.lst
           git commit -m "Обновление доменных .lst файлов" || echo "Нет изменений для коммита"
-          git push
+          git pull --rebase origin main
+          git push origin main
 
       # --- Коммит для Compared-Domains ---
       - name: Commit and push Compared-Domains changes
@@ -205,4 +206,5 @@ jobs:
           git config --local user.name "GitHub Action"
           git add categories/Compared-Domains/*
           git commit -m "Автоматическое сравнение: $(date +'%Y-%m-%d')" || echo "Нет изменений для коммита"
-          git push
+          git pull --rebase origin main
+          git push origin main
