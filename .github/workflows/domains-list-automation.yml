@@ -20,7 +20,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get install -y wget grep || echo "ОШИБКА: Не удалось установить зависимости" >> $LOG_FILE
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget grep || echo "ОШИБКА: Не удалось установить зависимости" >> $LOG_FILE
         continue-on-error: true
 
       - name: Очистка файла domains.lst
