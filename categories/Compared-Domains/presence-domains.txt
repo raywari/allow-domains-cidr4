@@ -1,6 +1,5 @@
 ### presence RussiaInside
 
-2example.com
 2ip.io
 4pda.ru
 4pda.ws
@@ -527,7 +526,6 @@ zoomadmin.com
 10minutemail.com
 1337x.to
 24.kg
-2example.com
 2ip.io
 4freerussia.org
 4pda.ws
