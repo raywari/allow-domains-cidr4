@@ -109,6 +109,7 @@ facebook.com.vn
 facebook.fr
 fanbox.cc
 fastly.net
+faz.net
 fb.me
 feedcdn.sapphire.microsoftapp.net
 fex.net
@@ -376,6 +377,7 @@ sobesednik.ru
 software-static.download.prss.microsoft.com
 soundcloud.cloud
 sovanews.tv
+spiegel.de
 spoti.fi
 spotify-everywhere.com
 spotify.design
@@ -753,6 +755,7 @@ fanbox.cc
 fast-torrent.club
 fast.com
 fastly.net
+faz.net
 fb.com
 fb.me
 fbcdn.net
@@ -1306,6 +1309,7 @@ soundcloud.cloud
 sovetromantica.com
 spacelift.io
 spektr.press
+spiegel.de
 spitfireaudio.com
 spoti.fi
 spotify-everywhere.com
