@@ -91,8 +91,8 @@ jobs:
       # --- Сравнение доменов ---
       - name: Prepare and compare domain lists
         run: |
-          mkdir -p domain-categories/compared
-          rm -f domain-categories/compared/missing_domains.txt domain-categories/compared/presence_domains.txt
+          mkdir -p domain-categories/Compared-Domains
+          rm -f domain-categories/Compared-Domains/missing_domains.txt domain-categories/Compared-Domains/presence_domains.txt
 
           wget -q -O inside-raw.lst https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
 
@@ -102,7 +102,7 @@ jobs:
             if ! grep -q -x "$domain" my-domains.lst && \
                ! grep -q "^\\.${domain#.}" my-domains.lst && \
                ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' my-domains.lst; then
-              echo "$domain" >> domain-categories/compared/missing_domains.txt
+              echo "$domain" >> domain-categories/Compared-Domains/missing_domains.txt
             fi
           done < inside-raw.lst
 
@@ -110,12 +110,12 @@ jobs:
             if ! grep -q -x "$domain" inside-raw.lst && \
                ! grep -q "^\\.${domain#.}" inside-raw.lst && \
                ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' inside-raw.lst; then
-              echo "$domain" >> domain-categories/compared/presence_domains.txt
+              echo "$domain" >> domain-categories/Compared-Domains/presence_domains.txt
             fi
           done < my-domains.lst
 
-          sort -u domain-categories/compared/missing_domains.txt -o domain-categories/compared/missing_domains.txt
-          sort -u domain-categories/compared/presence_domains.txt -o domain-categories/compared/presence_domains.txt
+          sort -u domain-categories/Compared-Domains/missing_domains.txt -o domain-categories/Compared-Domains/missing_domains.txt
+          sort -u domain-categories/Compared-Domains/presence_domains.txt -o domain-categories/Compared-Domains/presence_domains.txt
 
           echo "Сравнение доменных списков завершено."
 
@@ -123,7 +123,7 @@ jobs:
       - name: Generate domains-without-yt.lst excluding YouTube domains
         run: |
           input_file="domains.lst"
-          exclude_file="domain-categories/youtube/youtube_domains.lst"
+          exclude_file="domain-categories/Services/youtube/youtube-domains.lst"
           output_file="domains-without-yt.lst"
 
           if [ ! -f "$input_file" ]; then
@@ -149,11 +149,11 @@ jobs:
           git commit -m "Обновление доменных .lst файлов" || echo "Нет изменений для коммита"
           git push
 
-      # --- Коммит для compared ---
-      - name: Commit and push compared changes
+      # --- Коммит для Compared-Domains ---
+      - name: Commit and push Compared-Domains changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add domain-categories/compared/*
+          git add domain-categories/Compared-Domains/*
           git commit -m "Автоматическое сравнение: $(date +'%Y-%m-%d')" || echo "Нет изменений для коммита"
           git push
