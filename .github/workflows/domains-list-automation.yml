@@ -22,7 +22,14 @@ jobs:
       - name: Clean domains.lst
         run: |
           if [[ -f domains.lst ]]; then
-            sed -i '/^\s*$/d; /^\s*[#;\/]\//d; /^\s*--/d' domains.lst
+            sed -i \
+              '/^\s*$/d;     # удалить пустые строки' \
+              '/#/d;         # удалить любые строки с #' \
+              '/^;.*$/d;     # удалить строки, начинающиеся с ;' \
+              '/^\/\/.*$/d;  # удалить строки, начинающиеся с //' \
+              '/^\s*--/d;    # удалить строки, начинающиеся с --' \
+              's/^full://;   # убрать префикс full: в начале строки' \
+              domains.lst
             echo "domains.lst очищен."
           else
             echo "domains.lst отсутствует." && exit 1
@@ -131,24 +138,6 @@ jobs:
           for name in "${!sources[@]}"; do
             compare_source "$name" "${sources[$name]}"
           done
-
-          {
-            for name in "${!sources[@]}"; do
-              echo "### missing $name"
-              echo
-              cat "missing_${name,,}.txt"
-              echo
-            done
-          } > categories/Compared-Domains/missing-domains.txt
-
-          {
-            for name in "${!sources[@]}"; do
-              echo "### presence $name"
-              echo
-              cat "presence_${name,,}.txt"
-              echo
-            done
-          } > categories/Compared-Domains/presence-domains.txt
 
           echo "Сравнение завершено."
 
