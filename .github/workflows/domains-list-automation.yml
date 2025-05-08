@@ -22,7 +22,18 @@ jobs:
       - name: Clean domains.lst
         run: |
           if [[ -f domains.lst ]]; then
-            sed -i '/^[[:space:]]*$/d;/#/d;/^;.*$/d;/^\/\/.*$/d;/^[[:space:]]*--/d;s/^full://' domains.lst
+            # удалить пустые строки
+            sed -i '/^[[:space:]]*$/d' domains.lst
+            # удалить строки начинающиеся с #
+            sed -i '/^[[:space:]]*#/d' domains.lst
+            # удалить строки начинающиеся с ;
+            sed -i '/^;/d' domains.lst
+            # удалить строки начинающиеся с //
+            sed -i '/^\/\//d' domains.lst
+            # удалить строки начинающиеся с --
+            sed -i '/^[[:space:]]*--/d' domains.lst
+            # удалить префикс full:
+            sed -i 's/^full://' domains.lst
             echo "domains.lst очищен."
           else
             echo "domains.lst отсутствует." && exit 1
