@@ -22,12 +22,7 @@ jobs:
       - name: Clean domains.lst
         run: |
           if [[ -f domains.lst ]]; then
-            sed -i '/^[[:space:]]*$/d; \
-/#/d; \
-/^;.*$/d; \
-/^\/\/.*$/d; \
-/^[[:space:]]*--/d; \
-s/^full://' domains.lst
+            sed -i '/^[[:space:]]*$/d;/#/d;/^;.*$/d;/^\/\/.*$/d;/^[[:space:]]*--/d;s/^full://' domains.lst
             echo "domains.lst очищен."
           else
             echo "domains.lst отсутствует." && exit 1
