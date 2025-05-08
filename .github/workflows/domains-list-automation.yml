@@ -172,7 +172,10 @@ jobs:
           grep -v '\.ua$' categories/Compared-Domains/missing-domains.txt > tmp.txt && mv tmp.txt categories/Compared-Domains/missing-domains.txt
           grep -v '\.ua$' categories/Compared-Domains/presence-domains.txt > tmp.txt && mv tmp.txt categories/Compared-Domains/presence-domains.txt
 
-          echo "Сравнение доменных списков завершено, домены с TLD .ua удалены."
+          # Очистка временных файлов
+          rm -f inside-raw.lst community.lst my-domains.lst tmp.txt
+
+          echo "Сравнение доменных списков завершено, домены с TLD .ua удалены, временные файлы очищены."
 
       # --- Генерация domains-without-yt.lst ---
       - name: Generate domains-without-yt.lst excluding YouTube domains
