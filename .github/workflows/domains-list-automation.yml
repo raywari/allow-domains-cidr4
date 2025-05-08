@@ -113,11 +113,29 @@ jobs:
 
           cp domains.lst my-domains.lst
 
+          # Функция для проверки наличия родительского домена в списке
+          has_parent_in_list() {
+            local domain=$1
+            local list=$2
+            local parents=()
+            local i=0
+            while [[ $domain = *.* ]] && (( i < 99 )); do
+              domain=${domain#*.}
+              parents+=("$domain")
+              ((i++))
+            done
+            for p in "${parents[@]}"; do
+              if grep -q -x "$p" "$list"; then
+                return 0
+              fi
+            done
+            return 1
+          }
+
           # Сравнение с inside-raw.lst (missing)
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" my-domains.lst && \
-               ! grep -q "^\\.${domain#.}" my-domains.lst && \
-               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' my-domains.lst; then
+               ! has_parent_in_list "$domain" my-domains.lst; then
               echo "$domain" >> categories/Compared-Domains/missing-domains.txt
             fi
           done < inside-raw.lst
@@ -125,8 +143,7 @@ jobs:
           # Сравнение с community.lst (missing)
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" my-domains.lst && \
-               ! grep -q "^\\.${domain#.}" my-domains.lst && \
-               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' my-domains.lst; then
+               ! has_parent_in_list "$domain" my-domains.lst; then
               echo "$domain" >> categories/Compared-Domains/missing-domains.txt
             fi
           done < community.lst
@@ -134,8 +151,7 @@ jobs:
           # Сравнение с inside-raw.lst (presence)
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" inside-raw.lst && \
-               ! grep -q "^\\.${domain#.}" inside-raw.lst && \
-               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' inside-raw.lst; then
+               ! has_parent_in_list "$domain" inside-raw.lst; then
               echo "$domain" >> categories/Compared-Domains/presence-domains.txt
             fi
           done < my-domains.lst
@@ -143,8 +159,7 @@ jobs:
           # Сравнение с community.lst (presence)
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" community.lst && \
-               ! grep -q "^\\.${domain#.}" community.lst && \
-               ! awk -v d="$domain" 'BEGIN {n=split(d,a,"."); for(i=2;i<=n;i++) {parent=a[i]; for(j=i+1;j<=n;j++) parent=parent"."a[j]; if ($0 ~ "^\\."parent"$") exit 0}} END {exit 1}' community.lst; then
+               ! has_parent_in_list "$domain" community.lst; then
               echo "$domain" >> categories/Compared-Domains/presence-domains.txt
             fi
           done < my-domains.lst
