@@ -20,8 +20,11 @@ adobejanus.com
 adobelogin.com
 ads-pixiv.net
 agentura.ru
+ai.google.dev
 aistudio.google.com
 alberta.ca
+alkalicore-pa.clients6.google.com
+alkalimakersuite-pa.clients6.google.com
 amazonaws.com
 amd.com
 androidpolice.com
@@ -104,9 +107,6 @@ feedcdn.sapphire.microsoftapp.net
 fex.net
 fork.pet
 fpt2.microsoft.com
-full:ai.google.dev
-full:alkalicore-pa.clients6.google.com
-full:alkalimakersuite-pa.clients6.google.com
 g2a.com
 gateway.bingviz.microsoftapp.net
 geller-pa.googleapis.com
