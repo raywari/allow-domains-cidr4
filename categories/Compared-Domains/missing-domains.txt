@@ -21,14 +21,12 @@ image.tmdb.org
 interfax.com.ua
 jskor.ill.in.ua
 kor.ill.in.ua
-kym-cdn.com
 mail-api.proton.me
 manus.im
 mbk-news.appspot.com
 neformat.com.ua
 newsroom.porsche.com
 olx.ua
-opensanctions.org
 patriot.dp.ua
 pkgs.tailscale.com
 portal.lviv.ua

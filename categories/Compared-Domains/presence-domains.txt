@@ -110,6 +110,7 @@ fpt2.microsoft.com
 g2a.com
 gateway.bingviz.microsoftapp.net
 geller-pa.googleapis.com
+gemini.google
 generativeai.google
 geni.us
 genius.com
@@ -121,12 +122,14 @@ gnome-look.org
 googletagmanager.com
 gordonua.com
 gpt3-openai.com
+gpu-monkey.com
 grammarly.com
 grazie.ai
 groza.media
 gstatic.com
 gtagarage.com
 gts.byteoversea.net
+habrastorage.org
 hath.network
 hbomax.com
 hdrezka.cm
@@ -136,7 +139,6 @@ hrw.org
 http-inputs-notion.splunkcloud.com
 huawei.com
 hwbot.org
-i.kym-cdn.com
 i.yting.com
 ic-vt-nss.xhcdn.com
 img.strpst.com
@@ -314,6 +316,7 @@ resp.app
 reuters.com
 rferl.org
 riafan.ru
+roskomsvoboda.org
 rpt.usuppliers.uber.com
 rr3.sn-pouxga5o-vu2l.gvt1.com
 rr3.sn-pouxga5o-vu2s.gvt1.com
@@ -339,6 +342,7 @@ searchfloor.org
 sebeanus.online
 self.events.data.microsoft.com
 serpstat.com
+serv01001.xyz
 services.bingapis.com
 sf1-ttcdn-tos.pstatp.com
 sf16-ttcdn-tos.ipstatp.com
@@ -383,6 +387,7 @@ stream.voidboost.in
 streamable.com
 stulchik.net
 sysdig.com
+t-invariant.org
 t-ru.org
 t-s.news
 t3.chat
@@ -466,7 +471,6 @@ wixmp.com
 wk.cz
 wstracker.online
 wunderground.com
-www.serv01001.xyz
 xdaforums.com
 xnxx-ru.com
 xnxx.com
