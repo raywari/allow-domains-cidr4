@@ -139,7 +139,6 @@ hrw.org
 http-inputs-notion.splunkcloud.com
 huawei.com
 hwbot.org
-i.yting.com
 ic-vt-nss.xhcdn.com
 img.strpst.com
 in.appcenter.ms
