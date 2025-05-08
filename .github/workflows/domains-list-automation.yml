@@ -19,44 +19,36 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y wget grep
 
-      # Очистка domains.lst от пустых строк и комментариев
       - name: Clean domains.lst
         run: |
           if [ -f domains.lst ]; then
             sed -i '/^\s*$/d; /^\s*#/d; /^\s*\/\//d; /^\s*;/d; /^\s*--/d' domains.lst
-            echo "Пустые строки и комментарии удалены из domains.lst."
           else
             echo "Файл domains.lst отсутствует."
             exit 1
           fi
 
-      # Сортировка domains.lst
       - name: Sort domains.lst
         run: |
           if [ -f domains.lst ]; then
             LC_COLLATE=C sort -f -u domains.lst -o domains.lst
-            echo "domains.lst отсортирован."
           else
             echo "Файл domains.lst отсутствует."
             exit 1
           fi
 
-      # Удаление 'www.' из доменов
       - name: Remove 'www.' from domains
         run: |
           if [ -f domains.lst ]; then
             sed -i 's/^www\.//g' domains.lst
-            echo "'www.' удалено из доменов в domains.lst."
           else
             echo "Файл domains.lst отсутствует."
             exit 1
           fi
 
-      # Фильтрация поддоменов (in-place)
       - name: Filter subdomains in-place
         run: |
           if [ -f domains.lst ]; then
-            # Функция для получения родительских доменов
             get_parents() {
               local domain=$1
               local parents=()
@@ -69,12 +61,13 @@ jobs:
               echo "${parents[@]}"
             }
 
-            # Чтение и сортировка доменов по количеству уровней
             mapfile -t domains < domains.lst
             IFS=$'\n' sorted=($(printf '%s\n' "${domains[@]}" | awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
             unset IFS
 
             declare -A kept
+            > filtered_domains.txt
+
             for domain in "${sorted[@]}"; do
               parents=($(get_parents "$domain"))
               skip=false
@@ -91,38 +84,31 @@ jobs:
             done
             sort -u filtered_domains.txt -o domains.lst
             rm filtered_domains.txt
-            echo "Поддомены до 99 уровней отфильтрованы."
           else
             echo "Файл domains.lst отсутствует."
             exit 1
           fi
 
-      # Генерация domains-nekobox.lst
       - name: Generate domains-nekobox.lst
         run: |
           if [ -f domains.lst ]; then
             sed 's/^/domain:/' domains.lst | sort -u > domains-nekobox.lst
-            echo "Файл domains-nekobox.lst успешно создан."
           else
             echo "Файл domains.lst не найден."
             exit 1
           fi
 
-      # Сравнение доменов с внешними источниками
       - name: Prepare and compare domain lists
         run: |
-          # Массив источников
           declare -A sources
           sources["RussiaInside"]="https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst"
           sources["CommunityFilter"]="https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst"
 
-          # Инициализация итоговых файлов
           rm -f categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
           touch categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
 
           cp domains.lst my-domains.lst
 
-          # Функция для проверки наличия родительского домена
           has_parent_in_list() {
             local domain=$1
             local list=$2
@@ -141,14 +127,14 @@ jobs:
             return 1
           }
 
-          # Функция для сравнения с одним источником
           compare_source() {
             local source_name=$1
             local source_url=$2
             local source_file="${source_name,,}.lst"
             wget -q -O "$source_file" "$source_url" || { echo "Ошибка загрузки $source_file"; exit 1; }
 
-            # Missing: домены из источника, которых нет в my-domains.lst
+            touch "missing_${source_name,,}.txt" "presence_${source_name,,}.txt"
+
             while IFS= read -r domain; do
               if ! grep -q -x "$domain" my-domains.lst && \
                  ! has_parent_in_list "$domain" my-domains.lst; then
@@ -156,7 +142,6 @@ jobs:
               fi
             done < "$source_file"
 
-            # Presence: домены из my-domains.lst, которых нет в источнике
             while IFS= read -r domain; do
               if ! grep -q -x "$domain" "$source_file" && \
                  ! has_parent_in_list "$domain" "$source_file"; then
@@ -164,19 +149,16 @@ jobs:
               fi
             done < my-domains.lst
 
-            # Сортировка и фильтрация .ua
             sort -u "missing_${source_name,,}.txt" -o "missing_${source_name,,}.txt"
             sort -u "presence_${source_name,,}.txt" -o "presence_${source_name,,}.txt"
             grep -v '\.ua$' "missing_${source_name,,}.txt" > tmp.txt && mv tmp.txt "missing_${source_name,,}.txt"
             grep -v '\.ua$' "presence_${source_name,,}.txt" > tmp.txt && mv tmp.txt "presence_${source_name,,}.txt"
           }
 
-          # Обработка всех источников
           for source_name in "${!sources[@]}"; do
             compare_source "$source_name" "${sources[$source_name]}"
           done
 
-          # Формирование итоговых файлов с заголовками
           {
             for source_name in "${!sources[@]}"; do
               echo "### missing $source_name"
@@ -195,22 +177,17 @@ jobs:
             done
           } > categories/Compared-Domains/presence-domains.txt
 
-          # Очистка временных файлов
           for source_name in "${!sources[@]}"; do
             rm -f "${source_name,,}.lst" "missing_${source_name,,}.txt" "presence_${source_name,,}.txt"
           done
           rm -f my-domains.lst tmp.txt
 
-          echo "Сравнение завершено."
-
-      # Генерация domains-without-yt.lst
       - name: Generate domains-without-yt.lst excluding YouTube domains
         run: |
           if [ -f domains.lst ]; then
             exclude_file="categories/Services/youtube/youtube-domains.lst"
             if [ -f "$exclude_file" ]; then
               grep -vxFf "$exclude_file" domains.lst | sort -u > domains-without-yt.lst
-              echo "Файл domains-without-yt.lst успешно создан."
             else
               echo "Файл $exclude_file не найден."
               exit 1
@@ -220,7 +197,6 @@ jobs:
             exit 1
           fi
 
-      # Коммит .lst файлов
       - name: Commit and push .lst changes
         run: |
           git config --local user.email "action@github.com"
@@ -229,7 +205,6 @@ jobs:
           git commit -m "Обновление доменных .lst файлов" || echo "Нет изменений для коммита"
           git push origin main
 
-      # Коммит Compared-Domains файлов
       - name: Commit and push Compared-Domains changes
         run: |
           git config --local user.email "action@github.com"
