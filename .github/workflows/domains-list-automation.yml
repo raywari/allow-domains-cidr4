@@ -22,19 +22,35 @@ jobs:
       - name: Clean domains.lst
         run: |
           if [[ -f domains.lst ]]; then
-            # удалить пустые строки
-            sed -i '/^[[:space:]]*$/d' domains.lst
-            # удалить строки начинающиеся с #
+            # Удаляем строки с комментариями
             sed -i '/^[[:space:]]*#/d' domains.lst
-            # удалить строки начинающиеся с ;
             sed -i '/^;/d' domains.lst
-            # удалить строки начинающиеся с //
             sed -i '/^\/\//d' domains.lst
-            # удалить строки начинающиеся с --
             sed -i '/^[[:space:]]*--/d' domains.lst
-            # удалить префикс full:
-            sed -i 's/^full://' domains.lst
-            echo "domains.lst очищен."
+
+            # Удаляем префикс full:
+            sed -i 's/^full://g' domains.lst
+
+            # Удаляем протоколы (каждый sed отдельно)
+            sed -i 's|^https://||g' domains.lst
+            sed -i 's|^http://||g' domains.lst
+            sed -i 's|^//||g' domains.lst
+
+            # Удаляем пути и порты
+            sed -i 's|/.*$||g' domains.lst
+            sed -i 's|:.*$||g' domains.lst
+
+            # Удаляем www. (каждый sed отдельно для надежности)
+            sed -i 's|^www\.||g' domains.lst
+            sed -i 's|^www2\.||g' domains.lst
+            sed -i 's|^www3\.||g' domains.lst
+
+            # Удаляем пробелы и пустые строки
+            sed -i 's/^[[:space:]]*//g' domains.lst
+            sed -i 's/[[:space:]]*$//g' domains.lst
+            sed -i '/^[[:space:]]*$/d' domains.lst
+
+            echo "domains.lst очищен и нормализован."
           else
             echo "domains.lst отсутствует." && exit 1
           fi
@@ -42,10 +58,6 @@ jobs:
       - name: Sort domains.lst
         run: |
           [[ -f domains.lst ]] && LC_COLLATE=C sort -f -u domains.lst -o domains.lst
-
-      - name: Remove 'www.' from domains
-        run: |
-          [[ -f domains.lst ]] && sed -i 's/^www\.//g' domains.lst
 
       - name: Filter subdomains in-place
         run: |
