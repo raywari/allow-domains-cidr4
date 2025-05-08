@@ -100,10 +100,13 @@ jobs:
       # --- Сравнение доменов ---
       - name: Prepare and compare domain lists
         run: |
-          # Определение URL-адресов списков
+          # Определение URL-адресов и имен источников
           INSIDE_RAW_URL="https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst"
           COMMUNITY_URL="https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst"
+          RUSSIA_INSIDE_NAME="RussiaInside"
+          COMMUNITY_FILTER_NAME="CommunityFilter"
 
+          # Инициализация файлов
           rm -f categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
           touch categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
 
@@ -132,11 +135,15 @@ jobs:
             return 1
           }
 
+          # Временные файлы для каждого источника
+          touch missing_russia_inside.txt missing_community_filter.txt
+          touch presence_russia_inside.txt presence_community_filter.txt
+
           # Сравнение с inside-raw.lst (missing)
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" my-domains.lst && \
                ! has_parent_in_list "$domain" my-domains.lst; then
-              echo "$domain" >> categories/Compared-Domains/missing-domains.txt
+              echo "$domain" >> missing_russia_inside.txt
             fi
           done < inside-raw.lst
 
@@ -144,7 +151,7 @@ jobs:
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" my-domains.lst && \
                ! has_parent_in_list "$domain" my-domains.lst; then
-              echo "$domain" >> categories/Compared-Domains/missing-domains.txt
+              echo "$domain" >> missing_community_filter.txt
             fi
           done < community.lst
 
@@ -152,7 +159,7 @@ jobs:
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" inside-raw.lst && \
                ! has_parent_in_list "$domain" inside-raw.lst; then
-              echo "$domain" >> categories/Compared-Domains/presence-domains.txt
+              echo "$domain" >> presence_russia_inside.txt
             fi
           done < my-domains.lst
 
@@ -160,22 +167,45 @@ jobs:
           while IFS= read -r domain; do
             if ! grep -q -x "$domain" community.lst && \
                ! has_parent_in_list "$domain" community.lst; then
-              echo "$domain" >> categories/Compared-Domains/presence-domains.txt
+              echo "$domain" >> presence_community_filter.txt
             fi
           done < my-domains.lst
 
-          # Сортировка и устранение дубликатов
-          sort -u categories/Compared-Domains/missing-domains.txt -o categories/Compared-Domains/missing-domains.txt
-          sort -u categories/Compared-Domains/presence-domains.txt -o categories/Compared-Domains/presence-domains.txt
+          # Сортировка и устранение дубликатов во временных файлах
+          sort -u missing_russia_inside.txt -o missing_russia_inside.txt
+          sort -u missing_community_filter.txt -o missing_community_filter.txt
+          sort -u presence_russia_inside.txt -o presence_russia_inside.txt
+          sort -u presence_community_filter.txt -o presence_community_filter.txt
 
-          # Удаление доменов с TLD .ua
-          grep -v '\.ua$' categories/Compared-Domains/missing-domains.txt > tmp.txt && mv tmp.txt categories/Compared-Domains/missing-domains.txt
-          grep -v '\.ua$' categories/Compared-Domains/presence-domains.txt > tmp.txt && mv tmp.txt categories/Compared-Domains/presence-domains.txt
+          # Удаление доменов с TLD .ua из временных файлов
+          grep -v '\.ua$' missing_russia_inside.txt > tmp.txt && mv tmp.txt missing_russia_inside.txt
+          grep -v '\.ua$' missing_community_filter.txt > tmp.txt && mv tmp.txt missing_community_filter.txt
+          grep -v '\.ua$' presence_russia_inside.txt > tmp.txt && mv tmp.txt presence_russia_inside.txt
+          grep -v '\.ua$' presence_community_filter.txt > tmp.txt && mv tmp.txt presence_community_filter.txt
+
+          # Объединение в итоговые файлы с заголовками (без исключения общих доменов)
+          {
+            echo "### missing $RUSSIA_INSIDE_NAME"
+            cat missing_russia_inside.txt
+            echo
+            echo "### missing $COMMUNITY_FILTER_NAME"
+            cat missing_community_filter.txt
+          } > categories/Compared-Domains/missing-domains.txt
+
+          {
+            echo "### presence $RUSSIA_INSIDE_NAME"
+            cat presence_russia_inside.txt
+            echo
+            echo "### presence $COMMUNITY_FILTER_NAME"
+            cat presence_community_filter.txt
+          } > categories/Compared-Domains/presence-domains.txt
 
           # Очистка временных файлов
           rm -f inside-raw.lst community.lst my-domains.lst tmp.txt
+          rm -f missing_russia_inside.txt missing_community_filter.txt
+          rm -f presence_russia_inside.txt presence_community_filter.txt
 
-          echo "Сравнение доменных списков завершено, домены с TLD .ua удалены, временные файлы очищены."
+          echo "Сравнение доменных списков завершено, файлы разделены по источникам, домены с TLD .ua удалены, временные файлы очищены."
 
       # --- Генерация domains-without-yt.lst ---
       - name: Generate domains-without-yt.lst excluding YouTube domains
