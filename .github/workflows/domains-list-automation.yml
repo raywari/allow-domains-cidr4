@@ -7,7 +7,6 @@ on:
   push:
     paths:
       - 'domains.lst'
-      - 'cidr4/summary/raw.lst'
 
 jobs:
   process-and-compare-domains:
@@ -26,6 +25,17 @@ jobs:
           if [ -f domains.lst ]; then
             LC_COLLATE=C sort -f -u domains.lst -o domains.lst
             echo "domains.lst отсортирован."
+          else
+            echo "Файл domains.lst отсутствует."
+            exit 1
+          fi
+
+      # --- Преобразование доменов с www в домены без www ---
+      - name: Remove 'www.' from domains
+        run: |
+          if [ -f domains.lst ]; then
+            sed -i 's/^www\.//g' domains.lst
+            echo "'www.' удалено из доменов в domains.lst."
           else
             echo "Файл domains.lst отсутствует."
             exit 1
