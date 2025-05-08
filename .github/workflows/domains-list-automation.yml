@@ -22,7 +22,12 @@ jobs:
       - name: Clean domains.lst
         run: |
           if [[ -f domains.lst ]]; then
-            sed -i '/^[[:space:]]*$/d; /#/d; /^;.*$/d; /^\/\//d; /^[[:space:]]*--/d; s/^full://;' domains.lst
+            sed -i '/^[[:space:]]*$/d; \
+/#/d; \
+/^;.*$/d; \
+/^\/\/.*$/d; \
+/^[[:space:]]*--/d; \
+s/^full://' domains.lst
             echo "domains.lst очищен."
           else
             echo "domains.lst отсутствует." && exit 1
@@ -50,10 +55,7 @@ jobs:
             }
 
             mapfile -t domains < domains.lst
-            IFS=$'\n' sorted=($(printf '%s\n' "${domains[@]}" \
-              | awk -F. '{print NF-1, $0}' \
-              | sort -n \
-              | cut -d' ' -f2-))
+            IFS=$'\n' sorted=($(printf '%s\n' "${domains[@]}" | awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
             unset IFS
 
             declare -A kept
@@ -131,6 +133,26 @@ jobs:
           for name in "${!sources[@]}"; do
             compare_source "$name" "${sources[$name]}"
           done
+
+          {
+            for name in "${!sources[@]}"; do
+              echo "### missing $name"
+              echo
+              cat "missing_${name,,}.txt"
+              echo
+            done
+          } > categories/Compared-Domains/missing-domains.txt
+
+          {
+            for name in "${!sources[@]}"; do
+              echo "### presence $name"
+              echo
+              cat "presence_${name,,}.txt"
+              echo
+            done
+          } > categories/Compared-Domains/presence-domains.txt
+
+          rm -f *.lst missing_*.txt presence_*.txt my-domains.lst tmp
 
           echo "Сравнение завершено."
 
