@@ -72,11 +72,11 @@ jobs:
           rm "$tmp"
           echo "Поддомены до 99 уровней отфильтрованы (in-place)."
 
-      # --- Генерация domains_nekobox.lst ---
-      - name: Generate domains_nekobox.lst
+      # --- Генерация domains-nekobox.lst ---
+      - name: Generate domains-nekobox.lst
         run: |
           input_file="domains.lst"
-          output_file="domains_nekobox.lst"
+          output_file="domains-nekobox.lst"
 
           if [ ! -f "$input_file" ]; then
             echo "Файл $input_file не найден."
@@ -145,7 +145,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add domains.lst domains_nekobox.lst domains-without-yt.lst
+          git add domains.lst domains-nekobox.lst domains-without-yt.lst
           git commit -m "Обновление доменных .lst файлов" || echo "Нет изменений для коммита"
           git push
 
