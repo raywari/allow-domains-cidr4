@@ -19,6 +19,18 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y wget grep
 
+      # --- Очистка domains.lst от абзацев и комментариев ---
+      - name: Clean domains.lst
+        run: |
+          if [ -f domains.lst ]; then
+            # Удаление пустых строк и строк, начинающихся с #, //, ; или --
+            sed -i '/^\s*$/d; /^\s*#/d; /^\s*\/\//d; /^\s*;/d; /^\s*--/d' domains.lst
+            echo "Пустые строки и комментарии удалены из domains.lst."
+          else
+            echo "Файл domains.lst отсутствует."
+            exit 1
+          fi
+
       # --- Сортировка domains.lst ---
       - name: Sort domains.lst
         run: |
@@ -183,20 +195,24 @@ jobs:
           grep -v '\.ua$' presence_russia_inside.txt > tmp.txt && mv tmp.txt presence_russia_inside.txt
           grep -v '\.ua$' presence_community_filter.txt > tmp.txt && mv tmp.txt presence_community_filter.txt
 
-          # Объединение в итоговые файлы с заголовками (без исключения общих доменов)
+          # Объединение в итоговые файлы с заголовками и пустой строкой после заголовков
           {
             echo "### missing $RUSSIA_INSIDE_NAME"
+            echo
             cat missing_russia_inside.txt
             echo
             echo "### missing $COMMUNITY_FILTER_NAME"
+            echo
             cat missing_community_filter.txt
           } > categories/Compared-Domains/missing-domains.txt
 
           {
             echo "### presence $RUSSIA_INSIDE_NAME"
+            echo
             cat presence_russia_inside.txt
             echo
             echo "### presence $COMMUNITY_FILTER_NAME"
+            echo
             cat presence_community_filter.txt
           } > categories/Compared-Domains/presence-domains.txt
 
