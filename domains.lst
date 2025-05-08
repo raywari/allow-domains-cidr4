@@ -359,6 +359,7 @@ gateway.bingviz.microsoftapp.net
 geforcenow.com
 gelbooru.com
 geller-pa.googleapis.com
+gemini.google
 gemini.google.com
 generativeai.google
 generativelanguage.googleapis.com
@@ -388,6 +389,7 @@ googlevideo.com
 gordonua.com
 gpsonextra.net
 gpt3-openai.com
+gpu-monkey.com
 gr-assets.com
 grafana.com
 grammarly.com
@@ -405,6 +407,7 @@ gts.byteoversea.net
 guilded.gg
 gulagu.net
 habr.com
+habrastorage.org
 hackernoon.com
 hackmd.io
 halooglasi.com
@@ -435,7 +438,6 @@ htmhell.dev
 http-inputs-notion.splunkcloud.com
 huawei.com
 hwbot.org
-i.kym-cdn.com
 i.yting.com
 ibm.com
 ibytedtos.com
@@ -512,6 +514,7 @@ kovcheg.live
 kpapp.link
 krymr.com
 kupujemprodajem.com
+kym-cdn.com
 lambdalabs.com
 lamcdn.net
 lampa.mx
@@ -705,6 +708,7 @@ openaiapi-site.azureedge.net
 openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 openaicomproductionae4b.blob.core.windows.net
 openmedia.io
+opensanctions.org
 opensea.io
 opentrackr.org
 opposition-news.com
@@ -863,6 +867,7 @@ riafan.ru
 riperam.org
 roar-review.com
 root-nation.com
+roskomsvoboda.org
 rpt.usuppliers.uber.com
 rr3.sn-pouxga5o-vu2l.gvt1.com
 rr3.sn-pouxga5o-vu2s.gvt1.com
@@ -917,6 +922,7 @@ semnasem.org
 sentry.io
 sephora.com
 serpstat.com
+serv01001.xyz
 servarr.com
 services.bingapis.com
 severreal.org
@@ -1020,6 +1026,7 @@ swagger.io
 swissinfo.ch
 synoforum.com
 sysdig.com
+t-invariant.org
 t-ru.org
 t-s.news
 t.co
@@ -1220,7 +1227,6 @@ wonderzine.com
 wpengine.com
 wstracker.online
 wunderground.com
-www.serv01001.xyz
 x.ai
 x.com
 xdaforums.com
@@ -1277,25 +1283,3 @@ znanija.com
 zohomail.com
 zona.media
 zoomadmin.com
-habrastorage.org
-roskomsvoboda.org
-t-invariant.org
-searchfloor.org
-gpu-monkey.com
-deepmind.com
-deepmind.google
-geller-pa.googleapis.com
-generativelanguage.googleapis.com
-proactivebackend-pa.googleapis.com
-ai.google.dev
-alkalicore-pa.clients6.google.com
-alkalimakersuite-pa.clients6.google.com
-generativeai.google
-makersuite.google.com
-
-aistudio.google.com
-bard.google.com
-gemini.google
-gemini.google.com
-opensanctions.org
-kym-cdn.com

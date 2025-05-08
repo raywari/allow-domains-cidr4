@@ -359,6 +359,7 @@ domain:gateway.bingviz.microsoftapp.net
 domain:geforcenow.com
 domain:gelbooru.com
 domain:geller-pa.googleapis.com
+domain:gemini.google
 domain:gemini.google.com
 domain:generativeai.google
 domain:generativelanguage.googleapis.com
@@ -388,6 +389,7 @@ domain:googlevideo.com
 domain:gordonua.com
 domain:gpsonextra.net
 domain:gpt3-openai.com
+domain:gpu-monkey.com
 domain:gr-assets.com
 domain:grafana.com
 domain:grammarly.com
@@ -405,6 +407,7 @@ domain:gts.byteoversea.net
 domain:guilded.gg
 domain:gulagu.net
 domain:habr.com
+domain:habrastorage.org
 domain:hackernoon.com
 domain:hackmd.io
 domain:halooglasi.com
@@ -435,7 +438,6 @@ domain:htmhell.dev
 domain:http-inputs-notion.splunkcloud.com
 domain:huawei.com
 domain:hwbot.org
-domain:i.kym-cdn.com
 domain:i.yting.com
 domain:ibm.com
 domain:ibytedtos.com
@@ -512,6 +514,7 @@ domain:kovcheg.live
 domain:kpapp.link
 domain:krymr.com
 domain:kupujemprodajem.com
+domain:kym-cdn.com
 domain:lambdalabs.com
 domain:lamcdn.net
 domain:lampa.mx
@@ -705,6 +708,7 @@ domain:openaiapi-site.azureedge.net
 domain:openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 domain:openaicomproductionae4b.blob.core.windows.net
 domain:openmedia.io
+domain:opensanctions.org
 domain:opensea.io
 domain:opentrackr.org
 domain:opposition-news.com
@@ -863,6 +867,7 @@ domain:riafan.ru
 domain:riperam.org
 domain:roar-review.com
 domain:root-nation.com
+domain:roskomsvoboda.org
 domain:rpt.usuppliers.uber.com
 domain:rr3.sn-pouxga5o-vu2l.gvt1.com
 domain:rr3.sn-pouxga5o-vu2s.gvt1.com
@@ -917,6 +922,7 @@ domain:semnasem.org
 domain:sentry.io
 domain:sephora.com
 domain:serpstat.com
+domain:serv01001.xyz
 domain:servarr.com
 domain:services.bingapis.com
 domain:severreal.org
@@ -1020,6 +1026,7 @@ domain:swagger.io
 domain:swissinfo.ch
 domain:synoforum.com
 domain:sysdig.com
+domain:t-invariant.org
 domain:t-ru.org
 domain:t-s.news
 domain:t.co
@@ -1220,7 +1227,6 @@ domain:wonderzine.com
 domain:wpengine.com
 domain:wstracker.online
 domain:wunderground.com
-domain:www.serv01001.xyz
 domain:x.ai
 domain:x.com
 domain:xdaforums.com
