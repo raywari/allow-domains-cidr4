@@ -19,32 +19,50 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y wget grep
 
+      - name: Initialize log file
+        run: echo "Лог выполнения workflow:" > workflow.log
+
       - name: Clean domains.lst
         run: |
-          if [[ -f domains.lst ]]; then
-            sed -i '/^\s*$/d; /^\s*[#;\/]\//d; /^\s*--/d' domains.lst
-            echo "domains.lst очищен."
+          if [ -f domains.lst ]; then
+            sed -i '/^\s*$/d; /^\s*#/d; /^\s*\/\//d; /^\s*;/d; /^\s*--/d' domains.lst
+            echo "Пустые строки и комментарии удалены из domains.lst." >> workflow.log
           else
-            echo "domains.lst отсутствует." && exit 1
+            echo "Файл domains.lst отсутствует." >> workflow.log
+            exit 1
           fi
 
       - name: Sort domains.lst
         run: |
-          [[ -f domains.lst ]] && LC_COLLATE=C sort -f -u domains.lst -o domains.lst
+          if [ -f domains.lst ]; then
+            LC_COLLATE=C sort -f -u domains.lst -o domains.lst
+            echo "domains.lst отсортирован." >> workflow.log
+          else
+            echo "Файл domains.lst отсутствует." >> workflow.log
+            exit 1
+          fi
 
       - name: Remove 'www.' from domains
         run: |
-          [[ -f domains.lst ]] && sed -i 's/^www\.//g' domains.lst
+          if [ -f domains.lst ]; then
+            sed -i 's/^www\.//g' domains.lst
+            echo "'www.' удалено из доменов." >> workflow.log
+          else
+            echo "Файл domains.lst отсутствует." >> workflow.log
+            exit 1
+          fi
 
       - name: Filter subdomains in-place
         run: |
-          if [[ -f domains.lst ]]; then
+          if [ -f domains.lst ]; then
             get_parents() {
               local domain=$1
               local parents=()
-              while [[ $domain == *.* ]]; do
+              local i=0
+              while [[ $domain = *.* ]] && (( i < 99 )); do
                 domain=${domain#*.}
                 parents+=("$domain")
+                ((i++))
               done
               echo "${parents[@]}"
             }
@@ -57,104 +75,140 @@ jobs:
             > filtered_domains.txt
 
             for domain in "${sorted[@]}"; do
+              parents=($(get_parents "$domain"))
               skip=false
-              for p in $(get_parents "$domain"); do
-                if [[ ${kept["$p"]+1} ]]; then
+              for p in "${parents[@]}"; do
+                if [[ -n "${kept[$p]}" ]]; then
                   skip=true
                   break
                 fi
               done
-              $skip || { echo "$domain" >> filtered_domains.txt; kept["$domain"]=1; }
+              if ! $skip; then
+                echo "$domain" >> filtered_domains.txt
+                kept["$domain"]=1
+              fi
             done
 
             sort -u filtered_domains.txt -o domains.lst
-            rm -f filtered_domains.txt
-            echo "Поддомены отфильтрованы."
+            rm filtered_domains.txt
+            echo "Поддомены отфильтрованы." >> workflow.log
+          else
+            echo "Файл domains.lst отсутствует." >> workflow.log
+            exit 1
           fi
 
       - name: Generate domains-nekobox.lst
         run: |
-          [[ -f domains.lst ]] && sed 's/^/domain:/' domains.lst | sort -u > domains-nekobox.lst
+          if [ -f domains.lst ]; then
+            sed 's/^/domain:/' domains.lst | sort -u > domains-nekobox.lst
+            echo "Файл domains-nekobox.lst создан." >> workflow.log
+          else
+            echo "Файл domains.lst не найден." >> workflow.log
+            exit 1
+          fi
 
       - name: Prepare and compare domain lists
         run: |
-          declare -A sources=(
-            ["RussiaInside"]="https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst"
-            ["CommunityFilter"]="https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst"
-          )
+          declare -A sources
+          sources["RussiaInside"]="https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst"
+          sources["CommunityFilter"]="https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst"
 
-          mkdir -p categories/Compared-Domains
           rm -f categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
           touch categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
 
           cp domains.lst my-domains.lst
 
           has_parent_in_list() {
-            local domain=$1 list=$2
-            while [[ $domain == *.* ]]; do
+            local domain=$1
+            local list=$2
+            local parents=()
+            local i=0
+            while [[ $domain = *.* ]] && (( i < 99 )); do
               domain=${domain#*.}
-              grep -qx "$domain" "$list" && return 0
+              parents+=("$domain")
+              ((i++))
+            done
+            for p in "${parents[@]}"; do
+              if grep -q -x "$p" "$list"; then
+                return 0
+              fi
             done
             return 1
           }
 
           compare_source() {
-            local name=$1 url=$2 file="${name,,}.lst"
-            wget -q -O "$file" "$url" || { echo "Не удалось загрузить $file"; exit 1; }
+            local source_name=$1
+            local source_url=$2
+            local source_file="${source_name,,}.lst"
+            wget -q -O "$source_file" "$source_url" || { echo "Ошибка загрузки $source_file" >> workflow.log; exit 1; }
 
-            touch "missing_${name,,}.txt" "presence_${name,,}.txt"
+            > "missing_${source_name,,}.txt"
+            > "presence_${source_name,,}.txt"
 
             while IFS= read -r domain; do
-              [[ -z $domain ]] && continue
-              if ! grep -qx "$domain" my-domains.lst && ! has_parent_in_list "$domain" my-domains.lst; then
-                echo "$domain" >> "missing_${name,,}.txt"
+              if ! grep -q -x "$domain" my-domains.lst && ! has_parent_in_list "$domain" my-domains.lst; then
+                echo "$domain" >> "missing_${source_name,,}.txt"
               fi
-            done < "$file"
+            done < "$source_file"
 
             while IFS= read -r domain; do
-              [[ -z $domain ]] && continue
-              if ! grep -qx "$domain" "$file" && ! has_parent_in_list "$domain" "$file"; then
-                echo "$domain" >> "presence_${name,,}.txt"
+              if ! grep -q -x "$domain" "$source_file" && ! has_parent_in_list "$domain" "$source_file"; then
+                echo "$domain" >> "presence_${source_name,,}.txt"
               fi
             done < my-domains.lst
 
-            sort -u "missing_${name,,}.txt" -o "missing_${name,,}.txt"
-            sort -u "presence_${name,,}.txt" -o "presence_${name,,}.txt"
+            sort -u "missing_${source_name,,}.txt" -o "missing_${source_name,,}.txt"
+            sort -u "presence_${source_name,,}.txt" -o "presence_${source_name,,}.txt"
 
-            grep -v '\.ua$' "missing_${name,,}.txt" > tmp && mv tmp "missing_${name,,}.txt"
-            grep -v '\.ua$' "presence_${name,,}.txt" > tmp && mv tmp "presence_${name,,}.txt"
+            grep -v '\.ua$' "missing_${source_name,,}.txt" > tmp.txt && mv tmp.txt "missing_${source_name,,}.txt"
+            grep -v '\.ua$' "presence_${source_name,,}.txt" > tmp.txt && mv tmp.txt "presence_${source_name,,}.txt"
+
+            echo "Сравнение с $source_name завершено." >> workflow.log
           }
 
-          for name in "${!sources[@]}"; do
-            compare_source "$name" "${sources[$name]}"
+          for source_name in "${!sources[@]}"; do
+            compare_source "$source_name" "${sources[$source_name]}"
           done
 
           {
-            for name in "${!sources[@]}"; do
-              echo "### missing $name"
+            for source_name in "${!sources[@]}"; do
+              echo "### missing $source_name"
               echo
-              cat "missing_${name,,}.txt"
+              cat "missing_${source_name,,}.txt"
               echo
             done
           } > categories/Compared-Domains/missing-domains.txt
 
           {
-            for name in "${!sources[@]}"; do
-              echo "### presence $name"
+            for source_name in "${!sources[@]}"; do
+              echo "### presence $source_name"
               echo
-              cat "presence_${name,,}.txt"
+              cat "presence_${source_name,,}.txt"
               echo
             done
           } > categories/Compared-Domains/presence-domains.txt
 
-          rm -f *.lst missing_*.txt presence_*.txt my-domains.lst tmp
+          for source_name in "${!sources[@]}"; do
+            rm -f "${source_name,,}.lst" "missing_${source_name,,}.txt" "presence_${source_name,,}.txt"
+          done
+          rm -f my-domains.lst tmp.txt
 
-          echo "Сравнение завершено."
+          echo "Сравнение всех источников завершено." >> workflow.log
 
-      - name: Generate domains-without-yt.lst
+      - name: Generate domains-without-yt.lst excluding YouTube domains
         run: |
           exclude_file="categories/Services/youtube/youtube-domains.lst"
-          [[ -f "$exclude_file" && -f domains.lst ]] && grep -vxFf "$exclude_file" domains.lst | sort -u > domains-without-yt.lst
+          if [[ -f "$exclude_file" && -f domains.lst ]]; then
+            grep -vxFf "$exclude_file" domains.lst | sort -u > domains-without-yt.lst
+            echo "domains-without-yt.lst успешно создан." >> workflow.log
+          else
+            echo "Файл $exclude_file или domains.lst отсутствует — пропуск шага." >> workflow.log
+          fi
+
+      - name: Show workflow log
+        run: |
+          echo "====== Лог выполнения workflow ======"
+          cat workflow.log
 
       - name: Commit and push .lst changes
         run: |
