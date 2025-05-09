@@ -2,66 +2,90 @@ name: Update Block Lists
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Ежедневно в полночь UTC
-  workflow_dispatch:      # Ручной запуск
+    - cron: '0 0 * * *'
+  push:
+    paths:
+      - 'categories/Block/**.lst'
+  workflow_dispatch:
 
 jobs:
-  update-block-lists:
+  update:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Prepare directories
-        run: mkdir -p categories/Block
+      - name: Prepare environment
+        run: |
+          mkdir -p categories/Block
+          cd categories/Block
+          touch block-ips.lst block-domains.lst
 
-      - name: Download and preprocess hosts file
+      - name: Validate and fix entries
+        id: validate
+        run: |
+          cd categories/Block
+          # Извлекаем ошибочные записи
+          grep -E '^[^0-9]' block-ips.lst > domains.tmp || true
+          grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' block-domains.lst > ips.tmp || true
+          
+          # Перемещаем найденные записи
+          if [ -s domains.tmp ]; then
+            cat domains.tmp >> block-domains.lst
+            grep -v -f domains.tmp block-ips.lst > temp && mv temp block-ips.lst
+          fi
+          
+          if [ -s ips.tmp ]; then
+            cat ips.tmp >> block-ips.lst
+            grep -v -f ips.tmp block-domains.lst > temp && mv temp block-domains.lst
+          fi
+          
+          rm -f domains.tmp ips.tmp
+          echo "fixed=$(( $(wc -l < block-ips.lst) + $(wc -l < block-domains.lst) ))" >> $GITHUB_OUTPUT
+
+      - name: Fetch external data
         run: |
           curl -s https://raw.githubusercontent.com/Ruddernation-Designs/Adobe-URL-Block-List/master/hosts  \
             | grep -v '^#' \
-            | sed 's/^0.0.0.0[[:space:]]*//' \
+            | sed 's/^0.0.0.0 *//' \
             | grep -v '^$' > temp.txt
 
-      - name: Split IPs and domains
-        run: |
-          grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' temp.txt >> categories/Block/block-ips.lst
-          grep -v -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' temp.txt >> categories/Block/block-domains.lst
-
-      - name: Sort and deduplicate
-        run: |
-          sort -u categories/Block/block-ips.lst -o categories/Block/block-ips.lst
-          sort -u categories/Block/block-domains.lst -o categories/Block/block-domains.lst
-
-      - name: Generate formatted hosts file
+      - name: Update lists
         run: |
           cd categories/Block
-          # Создаем временные файлы с префиксами
-          awk '{print "0.0.0.0 "$0}' block-ips.lst | sort -u > ips.tmp
-          awk '{print "0.0.0.0 "$0}' block-domains.lst | sort -u > domains.tmp
+          # Добавляем внешние данные
+          grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' ../temp.txt >> block-ips.lst
+          grep -v -f block-ips.lst ../temp.txt >> block-domains.lst
 
-          # Формируем итоговый hosts файл
-          echo "# Автоматически сгенерированный hosts файл" > hosts
+      - name: Final processing
+        run: |
+          cd categories/Block
+          # Единая сортировка и дедупликация
+          sort -u block-ips.lst -o block-ips.lst
+          sort -u block-domains.lst -o block-domains.lst
+
+      - name: Generate hosts
+        run: |
+          cd categories/Block
+          # Генерация hosts файла
+          awk '{print "0.0.0.0 "$0}' block-ips.lst > ips.tmp
+          awk '{print "0.0.0.0 "$0}' block-domains.lst > domains.tmp
+          
+          echo "# Auto-generated hosts" > hosts
           echo "" >> hosts
-          
-          echo "# IP-адреса" >> hosts
-          cat ips.tmp >> hosts
+          echo "# IP addresses" >> hosts
+          sort -u ips.tmp >> hosts
           echo "" >> hosts
+          echo "# Domains" >> hosts
+          sort -u domains.tmp >> hosts
           
-          echo "# Домены" >> hosts
-          cat domains.tmp >> hosts
-          
-          # Удаляем временные файлы
           rm -f ips.tmp domains.tmp
 
-      - name: Commit and push changes
+      - name: Commit changes
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
           cd categories/Block
-          git add block-ips.lst block-domains.lst hosts
-          
-          # Создаем коммит только при наличии изменений
-          git commit -m "Автоматическое обновление block list" || exit 0
+          git add .
+          git commit -m "Update block lists" || exit 0
           git push origin main
