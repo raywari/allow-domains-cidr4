@@ -2,12 +2,12 @@ name: Update Block Lists
 
 on:
   schedule:
-    - cron: '0 21 * * *'  # Ежедневно в полночь MSK (UTC+3)
+    - cron: '0 21 * * *'
   push:
     paths:
       - 'categories/Block/**.lst'
       - 'sources/sources-block.txt'
-  workflow_dispatch:      # Ручной запуск
+  workflow_dispatch:
 
 jobs:
   update:
@@ -21,133 +21,80 @@ jobs:
           mkdir -p categories/Block sources
           cd categories/Block
           touch block-ips.lst block-domains.lst
-          # Очистка временных файлов
           rm -f ../temp.* *.tmp
 
       - name: Validate and fix entries
-        id: validate
         run: |
           cd categories/Block
-          # Проверяем существование файлов
-          [ -f block-ips.lst ] || touch block-ips.lst
-          [ -f block-domains.lst ] || touch block-domains.lst
+          # Сохраняем оригинальные записи перед очисткой
+          cp block-ips.lst original-ips.bak
+          cp block-domains.lst original-domains.bak
           
-          # Удаление комментариев и пустых строк
-          sed -i -E '/^[[:space:]]*#/d; /^[[:space:]]*$/d' block-ips.lst block-domains.lst || true
+          # Очищаем только технические данные (комментарии, форматирование)
+          sed -i -E '/^[[:space:]]*#/d; /^[[:space:]]*$/d' block-ips.lst block-domains.lst
+          sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' block-ips.lst block-domains.lst
           
-          # Удаляем запрещенные адреса из начала строк
-          sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' block-ips.lst block-domains.lst || true
-          
-          # Строгая валидация IP в block-ips.lst
+          # Восстанавливаем пользовательские записи, удаляя только невалидные IP
           if [ -s block-ips.lst ]; then
-            grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' block-ips.lst > valid_ips.tmp || true
-            mv valid_ips.tmp block-ips.lst || true
+            grep -E '^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$' \
+              original-ips.bak > block-ips.lst
           fi
           
-          # Удаляем пустые строки
-          sed -i '/^$/d' block-ips.lst block-domains.lst || true
+          # Сохраняем оригинальные домены
+          mv original-domains.bak block-domains.lst
+          rm -f original-*.bak
 
       - name: Fetch external data
         run: |
-          # Создаем временный файл
-          temp_file=$(mktemp)
-          
-          # Проверяем существование файла источников
-          if [ ! -f sources/sources-block.txt ]; then
-            echo "Error: sources/sources-block.txt not found!"
-            exit 1
-          fi
+          temp_file="$GITHUB_WORKSPACE/temp.txt"
+          > "$temp_file"
 
-          # Обрабатываем каждый источник из списка
-          echo "Processing sources from sources-block.txt:"
-          cat sources/sources-block.txt
-          echo "-----------------------------"
-          
           while IFS= read -r line || [ -n "$line" ]; do
-            # Пропускаем пустые строки и комментарии
-            if [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]]; then
-              continue
-            fi
-            
-            # Удаляем пробелы в начале и конце строки
+            [[ "$line" =~ ^[[:space:]]*# || -z "$line" ]] && continue
             line=$(echo "$line" | xargs)
-            
-            echo "Processing URL: $line"
-            response=$(curl -sSf -w "%{http_code}" -o "$temp_file.part" "$line")
-            
-            if [ $? -eq 0 ] && [ $response -eq 200 ]; then
-              echo "Successfully downloaded data from $line"
-              cat "$temp_file.part" \
-                | grep -v '^#' \
-                | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
-                | grep -v '^$' >> "$temp_file"
-              rm -f "$temp_file.part"
-            else
-              echo "Error processing $line (HTTP $response)"
-              rm -f "$temp_file.part"
-            fi
-          done < sources/sources-block.txt
 
-          # Перемещаем временный файл
-          if [ -s "$temp_file" ]; then
-            mv "$temp_file" ../temp.txt
-            echo "Downloaded data:"
-            cat ../temp.txt
-          else
-            echo "Warning: No data downloaded from sources"
-            touch ../temp.txt
-          fi
+            echo "Processing URL: $line"
+            curl -sSfL "$line" | \
+              grep -v '^#' | \
+              sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]+//' | \
+              grep -v '^[[:space:]]*$' >> "$temp_file" || true
+          done < sources/sources-block.txt
 
       - name: Update lists
         run: |
           cd categories/Block
-          # Строгая валидация IPv4
-          if [ -f ../temp.txt ]; then
-            echo "Processing downloaded data:"
-            cat ../temp.txt
-            echo "-----------------------------"
-            
-            grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' \
-              ../temp.txt >> block-ips.lst || true
-              
-            # Все остальное считаем доменами
-            grep -v -F -f block-ips.lst ../temp.txt >> block-domains.lst || true
-          fi
+          
+          # Добавляем новые IP (без перезаписи)
+          grep -E '^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$' \
+            "$GITHUB_WORKSPACE/temp.txt" >> block-ips.lst
+
+          # Добавляем новые домены (исключая IP)
+          grep -vFf block-ips.lst "$GITHUB_WORKSPACE/temp.txt" >> block-domains.lst
 
       - name: Final processing
         run: |
           cd categories/Block
-          # Удаляем дубликаты и сортируем
-          sort -u block-ips.lst -o block-ips.lst || true
-          sort -u block-domains.lst -o block-domains.lst || true
+          # Удаляем дубликаты и сортируем, сохраняя оригинальный порядок
+          awk '!seen[$0]++' block-ips.lst > tmp && mv tmp block-ips.lst
+          awk '!seen[$0]++' block-domains.lst > tmp && mv tmp block-domains.lst
 
-      - name: Generate hosts
-        run: |
-          cd categories/Block
           # Генерация hosts файла
-          awk '{print "0.0.0.0 "$0}' block-ips.lst > ips.tmp || true
-          awk '{print "0.0.0.0 "$0}' block-domains.lst > domains.tmp || true
-          
-          echo "# Auto-generated hosts" > hosts
-          echo "" >> hosts
-          echo "# IP addresses" >> hosts
-          sort -u ips.tmp >> hosts || true
-          echo "" >> hosts
-          echo "# Domains" >> hosts
-          sort -u domains.tmp >> hosts || true
-          
-          # Удаляем временные файлы
-          rm -f ips.tmp domains.tmp || true
+          {
+            echo "# Auto-generated hosts"
+            echo -e "\n# IP addresses"
+            awk '!seen[$0]++ {print "0.0.0.0 "$0}' block-ips.lst
+            echo -e "\n# Domains"
+            awk '!seen[$0]++ {print "0.0.0.0 "$0}' block-domains.lst
+          } > hosts
 
       - name: Cleanup
         run: |
-          rm -f ../temp.txt || true
+          rm -f "$GITHUB_WORKSPACE/temp.txt"
 
       - name: Commit changes
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          cd categories/Block
-          git add .
-          git commit -m "Update block lists" || exit 0
+          git add categories/Block/
+          git commit -m "Update block lists (+preserve custom entries)" || exit 0
           git push origin main
