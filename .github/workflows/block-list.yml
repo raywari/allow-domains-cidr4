@@ -2,7 +2,7 @@ name: Update Block Lists
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Ежедневно в полночь UTC
+    - cron: '0 21 * * *'
   push:
     paths:
       - 'categories/Block/**.lst'
@@ -25,20 +25,30 @@ jobs:
         id: validate
         run: |
           cd categories/Block
+          # Удаление комментариев и пустых строк
+          sed -i -E '/^[[:space:]]*#/d; /^[[:space:]]*$/d' block-ips.lst block-domains.lst
+          
+          # Удаляем запрещенные адреса из начала строк
+          sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' block-ips.lst block-domains.lst
+          
+          # Удаляем пустые строки после очистки
+          sed -i '/^$/d' block-ips.lst block-domains.lst
+          
           # Строгая проверка IPv4 в доменном файле
           grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' block-domains.lst > ips_in_domains.tmp || true
+          
           # Проверка доменов в IP-файле
           grep -v -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' block-ips.lst > domains_in_ips.tmp || true
           
           # Перемещение ошибочных записей
           if [ -s ips_in_domains.tmp ]; then
             cat ips_in_domains.tmp >> block-ips.lst
-            grep -v -f ips_in_domains.tmp block-domains.lst > temp && mv temp block-domains.lst
+            grep -v -F -f ips_in_domains.tmp block-domains.lst > temp && mv temp block-domains.lst
           fi
           
           if [ -s domains_in_ips.tmp ]; then
             cat domains_in_ips.tmp >> block-domains.lst
-            grep -v -f domains_in_ips.tmp block-ips.lst > temp && mv temp block-ips.lst
+            grep -v -F -f domains_in_ips.tmp block-ips.lst > temp && mv temp block-ips.lst
           fi
           
           rm -f *.tmp
@@ -46,10 +56,15 @@ jobs:
 
       - name: Fetch external data
         run: |
-          curl -s https://raw.githubusercontent.com/Ruddernation-Designs/Adobe-URL-Block-List/master/hosts  \
+          curl -s https://raw.githubusercontent.com/Ruddernation-Designs/Adobe-URL-Block-List/master/hosts   \
             | grep -v '^#' \
-            | sed 's/^0.0.0.0 *//' \
+            | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
             | grep -v '^$' > temp.txt
+          
+          curl -s https://a.dove.isdumb.one/list.txt   \
+            | grep -v '^#' \
+            | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
+            | grep -v '^$' >> temp.txt
 
       - name: Update lists
         run: |
@@ -58,11 +73,12 @@ jobs:
           grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' \
             "$GITHUB_WORKSPACE/temp.txt" >> block-ips.lst
           # Все остальное считаем доменами
-          grep -v -f block-ips.lst "$GITHUB_WORKSPACE/temp.txt" >> block-domains.lst
+          grep -v -F -f block-ips.lst "$GITHUB_WORKSPACE/temp.txt" >> block-domains.lst
 
       - name: Final processing
         run: |
           cd categories/Block
+          # Уникализация и сортировка
           sort -u block-ips.lst -o block-ips.lst
           sort -u block-domains.lst -o block-domains.lst
 
