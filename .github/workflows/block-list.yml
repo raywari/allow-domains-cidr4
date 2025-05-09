@@ -18,15 +18,9 @@ jobs:
 
       - name: Prepare environment
         run: |
-          # Создаем необходимые директории
-          mkdir -p categories/Block
-          mkdir -p sources
-          
-          # Создаем файлы списков
+          mkdir -p categories/Block sources
           cd categories/Block
           touch block-ips.lst block-domains.lst
-          
-          # Гарантируем существование файла источников
           touch ${{ github.workspace }}/sources/sources-block.txt
 
       - name: Validate and fix entries
@@ -65,25 +59,34 @@ jobs:
       - name: Fetch external data
         run: |
           # Создаем временный файл
-          > temp.txt
+          touch temp.txt
           
           # Обрабатываем каждый источник из списка
-          while IFS= read -r source_url; do
+          while IFS= read -r source_url || [ -n "$source_url" ]; do
+            if [ -z "$source_url" ] || [[ "$source_url" =~ ^[[:space:]]*# ]]; then
+              continue
+            fi
             echo "Processing: $source_url"
-            curl -s "$source_url" \
+            curl -sSf "$source_url" \
               | grep -v '^#' \
               | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
-              | grep -v '^$' >> temp.txt || echo "Failed to process $source_url"
+              | grep -v '^$' >> temp.txt || echo "Warning: Failed to process $source_url"
           done < ${{ github.workspace }}/sources/sources-block.txt
 
       - name: Update lists
         run: |
           cd categories/Block
-          # Строгая валидация IPv4
-          grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' \
-            "$GITHUB_WORKSPACE/temp.txt" >> block-ips.lst
-          # Все остальное считаем доменами
-          grep -v -F -f block-ips.lst "$GITHUB_WORKSPACE/temp.txt" >> block-domains.lst
+          # Проверяем существование и размер temp.txt
+          if [ -s "$GITHUB_WORKSPACE/temp.txt" ]; then
+            # Строгая валидация IPv4
+            grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' \
+              "$GITHUB_WORKSPACE/temp.txt" >> block-ips.lst || true
+              
+            # Все остальное считаем доменами
+            grep -v -F -f block-ips.lst "$GITHUB_WORKSPACE/temp.txt" >> block-domains.lst || true
+          else
+            echo "Warning: temp.txt is empty or doesn't exist - skipping list update"
+          fi
 
       - name: Final processing
         run: |
