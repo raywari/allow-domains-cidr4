@@ -22,7 +22,7 @@ jobs:
           cd categories/Block
           touch block-ips.lst block-domains.lst
           # Очистка временных файлов
-          rm -f temp.* *.tmp
+          rm -f ../temp.* *.tmp
 
       - name: Validate and fix entries
         id: validate
@@ -52,28 +52,61 @@ jobs:
           # Создаем временный файл
           temp_file=$(mktemp)
           
+          # Проверяем существование файла источников
+          if [ ! -f sources/sources-block.txt ]; then
+            echo "Error: sources/sources-block.txt not found!"
+            exit 1
+          fi
+
           # Обрабатываем каждый источник из списка
+          echo "Processing sources from sources-block.txt:"
+          cat sources/sources-block.txt
+          echo "-----------------------------"
+          
           while IFS= read -r line || [ -n "$line" ]; do
             # Пропускаем пустые строки и комментарии
             if [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]]; then
               continue
             fi
             
-            echo "Processing: $line"
-            curl -sSf "$line" \
-              | grep -v '^#' \
-              | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
-              | grep -v '^$' >> "$temp_file" || echo "Warning: Failed to process $line"
+            # Удаляем пробелы в начале и конце строки
+            line=$(echo "$line" | xargs)
+            
+            echo "Processing URL: $line"
+            response=$(curl -sSf -w "%{http_code}" -o "$temp_file.part" "$line")
+            
+            if [ $? -eq 0 ] && [ $response -eq 200 ]; then
+              echo "Successfully downloaded data from $line"
+              cat "$temp_file.part" \
+                | grep -v '^#' \
+                | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
+                | grep -v '^$' >> "$temp_file"
+              rm -f "$temp_file.part"
+            else
+              echo "Error processing $line (HTTP $response)"
+              rm -f "$temp_file.part"
+            fi
           done < sources/sources-block.txt
 
           # Перемещаем временный файл
-          mv "$temp_file" temp.txt || true
+          if [ -s "$temp_file" ]; then
+            mv "$temp_file" ../temp.txt
+            echo "Downloaded data:"
+            cat ../temp.txt
+          else
+            echo "Warning: No data downloaded from sources"
+            touch ../temp.txt
+          fi
 
       - name: Update lists
         run: |
           cd categories/Block
           # Строгая валидация IPv4
           if [ -f ../temp.txt ]; then
+            echo "Processing downloaded data:"
+            cat ../temp.txt
+            echo "-----------------------------"
+            
             grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' \
               ../temp.txt >> block-ips.lst || true
               
@@ -108,7 +141,7 @@ jobs:
 
       - name: Cleanup
         run: |
-          rm -f temp.txt || true
+          rm -f ../temp.txt || true
 
       - name: Commit changes
         run: |
