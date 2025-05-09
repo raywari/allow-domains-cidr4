@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/Ruddernation-Designs/Adobe-URL-Block-List/master/hosts 
+https://a.dove.isdumb.one/list.txt
