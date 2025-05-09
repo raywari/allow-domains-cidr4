@@ -149,9 +149,9 @@ jobs:
             mv filtered-domains.lst block-domains.lst
           fi
 
-          # Удаляем дубликаты
-          awk '!seen[$0]++' block-ips.lst > tmp && mv tmp block-ips.lst
-          awk '!seen[$0]++' block-domains.lst > tmp && mv tmp block-domains.lst
+          # Применяем sort -u к обоим файлам перед генерацией hosts
+          sort -u block-ips.lst -o block-ips.lst
+          sort -u block-domains.lst -o block-domains.lst
 
           # Генерация hosts файла
           {
