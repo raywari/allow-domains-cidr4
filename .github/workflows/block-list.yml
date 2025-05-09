@@ -21,7 +21,8 @@ jobs:
           mkdir -p categories/Block sources
           cd categories/Block
           touch block-ips.lst block-domains.lst
-          touch ${{ github.workspace }}/sources/sources-block.txt
+          # Очистка временных файлов
+          rm -f temp.* *.tmp
 
       - name: Validate and fix entries
         id: validate
@@ -33,65 +34,49 @@ jobs:
           # Удаляем запрещенные адреса из начала строк
           sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' block-ips.lst block-domains.lst
           
-          # Удаляем пустые строки после очистки
+          # Строгая валидация IP в block-ips.lst
+          grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' block-ips.lst > valid_ips.tmp
+          mv valid_ips.tmp block-ips.lst
+          
+          # Удаляем пустые строки
           sed -i '/^$/d' block-ips.lst block-domains.lst
-          
-          # Строгая проверка IPv4 в доменном файле
-          grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' block-domains.lst > ips_in_domains.tmp || true
-          
-          # Проверка доменов в IP-файле
-          grep -v -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' block-ips.lst > domains_in_ips.tmp || true
-          
-          # Перемещение ошибочных записей
-          if [ -s ips_in_domains.tmp ]; then
-            cat ips_in_domains.tmp >> block-ips.lst
-            grep -v -F -f ips_in_domains.tmp block-domains.lst > temp && mv temp block-domains.lst
-          fi
-          
-          if [ -s domains_in_ips.tmp ]; then
-            cat domains_in_ips.tmp >> block-domains.lst
-            grep -v -F -f domains_in_ips.tmp block-ips.lst > temp && mv temp block-ips.lst
-          fi
-          
-          rm -f *.tmp
-          echo "fixed=1" >> $GITHUB_OUTPUT
 
       - name: Fetch external data
         run: |
           # Создаем временный файл
-          touch temp.txt
+          temp_file=$(mktemp)
           
           # Обрабатываем каждый источник из списка
-          while IFS= read -r source_url || [ -n "$source_url" ]; do
-            if [ -z "$source_url" ] || [[ "$source_url" =~ ^[[:space:]]*# ]]; then
+          while IFS= read -r line || [ -n "$line" ]; do
+            # Пропускаем пустые строки и комментарии
+            if [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]]; then
               continue
             fi
-            echo "Processing: $source_url"
-            curl -sSf "$source_url" \
+            
+            echo "Processing: $line"
+            curl -sSf "$line" \
               | grep -v '^#' \
               | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
-              | grep -v '^$' >> temp.txt || echo "Warning: Failed to process $source_url"
-          done < ${{ github.workspace }}/sources/sources-block.txt
+              | grep -v '^$' >> "$temp_file" || echo "Warning: Failed to process $line"
+          done < sources/sources-block.txt
+
+          # Перемещаем временный файл
+          mv "$temp_file" temp.txt
 
       - name: Update lists
         run: |
           cd categories/Block
-          # Проверяем существование и размер temp.txt
-          if [ -s "$GITHUB_WORKSPACE/temp.txt" ]; then
-            # Строгая валидация IPv4
-            grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' \
-              "$GITHUB_WORKSPACE/temp.txt" >> block-ips.lst || true
-              
-            # Все остальное считаем доменами
-            grep -v -F -f block-ips.lst "$GITHUB_WORKSPACE/temp.txt" >> block-domains.lst || true
-          else
-            echo "Warning: temp.txt is empty or doesn't exist - skipping list update"
-          fi
+          # Строгая валидация IPv4
+          grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' \
+            ../temp.txt >> block-ips.lst || true
+          
+          # Все остальное считаем доменами
+          grep -v -F -f block-ips.lst ../temp.txt >> block-domains.lst || true
 
       - name: Final processing
         run: |
           cd categories/Block
-          # Уникализация и сортировка
+          # Удаляем дубликаты и сортируем
           sort -u block-ips.lst -o block-ips.lst
           sort -u block-domains.lst -o block-domains.lst
 
@@ -110,7 +95,12 @@ jobs:
           echo "# Domains" >> hosts
           sort -u domains.tmp >> hosts
           
+          # Удаляем временные файлы
           rm -f ips.tmp domains.tmp
+
+      - name: Cleanup
+        run: |
+          rm -f temp.txt
 
       - name: Commit changes
         run: |
