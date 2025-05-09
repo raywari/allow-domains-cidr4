@@ -2,11 +2,11 @@ name: Update Block Lists
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *'  # Ежедневно в полночь UTC
   push:
     paths:
       - 'categories/Block/**.lst'
-  workflow_dispatch:
+  workflow_dispatch:      # Ручной запуск
 
 jobs:
   update:
@@ -18,29 +18,31 @@ jobs:
       - name: Prepare environment
         run: |
           mkdir -p categories/Block
-          touch categories/Block/block-ips.lst categories/Block/block-domains.lst
+          cd categories/Block
+          touch block-ips.lst block-domains.lst
 
       - name: Validate and fix entries
         id: validate
         run: |
           cd categories/Block
-          # Извлекаем ошибочные записи
-          grep -E '^[^0-9]' block-ips.lst > domains.tmp || true
-          grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' block-domains.lst > ips.tmp || true
+          # Строгая проверка IPv4 в доменном файле
+          grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' block-domains.lst > ips_in_domains.tmp || true
+          # Проверка доменов в IP-файле
+          grep -v -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' block-ips.lst > domains_in_ips.tmp || true
           
-          # Перемещаем найденные записи
-          if [ -s domains.tmp ]; then
-            cat domains.tmp >> block-domains.lst
-            grep -v -f domains.tmp block-ips.lst > temp && mv temp block-ips.lst
+          # Перемещение ошибочных записей
+          if [ -s ips_in_domains.tmp ]; then
+            cat ips_in_domains.tmp >> block-ips.lst
+            grep -v -f ips_in_domains.tmp block-domains.lst > temp && mv temp block-domains.lst
           fi
           
-          if [ -s ips.tmp ]; then
-            cat ips.tmp >> block-ips.lst
-            grep -v -f ips.tmp block-domains.lst > temp && mv temp block-domains.lst
+          if [ -s domains_in_ips.tmp ]; then
+            cat domains_in_ips.tmp >> block-domains.lst
+            grep -v -f domains_in_ips.tmp block-ips.lst > temp && mv temp block-ips.lst
           fi
           
-          rm -f domains.tmp ips.tmp
-          echo "fixed=$(( $(wc -l < block-ips.lst) + $(wc -l < block-domains.lst) ))" >> $GITHUB_OUTPUT
+          rm -f *.tmp
+          echo "fixed=1" >> $GITHUB_OUTPUT
 
       - name: Fetch external data
         run: |
@@ -52,14 +54,15 @@ jobs:
       - name: Update lists
         run: |
           cd categories/Block
-          # Используем абсолютный путь к temp.txt
-          grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' "$GITHUB_WORKSPACE/temp.txt" >> block-ips.lst
+          # Строгая валидация IPv4
+          grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' \
+            "$GITHUB_WORKSPACE/temp.txt" >> block-ips.lst
+          # Все остальное считаем доменами
           grep -v -f block-ips.lst "$GITHUB_WORKSPACE/temp.txt" >> block-domains.lst
 
       - name: Final processing
         run: |
           cd categories/Block
-          # Единая сортировка и дедупликация
           sort -u block-ips.lst -o block-ips.lst
           sort -u block-domains.lst -o block-domains.lst
 
