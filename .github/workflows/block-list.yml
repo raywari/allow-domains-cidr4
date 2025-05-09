@@ -18,11 +18,16 @@ jobs:
 
       - name: Prepare environment
         run: |
-          mkdir -p categories/Block sources
+          # Создаем необходимые директории
+          mkdir -p categories/Block
+          mkdir -p sources
+          
+          # Создаем файлы списков
           cd categories/Block
           touch block-ips.lst block-domains.lst
-          # Создаем файл источников если не существует
-          touch ../sources/sources-block.txt
+          
+          # Гарантируем существование файла источников
+          touch ${{ github.workspace }}/sources/sources-block.txt
 
       - name: Validate and fix entries
         id: validate
@@ -69,7 +74,7 @@ jobs:
               | grep -v '^#' \
               | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
               | grep -v '^$' >> temp.txt || echo "Failed to process $source_url"
-          done < sources/sources-block.txt
+          done < ${{ github.workspace }}/sources/sources-block.txt
 
       - name: Update lists
         run: |
