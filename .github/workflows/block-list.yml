@@ -1,0 +1,49 @@
+name: Update Block Lists
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Ежедневно в полночь UTC
+  workflow_dispatch:      # Ручной запуск
+
+jobs:
+  update-block-lists:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create directories
+        run: mkdir -p categories/Block
+
+      - name: Download and preprocess hosts file
+        run: |
+          curl -s https://raw.githubusercontent.com/Ruddernation-Designs/Adobe-URL-Block-List/master/hosts  \
+            | grep -v '^#' \
+            | sed 's/^0.0.0.0[[:space:]]*//' \
+            | grep -v '^$' > temp.txt
+
+      - name: Split IPs and domains
+        run: |
+          grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' temp.txt >> categories/Block/block-ips.lst
+          grep -v -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' temp.txt >> categories/Block/block-domains.lst
+
+      - name: Sort and deduplicate
+        run: |
+          sort -u categories/Block/block-ips.lst -o categories/Block/block-ips.lst
+          sort -u categories/Block/block-domains.lst -o categories/Block/block-domains.lst
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Добавляем только существующие файлы
+          cd categories/Block
+          for f in block-ips.lst block-domains.lst; do
+            [[ -f "$f" ]] && git add "$f"
+          done
+          
+          # Создаем коммит только при наличии изменений
+          git commit -m "Автоматическое обновление block list" || exit 0
+          git push origin main
