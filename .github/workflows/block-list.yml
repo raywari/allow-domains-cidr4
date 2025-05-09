@@ -144,5 +144,5 @@ jobs:
           git config user.email "action@github.com" # Настраиваем email для git
           git config user.name "GitHub Action" # Настраиваем имя для git
           git add categories/Block/ # Добавляем измененные файлы
-          git commit -m "Update block lists (+preserve custom entries)" || exit 0 # Коммитим изменения или выходим, если коммитить нечего
+          git commit -m "Update block lists" || exit 0 # Коммитим изменения или выходим, если коммитить нечего
           git push origin main # Отправляем изменения в ветку main
