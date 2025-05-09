@@ -2,10 +2,11 @@ name: Update Block Lists
 
 on:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '0 21 * * *'  # Ежедневно в полночь MSK (UTC+3)
   push:
     paths:
       - 'categories/Block/**.lst'
+      - 'sources/sources-block.txt'
   workflow_dispatch:      # Ручной запуск
 
 jobs:
@@ -17,9 +18,11 @@ jobs:
 
       - name: Prepare environment
         run: |
-          mkdir -p categories/Block
+          mkdir -p categories/Block sources
           cd categories/Block
           touch block-ips.lst block-domains.lst
+          # Создаем файл источников если не существует
+          touch ../sources/sources-block.txt
 
       - name: Validate and fix entries
         id: validate
@@ -56,15 +59,17 @@ jobs:
 
       - name: Fetch external data
         run: |
-          curl -s https://raw.githubusercontent.com/Ruddernation-Designs/Adobe-URL-Block-List/master/hosts   \
-            | grep -v '^#' \
-            | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
-            | grep -v '^$' > temp.txt
+          # Создаем временный файл
+          > temp.txt
           
-          curl -s https://a.dove.isdumb.one/list.txt   \
-            | grep -v '^#' \
-            | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
-            | grep -v '^$' >> temp.txt
+          # Обрабатываем каждый источник из списка
+          while IFS= read -r source_url; do
+            echo "Processing: $source_url"
+            curl -s "$source_url" \
+              | grep -v '^#' \
+              | sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' \
+              | grep -v '^$' >> temp.txt || echo "Failed to process $source_url"
+          done < sources/sources-block.txt
 
       - name: Update lists
         run: |
