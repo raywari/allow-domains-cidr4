@@ -171,5 +171,5 @@ jobs:
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
           git add categories/Block/
-          git commit -m "Update block lists (+preserve custom entries)" || exit 0
+          git commit -m "Update block lists" || exit 0
           git push origin main
