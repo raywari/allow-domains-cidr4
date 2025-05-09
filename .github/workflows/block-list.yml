@@ -28,18 +28,24 @@ jobs:
         id: validate
         run: |
           cd categories/Block
+          # Проверяем существование файлов
+          [ -f block-ips.lst ] || touch block-ips.lst
+          [ -f block-domains.lst ] || touch block-domains.lst
+          
           # Удаление комментариев и пустых строк
-          sed -i -E '/^[[:space:]]*#/d; /^[[:space:]]*$/d' block-ips.lst block-domains.lst
+          sed -i -E '/^[[:space:]]*#/d; /^[[:space:]]*$/d' block-ips.lst block-domains.lst || true
           
           # Удаляем запрещенные адреса из начала строк
-          sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' block-ips.lst block-domains.lst
+          sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' block-ips.lst block-domains.lst || true
           
           # Строгая валидация IP в block-ips.lst
-          grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' block-ips.lst > valid_ips.tmp
-          mv valid_ips.tmp block-ips.lst
+          if [ -s block-ips.lst ]; then
+            grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' block-ips.lst > valid_ips.tmp || true
+            mv valid_ips.tmp block-ips.lst || true
+          fi
           
           # Удаляем пустые строки
-          sed -i '/^$/d' block-ips.lst block-domains.lst
+          sed -i '/^$/d' block-ips.lst block-domains.lst || true
 
       - name: Fetch external data
         run: |
@@ -61,46 +67,48 @@ jobs:
           done < sources/sources-block.txt
 
           # Перемещаем временный файл
-          mv "$temp_file" temp.txt
+          mv "$temp_file" temp.txt || true
 
       - name: Update lists
         run: |
           cd categories/Block
           # Строгая валидация IPv4
-          grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' \
-            ../temp.txt >> block-ips.lst || true
-          
-          # Все остальное считаем доменами
-          grep -v -F -f block-ips.lst ../temp.txt >> block-domains.lst || true
+          if [ -f ../temp.txt ]; then
+            grep -E '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$' \
+              ../temp.txt >> block-ips.lst || true
+              
+            # Все остальное считаем доменами
+            grep -v -F -f block-ips.lst ../temp.txt >> block-domains.lst || true
+          fi
 
       - name: Final processing
         run: |
           cd categories/Block
           # Удаляем дубликаты и сортируем
-          sort -u block-ips.lst -o block-ips.lst
-          sort -u block-domains.lst -o block-domains.lst
+          sort -u block-ips.lst -o block-ips.lst || true
+          sort -u block-domains.lst -o block-domains.lst || true
 
       - name: Generate hosts
         run: |
           cd categories/Block
           # Генерация hosts файла
-          awk '{print "0.0.0.0 "$0}' block-ips.lst > ips.tmp
-          awk '{print "0.0.0.0 "$0}' block-domains.lst > domains.tmp
+          awk '{print "0.0.0.0 "$0}' block-ips.lst > ips.tmp || true
+          awk '{print "0.0.0.0 "$0}' block-domains.lst > domains.tmp || true
           
           echo "# Auto-generated hosts" > hosts
           echo "" >> hosts
           echo "# IP addresses" >> hosts
-          sort -u ips.tmp >> hosts
+          sort -u ips.tmp >> hosts || true
           echo "" >> hosts
           echo "# Domains" >> hosts
-          sort -u domains.tmp >> hosts
+          sort -u domains.tmp >> hosts || true
           
           # Удаляем временные файлы
-          rm -f ips.tmp domains.tmp
+          rm -f ips.tmp domains.tmp || true
 
       - name: Cleanup
         run: |
-          rm -f temp.txt
+          rm -f temp.txt || true
 
       - name: Commit changes
         run: |
