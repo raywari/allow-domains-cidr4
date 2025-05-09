@@ -2,62 +2,61 @@ name: Update Block Lists
 
 on:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '0 21 * * *' # Запуск каждый день в 21:00 UTC
   push:
     paths:
-      - 'categories/Block/**.lst'
-      - 'sources/sources-block.txt'
-  workflow_dispatch:
+      - 'categories/Block/**.lst' # Отслеживание изменений в списках блокировок
+      - 'sources/sources-block.txt' # Отслеживание изменений в файле источников
+  workflow_dispatch: # Ручной запуск
 
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Используем последнюю версию Ubuntu
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # Клонируем репозиторий
 
       - name: Prepare environment
         run: |
-          mkdir -p categories/Block sources
+          mkdir -p categories/Block sources # Создаем необходимые директории
           cd categories/Block
-          touch block-ips.lst block-domains.lst
-          rm -f ../temp.* *.tmp
+          touch block-ips.lst block-domains.lst # Создаем файлы, если их нет
+          rm -f ../temp.* *.tmp # Удаляем временные файлы от предыдущих запусков
 
       - name: Validate and fix entries
         run: |
           cd categories/Block
-          # Сохраняем оригинальные записи перед очисткой
-          cp block-ips.lst original-ips.bak
-          cp block-domains.lst original-domains.bak
+          # Сохраняем оригинальные домены (без комментариев и пустых строк) во временный файл
+          grep -v '^[[:space:]]*#' block-domains.lst | grep -v '^[[:space:]]*$' > original-domains.tmp
           
-          # Очищаем только технические данные (комментарии, форматирование)
-          sed -i -E '/^[[:space:]]*#/d; /^[[:space:]]*$/d' block-ips.lst block-domains.lst
-          sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' block-ips.lst block-domains.lst
+          # Очищаем block-domains.lst от технических данных
+          sed -i -E '/^[[:space:]]*#/d; /^[[:space:]]*$/d' block-domains.lst
+          sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' block-domains.lst
           
-          # Восстанавливаем пользовательские записи, удаляя только невалидные IP
-          if [ -s block-ips.lst ]; then
-            grep -E '^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$' \
-              original-ips.bak > block-ips.lst
-          fi
+          # Добавляем оригинальные домены в конец файла
+          cat original-domains.tmp >> block-domains.lst
+          rm -f original-domains.tmp
           
-          # Сохраняем оригинальные домены
-          mv original-domains.bak block-domains.lst
-          rm -f original-*.bak
+          # Обрабатываем IP, оставляем только валидные
+          grep -E '^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$' \
+            block-ips.lst > valid-ips.tmp
+          cat valid-ips.tmp > block-ips.lst
+          rm -f valid-ips.tmp
 
       - name: Fetch external data
         run: |
           temp_file="$GITHUB_WORKSPACE/temp.txt"
-          > "$temp_file"
+          > "$temp_file" # Создаем пустой временный файл
 
           while IFS= read -r line || [ -n "$line" ]; do
-            [[ "$line" =~ ^[[:space:]]*# || -z "$line" ]] && continue
-            line=$(echo "$line" | xargs)
+            [[ "$line" =~ ^[[:space:]]*# || -z "$line" ]] && continue # Пропускаем комментарии и пустые строки
+            line=$(echo "$line" | xargs) # Удаляем лишние пробелы
 
             echo "Processing URL: $line"
             curl -sSfL "$line" | \
               grep -v '^#' | \
               sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]+//' | \
-              grep -v '^[[:space:]]*$' >> "$temp_file" || true
+              grep -v '^[[:space:]]*$' >> "$temp_file" || true # Загружаем и обрабатываем данные
           done < sources/sources-block.txt
 
       - name: Update lists
@@ -74,7 +73,56 @@ jobs:
       - name: Final processing
         run: |
           cd categories/Block
-          # Удаляем дубликаты и сортируем, сохраняя оригинальный порядок
+          
+          # Функция для фильтрации субдоменов
+          filter_subdomains() {
+            local input_file=$1
+            local output_file=$2
+            
+            get_parents() {
+              local domain=$1
+              local parents=()
+              while [[ "$domain" == *.* ]]; do
+                domain="${domain#*.}"
+                parents+=("$domain")
+              done
+              echo "${parents[@]}"
+            }
+
+            # Сортируем домены по уровню вложенности
+            mapfile -t domains < "$input_file"
+            IFS=$'\n' sorted=($(printf '%s\n' "${domains[@]}" | awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
+            unset IFS
+
+            declare -A kept
+            > temp_filtered.txt
+
+            for domain in "${sorted[@]}"; do
+              skip=false
+              for p in $(get_parents "$domain"); do
+                if [[ -n "${kept["$p"]}" ]]; then
+                  skip=true
+                  break
+                fi
+              done
+              if ! $skip; then
+                echo "$domain" >> temp_filtered.txt
+                kept["$domain"]=1
+              fi
+            done
+
+            sort -u temp_filtered.txt -o "$output_file"
+            rm -f temp_filtered.txt
+          }
+
+          # Применяем фильтрацию только для доменов
+          if [[ -s block-domains.lst ]]; then
+            echo "Фильтрация субдоменов..."
+            filter_subdomains block-domains.lst filtered-domains.lst
+            mv filtered-domains.lst block-domains.lst
+          fi
+
+          # Удаляем дубликаты
           awk '!seen[$0]++' block-ips.lst > tmp && mv tmp block-ips.lst
           awk '!seen[$0]++' block-domains.lst > tmp && mv tmp block-domains.lst
 
@@ -82,19 +130,19 @@ jobs:
           {
             echo "# Auto-generated hosts"
             echo -e "\n# IP addresses"
-            awk '!seen[$0]++ {print "0.0.0.0 "$0}' block-ips.lst
+            awk '{print "0.0.0.0 "$0}' block-ips.lst
             echo -e "\n# Domains"
-            awk '!seen[$0]++ {print "0.0.0.0 "$0}' block-domains.lst
+            awk '{print "0.0.0.0 "$0}' block-domains.lst
           } > hosts
 
       - name: Cleanup
         run: |
-          rm -f "$GITHUB_WORKSPACE/temp.txt"
+          rm -f "$GITHUB_WORKSPACE/temp.txt" # Удаляем временный файл
 
       - name: Commit changes
         run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-          git add categories/Block/
-          git commit -m "Update block lists (+preserve custom entries)" || exit 0
-          git push origin main
+          git config user.email "action@github.com" # Настраиваем email для git
+          git config user.name "GitHub Action" # Настраиваем имя для git
+          git add categories/Block/ # Добавляем измененные файлы
+          git commit -m "Update block lists (+preserve custom entries)" || exit 0 # Коммитим изменения или выходим, если коммитить нечего
+          git push origin main # Отправляем изменения в ветку main
