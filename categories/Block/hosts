@@ -43,6 +43,8 @@
 0.0.0.0 100.24.211.130
 0.0.0.0 162.247.242.20
 0.0.0.0 199.232.114.137
+0.0.0.0 192.168.7.7
+0.0.0.0 183.233.0.1
 
 # Domains
 0.0.0.0 00nllmoilmti.p5jr3.adobestats.io
@@ -656,7 +658,6 @@
 0.0.0.0 activate.adobe.com
 0.0.0.0 activate.adobe.de
 0.0.0.0 activate.wip3.adobe.de
-0.0.0.0 ad.cub.red
 0.0.0.0 adobe-dns-01.adobe.com
 0.0.0.0 adobe-dns-1.adobe.com
 0.0.0.0 adobe-dns-2.adobe.com
