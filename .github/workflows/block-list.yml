@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create directories
+      - name: Prepare directories
         run: mkdir -p categories/Block
 
       - name: Download and preprocess hosts file
@@ -33,16 +33,34 @@ jobs:
           sort -u categories/Block/block-ips.lst -o categories/Block/block-ips.lst
           sort -u categories/Block/block-domains.lst -o categories/Block/block-domains.lst
 
+      - name: Generate formatted hosts file
+        run: |
+          cd categories/Block
+          # Создаем временные файлы с префиксами
+          awk '{print "0.0.0.0 "$0}' block-ips.lst | sort -u > ips.tmp
+          awk '{print "0.0.0.0 "$0}' block-domains.lst | sort -u > domains.tmp
+
+          # Формируем итоговый hosts файл
+          echo "# Автоматически сгенерированный hosts файл" > hosts
+          echo "" >> hosts
+          
+          echo "# IP-адреса" >> hosts
+          cat ips.tmp >> hosts
+          echo "" >> hosts
+          
+          echo "# Домены" >> hosts
+          cat domains.tmp >> hosts
+          
+          # Удаляем временные файлы
+          rm -f ips.tmp domains.tmp
+
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Добавляем только существующие файлы
           cd categories/Block
-          for f in block-ips.lst block-domains.lst; do
-            [[ -f "$f" ]] && git add "$f"
-          done
+          git add block-ips.lst block-domains.lst hosts
           
           # Создаем коммит только при наличии изменений
           git commit -m "Автоматическое обновление block list" || exit 0
