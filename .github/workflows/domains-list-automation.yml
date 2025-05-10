@@ -27,13 +27,11 @@ jobs:
           sed -i 's/^full://g; s|^https\?://||g; s|^//||g' domains.lst
           sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' domains.lst
           sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' domains.lst
-          echo "domains.lst очищен."
 
       - name: Sort domains.lst
-        run: |
-          LC_COLLATE=C sort -f -u domains.lst -o domains.lst
+        run: LC_COLLATE=C sort -f -u domains.lst -o domains.lst
 
-      - name: Filter subdomains
+      - name: Filter subdomains in domains.lst
         run: |
           get_parents() {
             local d=$1
@@ -55,7 +53,6 @@ jobs:
           done
           sort -u filtered.txt -o domains.lst
           rm filtered.txt
-          echo "Субдомены отфильтрованы."
 
       - name: Generate NekoBox list
         run: sed 's/^/domain:/' domains.lst | sort -u > domains-nekobox.lst
@@ -68,6 +65,10 @@ jobs:
             sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$1"
             sort -u "$1" -o "$1"
           }
+
+          # load parent domains set
+          declare -A PARENT
+          while read -r d; do PARENT["$d"]=1; done < domains.lst
 
           mkdir -p categories/Compared-Domains
           cp domains.lst my-domains.lst
@@ -86,6 +87,25 @@ jobs:
             wget -qO "${name}.lst" "$url" || continue
             normalize "${name}.lst"
 
+            # filter out any subdomain whose parent is in domains.lst
+            get_parents() {
+              local d=$1
+              while [[ $d == *.* ]]; do
+                d=${d#*.}
+                echo "$d"
+              done
+            }
+            > filtered_"$name".lst
+            while read -r d; do
+              skip=
+              for p in $(get_parents "$d"); do
+                [[ ${PARENT[$p]} ]] && { skip=1; break; }
+              done
+              [[ $skip ]] || echo "$d" >> filtered_"$name".lst
+            done < "${name}.lst"
+            mv filtered_"$name".lst "${name}.lst"
+
+            # compare, excluding .ua TLD
             comm -23 <(sort "${name}.lst") <(sort my-domains.lst) | \
               grep -v '\.ua$' > "missing_${name}.txt"
             comm -13 <(sort "${name}.lst") <(sort my-domains.lst) | \
@@ -118,7 +138,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # добавляем только существующие файлы
           for f in domains.lst domains-nekobox.lst domains-without-yt.lst; do
             [[ -f $f ]] && git add "$f"
           done
@@ -129,7 +148,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # добавляем только существующие отчётные файлы
           for f in categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt; do
             [[ -f $f ]] && git add "$f"
           done
