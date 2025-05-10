@@ -71,15 +71,11 @@ jobs:
           mkdir -p "$TMP_DIR" "$OUTPUT_DIR"
           cp "$DOMAINS_FILE" "$TMP_DIR/domains.lst"
 
-          sed -E \
-              -e 's/^[[:space:]]+//; s/[[:space:]]+$//' \
-              -e 's|^https?://||' \
-              -e 's|^www[0-9]*\.||' \
-              -e 's|/.*||' \
-              -e 's|:.*||' \
-              -e '/^$/d' \
-              "$TMP_DIR/domains.lst" | LC_ALL=C sort -u > "$TMP_DIR/domains.tmp"
-          mv "$TMP_DIR/domains.tmp" "$TMP_DIR/domains.lst"
+          sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' "$TMP_DIR/domains.lst"
+          sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$TMP_DIR/domains.lst"
+          sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$TMP_DIR/domains.lst"
+          sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$TMP_DIR/domains.lst"
+          LC_ALL=C sort -u "$TMP_DIR/domains.lst" -o "$TMP_DIR/domains.lst"
 
           declare -A PRIMARY_DOMAINS
           while IFS= read -r d; do
@@ -92,9 +88,14 @@ jobs:
               [ -z "$line" ] && continue
               url=$(echo "$line" | xargs)
               [[ "$url" =~ ^https?:// ]] || url="https://$url"
-              key=$(basename "$url" | cut -d. -f1)
+              key=$(echo "$url" | awk -F'/' '{print $(NF-2)"_"$(NF-1)"_"$NF}' | cut -d. -f1)
               SOURCES["$key"]="$url"
           done < "$SOURCES_FILE"
+
+          echo "Список источников:"
+          for key in "${!SOURCES[@]}"; do
+            echo "$key : ${SOURCES[$key]}"
+          done
 
           for key in "${!SOURCES[@]}"; do
               url="${SOURCES[$key]}"
@@ -102,15 +103,12 @@ jobs:
               
               curl -sfL --connect-timeout 30 --retry 3 "$url" > "$out_file" || continue
 
-              sed -E \
-                  -e 's/^[[:space:]]+//; s/[[:space:]]+$//' \
-                  -e 's|^https?://||' \
-                  -e 's|^www[0-9]*\.||' \
-                  -e 's|/.*||' \
-                  -e 's|:.*||' \
-                  -e '/^$/d' \
-                  "$out_file" | LC_ALL=C sort -u > "${out_file}.tmp"
-              mv "${out_file}.tmp" "$out_file"
+              # Нормализация доменов внутри скачанного списка
+              sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' "$out_file"
+              sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$out_file"
+              sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$out_file"
+              sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$out_file"
+              LC_ALL=C sort -u "$out_file" -o "$out_file"
 
               [ -s "$out_file" ] || continue
 
