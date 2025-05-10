@@ -1,13 +1,13 @@
 name: Domains Automation and Comparison
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 10 * * *'
   push:
     paths:
       - 'domains.lst'
       - 'sources/sources-domains.txt'
-  workflow_dispatch:
 
 jobs:
   process-and-compare-domains:
@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get install -y wget grep moreutils
+        run: sudo apt-get install -y wget grep
 
       - name: Clean domains.lst
         run: |
@@ -58,7 +58,6 @@ jobs:
 
       - name: Compare with external sources
         run: |
-          # normalize and sort
           normalize() {
             sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$1"
             sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$1"
@@ -66,7 +65,6 @@ jobs:
             sort -u "$1" -o "$1"
           }
 
-          # load parent domains into P[]
           declare -A P
           while read -r d; do P["$d"]=1; done < domains.lst
 
@@ -82,19 +80,22 @@ jobs:
             S["$key"]="$url"
           done < sources/sources-domains.txt
 
+          get_parents() {
+            local d=$1
+            while [[ $d == *.* ]]; do
+              d=${d#*.}
+              echo "$d"
+            done
+          }
+
           for key in "${!S[@]}"; do
             url=${S[$key]}
-            wget -qO "$key.lst" "$url" || continue
+            if ! wget -qO "$key.lst" "$url"; then
+              echo "Не удалось скачать $url" >&2
+              continue
+            fi
             normalize "$key.lst"
 
-            # filter out subdomains whose parent exists in domains.lst
-            get_parents() {
-              local d=$1
-              while [[ $d == *.* ]]; do
-                d=${d#*.}
-                echo "$d"
-              done
-            }
             > tmp.lst
             while read -r d; do
               skip=
@@ -105,7 +106,6 @@ jobs:
             done < "$key.lst" > tmp.lst
             mv tmp.lst "$key.lst"
 
-            # compare, exclude .ua
             comm -23 <(sort "$key.lst") <(sort my-domains.lst) | grep -v '\.ua$' > missing_"$key".txt
             comm -13 <(sort "$key.lst") <(sort my-domains.lst) | grep -v '\.ua$' > presence_"$key".txt
           done
