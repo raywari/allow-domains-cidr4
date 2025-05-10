@@ -69,8 +69,15 @@ jobs:
         run: |
           [[ -f domains.lst ]] && sed 's/^/domain:/' domains.lst | sort -u > domains-nekobox.lst
 
-      - name: Compare with external sources
+      - name: Compare with external sources (отладочная версия)
         run: |
+          normalize_domains() {
+            sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$1"
+            sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$1"
+            sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$1"
+            sort -u "$1" -o "$1"
+          }
+
           if [[ ! -f "sources/sources-domains.txt" ]]; then
             echo "Файл источников не найден!" && exit 1
           fi
@@ -78,6 +85,7 @@ jobs:
           mkdir -p categories/Compared-Domains
           rm -f categories/Compared-Domains/*.txt
           cp domains.lst my-domains.lst
+          normalize_domains my-domains.lst
 
           declare -A SOURCES
           while IFS= read -r line; do
@@ -95,15 +103,16 @@ jobs:
 
             echo "$(wc -l "${name}.lst") строк в ${name}.lst (до очистки)"
 
-            # Clean downloaded list
-            sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "${name}.lst"
-            sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "${name}.lst"
-            sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "${name}.lst"
+            normalize_domains "${name}.lst"
 
             echo "$(wc -l "${name}.lst") строк в ${name}.lst (после очистки)"
             echo "$(wc -l my-domains.lst) строк в my-domains.lst"
 
-            # Compare lists
+            echo "Первые строки ${name}.lst:"
+            head -n 5 "${name}.lst"
+            echo "Первые строки my-domains.lst:"
+            head -n 5 my-domains.lst
+
             comm -23 <(sort -u "${name}.lst") <(sort -u my-domains.lst) | grep -v '\.ua$' > "missing_${name}.txt"
             comm -13 <(sort -u "${name}.lst") <(sort -u my-domains.lst) > "presence_${name}.txt"
 
@@ -111,7 +120,6 @@ jobs:
             echo "$(wc -l presence_${name}.txt) доменов только в источнике в presence_${name}.txt"
           done
 
-          # Generate final reports
           {
             for name in "${!SOURCES[@]}"; do
               echo "### Missing in $name ###"
