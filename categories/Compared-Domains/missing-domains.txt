@@ -1,255 +1,261 @@
-### Missing from raw_githubusercontent_com_1andrevich_Re-filter-lists_refs_heads_main_community_lst ###
-gvt1.com
-### Missing from raw_githubusercontent_com_dartraiden_no-russia-hosts_refs_heads_master_hosts_txt ###
-2407.pl
-6pm.com
-8chan.moe
-activestate.com
-acurapartswarehouse.com
-adafruit.com
-adam-audio.com
-agar.io
-airbrake.io
-alienwarearena.com
-alltrails.com
-altaro.com
-amazon.com
-angryemailtranslator.com
-annimon.com
-anythingllm.com
-apiary.io
-apple.com
-atwiki.jp
-augmentcode.com
-av-connection.com
-avcdn.net
-bacch.com
-battle.net
-beacon3d.com
-blackfriday.com
-blizzardwatch.com
-bluesky-soft.com
-blur.io
-bosch.de
-bricklink.com
-broccolionline.jp
-canva-apps.com
-census.gov
-cesium.com
-chatfuel.com
-cisecurity.org
-clarabridge.net
-clevelandclinic.org
-cmems-du.eu
-cocalc.com
-codebrowser.dev
-cohere.com
-copernicus.eu
-crowdstrike.com
-crunchbase.com
-cybersecurity-help.cz
-darkproject.eu
-databricks.com
-dating.com
-daz3d.com
-deepsource.com
-deepsource.io
-devart.com
-devexpress.com
-dice.com
-dickssportinggoods.com
-diffblue.com
-dnb.com
-docker.io
-dyson.com
-dyson.nl
-dyson.se
-e-hentai.org
-easyjet.com
-elgiganten.se
-engagor.com
-entrust.com
-epicgames.com
-familysearch.org
-fanatical.com
-fastflux.ai
-fastspring.com
-findagrave.com
-flexpool.io
-fortiguard.com
-fortinet.com
-fotoforensics.com
-freemyip.com
-fujitsu.com
-futurelearn.com
-g711.org
-gambody.com
-game.co.uk
-gamestop.com
-genspark.ai
-geospy.ai
-getsafeonline.org
-ghidra-sre.org
-github.com
-githubusercontent.com
-google.com
-google.dev
-googleapis.com
-grouponcdn.com
-hashkey.com
-hex-rays.com
-home-connect.cn
-hpe.com
-humblebundle.com
-hume.ai
-hybrid-analysis.com
-hyundainews.com
-iaai.com
-icd10data.com
-idtech.services
-ikea.com
-imagecache365.com
-indeed.com
-informit.com
-insanelymac.com
-intel.se
-intellipaat.com
-iperf3serverlist.net
-joesandbox.com
-joyreactor.cc
-jsfiddle.net
-keepgrowing.in
-keepsolid.com
-klaviyo.com
-kowalski7cc.xyz
-kroger.com
-langdock.com
-lenso.ai
-letyshops.com
-lightburnsoftware.com
-lipstickalley.com
-liquidsky.com
-llamameta.net
-logo.com
-lowes.com
-malwarebytes.org
-matrix.org
-maximintegrated.com
-mbamupdates.com
-meest-shop.com
-megogo.net
-meshcapade.com
-metademolab.com
-metopera.org
-michaelkors.global
-microsoft.com
-militarnyi.com
-moneypuck.com
-mongodb.net
-monotype.com
-monotypefonts.com
-myfonts.com
-myprepaidcenter.com
-myrotvorets.center
-norton.com
-nvidia.com
-oclc.org
-octopart-clicks.com
-octopart.com
-octostatic.com
-oraclecloud.com
-ottg.app
-outflank.nl
-padi.com
-parts-express.com
-perforce.com
-peter-tanner.com
-philscomputerlab.com
-phishtank.com
-photonengine.com
-pimeyes.com
-pinata.cloud
-plugin-alliance.com
-pluralsight.com
-pny.com
-promods.net
-ptc.com
-pump.fun
-qaweb.dev
-qcad.org
-qobuz.com
-quicknode.com
-ratatype.com
-raycast.com
-razer.com
-readdle.com
-readybot.io
-reka.ai
-reverb.com
-samsclub.com
-schenker-tech.de
-securitytrails.com
-seekvectorlogo.net
-semrush.com
-sendy.jp
-serato.com
-serialcart.com
-serif.com
-serverkast.com
-setapp.com
-shiksha.com
-showtime.com
-siemens.com
-skyshowtime.com
-sophos.com
-spiceworks.com
-splunk.com
-splunkcloud.com
-st.com
-steamidfinder.com
-steganos.com
-stereophile.com
-studychat.app
-stuff.co.nz
-summerana.com
-syncfusion.com
-systemtek.co.uk
-target.com
-te.com
-templatemonster.com
-tenable.com
-teslasoft.org
-thesassway.com
-thinkpads.com
-thomas-krenn.com
-tommy.com
-tria.ge
-trionworlds.com
-truthsocial.com
-ubi.com
-ultimaker.com
-ultraedit.com
-vaio.com
-vans.com
-vans.de
-vans.fr
-vans.it
-vans.nl
-vans.se
-viperatech.com
-vpnunlimited.com
-wakanim.tv
-walletconnect.com
-we.tl
-webex.com
-webscraper.io
-wellfound.com
-wonderclub.com
-xbox.com
-xerox.com
-xfantazy.com
-xmg.gg
-yeggi.com
-yithemes.com
-yourdictionary.com
-zoosk.com
+# Missing domains
+# Source: https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst
+
+- gvt1.com
+
+# Missing domains
+# Source: https://raw.githubusercontent.com/dartraiden/no-russia-hosts/refs/heads/master/hosts.txt
+
+- 2407.pl
+- 6pm.com
+- 8chan.moe
+- activestate.com
+- acurapartswarehouse.com
+- adafruit.com
+- adam-audio.com
+- agar.io
+- airbrake.io
+- alienwarearena.com
+- alltrails.com
+- altaro.com
+- amazon.com
+- angryemailtranslator.com
+- annimon.com
+- anythingllm.com
+- apiary.io
+- apple.com
+- atwiki.jp
+- augmentcode.com
+- av-connection.com
+- avcdn.net
+- bacch.com
+- battle.net
+- beacon3d.com
+- blackfriday.com
+- blizzardwatch.com
+- bluesky-soft.com
+- blur.io
+- bosch.de
+- bricklink.com
+- broccolionline.jp
+- canva-apps.com
+- census.gov
+- cesium.com
+- chatfuel.com
+- cisecurity.org
+- clarabridge.net
+- clevelandclinic.org
+- cmems-du.eu
+- cocalc.com
+- codebrowser.dev
+- cohere.com
+- copernicus.eu
+- crowdstrike.com
+- crunchbase.com
+- cybersecurity-help.cz
+- darkproject.eu
+- databricks.com
+- dating.com
+- daz3d.com
+- deepsource.com
+- deepsource.io
+- devart.com
+- devexpress.com
+- dice.com
+- dickssportinggoods.com
+- diffblue.com
+- dnb.com
+- docker.io
+- dyson.com
+- dyson.nl
+- dyson.se
+- e-hentai.org
+- easyjet.com
+- elgiganten.se
+- engagor.com
+- entrust.com
+- epicgames.com
+- familysearch.org
+- fanatical.com
+- fastflux.ai
+- fastspring.com
+- findagrave.com
+- flexpool.io
+- fortiguard.com
+- fortinet.com
+- fotoforensics.com
+- freemyip.com
+- fujitsu.com
+- futurelearn.com
+- g711.org
+- gambody.com
+- game.co.uk
+- gamestop.com
+- genspark.ai
+- geospy.ai
+- getsafeonline.org
+- ghidra-sre.org
+- github.com
+- githubusercontent.com
+- google.com
+- google.dev
+- googleapis.com
+- grouponcdn.com
+- hashkey.com
+- hex-rays.com
+- home-connect.cn
+- hpe.com
+- humblebundle.com
+- hume.ai
+- hybrid-analysis.com
+- hyundainews.com
+- iaai.com
+- icd10data.com
+- idtech.services
+- ikea.com
+- imagecache365.com
+- indeed.com
+- informit.com
+- insanelymac.com
+- intel.se
+- intellipaat.com
+- iperf3serverlist.net
+- joesandbox.com
+- joyreactor.cc
+- jsfiddle.net
+- keepgrowing.in
+- keepsolid.com
+- klaviyo.com
+- kowalski7cc.xyz
+- kroger.com
+- langdock.com
+- lenso.ai
+- letyshops.com
+- lightburnsoftware.com
+- lipstickalley.com
+- liquidsky.com
+- llamameta.net
+- logo.com
+- lowes.com
+- malwarebytes.org
+- matrix.org
+- maximintegrated.com
+- mbamupdates.com
+- meest-shop.com
+- megogo.net
+- meshcapade.com
+- metademolab.com
+- metopera.org
+- michaelkors.global
+- microsoft.com
+- militarnyi.com
+- moneypuck.com
+- mongodb.net
+- monotype.com
+- monotypefonts.com
+- myfonts.com
+- myprepaidcenter.com
+- myrotvorets.center
+- norton.com
+- nvidia.com
+- oclc.org
+- octopart-clicks.com
+- octopart.com
+- octostatic.com
+- oraclecloud.com
+- ottg.app
+- outflank.nl
+- padi.com
+- parts-express.com
+- perforce.com
+- peter-tanner.com
+- philscomputerlab.com
+- phishtank.com
+- photonengine.com
+- pimeyes.com
+- pinata.cloud
+- plugin-alliance.com
+- pluralsight.com
+- pny.com
+- promods.net
+- ptc.com
+- pump.fun
+- qaweb.dev
+- qcad.org
+- qobuz.com
+- quicknode.com
+- ratatype.com
+- raycast.com
+- razer.com
+- readdle.com
+- readybot.io
+- reka.ai
+- reverb.com
+- samsclub.com
+- schenker-tech.de
+- securitytrails.com
+- seekvectorlogo.net
+- semrush.com
+- sendy.jp
+- serato.com
+- serialcart.com
+- serif.com
+- serverkast.com
+- setapp.com
+- shiksha.com
+- showtime.com
+- siemens.com
+- skyshowtime.com
+- sophos.com
+- spiceworks.com
+- splunk.com
+- splunkcloud.com
+- st.com
+- steamidfinder.com
+- steganos.com
+- stereophile.com
+- studychat.app
+- stuff.co.nz
+- summerana.com
+- syncfusion.com
+- systemtek.co.uk
+- target.com
+- te.com
+- templatemonster.com
+- tenable.com
+- teslasoft.org
+- thesassway.com
+- thinkpads.com
+- thomas-krenn.com
+- tommy.com
+- tria.ge
+- trionworlds.com
+- truthsocial.com
+- ubi.com
+- ultimaker.com
+- ultraedit.com
+- vaio.com
+- vans.com
+- vans.de
+- vans.fr
+- vans.it
+- vans.nl
+- vans.se
+- viperatech.com
+- vpnunlimited.com
+- wakanim.tv
+- walletconnect.com
+- we.tl
+- webex.com
+- webscraper.io
+- wellfound.com
+- wonderclub.com
+- xbox.com
+- xerox.com
+- xfantazy.com
+- xmg.gg
+- yeggi.com
+- yithemes.com
+- yourdictionary.com
+- zoosk.com
+
