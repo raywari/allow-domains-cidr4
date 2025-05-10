@@ -1,13 +1,13 @@
 name: Domains Automation and Comparison
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: '0 10 * * *'
   push:
     paths:
       - 'domains.lst'
       - 'sources/sources-domains.txt'
+  workflow_dispatch: 
 
 jobs:
   process-and-compare-domains:
@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get install -y wget grep
+        run: sudo apt-get install -y wget grep moreutils
 
       - name: Clean domains.lst
         run: |
@@ -90,11 +90,23 @@ jobs:
 
           for key in "${!S[@]}"; do
             url=${S[$key]}
+            echo "Загружаем $url в $key.lst"
             if ! wget -qO "$key.lst" "$url"; then
-              echo "Не удалось скачать $url" >&2
+              echo "Не удалось скачать $url, пропускаем"
               continue
             fi
+
+            if [[ ! -s "$key.lst" ]]; then
+              echo "$key.lst пуст после скачивания, пропускаем"
+              continue
+            fi
+
             normalize "$key.lst"
+
+            if [[ ! -s "$key.lst" ]]; then
+              echo "$key.lst пуст после нормализации, пропускаем"
+              continue
+            fi
 
             > tmp.lst
             while read -r d; do
@@ -106,23 +118,32 @@ jobs:
             done < "$key.lst" > tmp.lst
             mv tmp.lst "$key.lst"
 
+            if [[ ! -s "$key.lst" ]]; then
+              echo "$key.lst пуст после фильтрации поддоменов, пропускаем"
+              continue
+            fi
+
             comm -23 <(sort "$key.lst") <(sort my-domains.lst) | grep -v '\.ua$' > missing_"$key".txt
             comm -13 <(sort "$key.lst") <(sort my-domains.lst) | grep -v '\.ua$' > presence_"$key".txt
           done
 
           {
             for key in "${!S[@]}"; do
-              echo "### Missing in $key ###"
-              cat missing_"$key".txt
-              echo
+              if [[ -s missing_"$key".txt ]]; then
+                echo "### Missing in $key ###"
+                cat missing_"$key".txt
+                echo
+              fi
             done
           } > categories/Compared-Domains/missing-domains.txt
 
           {
             for key in "${!S[@]}"; do
-              echo "### Present only in $key ###"
-              cat presence_"$key".txt
-              echo
+              if [[ -s presence_"$key".txt ]]; then
+                echo "### Present only in $key ###"
+                cat presence_"$key".txt
+                echo
+              fi
             done
           } > categories/Compared-Domains/presence-domains.txt
 
