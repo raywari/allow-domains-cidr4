@@ -1,7 +1,6 @@
 name: Domains Automation and Comparison
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: '0 10 * * *'
   push:
@@ -58,6 +57,7 @@ jobs:
 
       - name: Compare with external sources
         run: |
+          # normalize and sort
           normalize() {
             sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$1"
             sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$1"
@@ -65,28 +65,28 @@ jobs:
             sort -u "$1" -o "$1"
           }
 
-          # load parent domains set
-          declare -A PARENT
-          while read -r d; do PARENT["$d"]=1; done < domains.lst
+          # load parent domains into P[]
+          declare -A P
+          while read -r d; do P["$d"]=1; done < domains.lst
 
           mkdir -p categories/Compared-Domains
           cp domains.lst my-domains.lst
           normalize my-domains.lst
 
-          declare -A SOURCES
-          while IFS= read -r line; do
-            [[ "$line" =~ ^#|^$ ]] && continue
-            url=${line// /}
-            name=$(basename "$url" | sed 's/\.[^.]*$//')
-            SOURCES["$name"]="$url"
+          declare -A S
+          while IFS= read -r ln; do
+            [[ "$ln" =~ ^#|^$ ]] && continue
+            url=${ln// /}
+            key=$(basename "$url" | sed 's/\.[^.]*$//')
+            S["$key"]="$url"
           done < sources/sources-domains.txt
 
-          for name in "${!SOURCES[@]}"; do
-            url=${SOURCES[$name]}
-            wget -qO "${name}.lst" "$url" || continue
-            normalize "${name}.lst"
+          for key in "${!S[@]}"; do
+            url=${S[$key]}
+            wget -qO "$key.lst" "$url" || continue
+            normalize "$key.lst"
 
-            # filter out any subdomain whose parent is in domains.lst
+            # filter out subdomains whose parent exists in domains.lst
             get_parents() {
               local d=$1
               while [[ $d == *.* ]]; do
@@ -94,35 +94,33 @@ jobs:
                 echo "$d"
               done
             }
-            > filtered_"$name".lst
+            > tmp.lst
             while read -r d; do
               skip=
               for p in $(get_parents "$d"); do
-                [[ ${PARENT[$p]} ]] && { skip=1; break; }
+                [[ ${P[$p]} ]] && { skip=1; break; }
               done
-              [[ $skip ]] || echo "$d" >> filtered_"$name".lst
-            done < "${name}.lst"
-            mv filtered_"$name".lst "${name}.lst"
+              [[ $skip ]] || echo "$d"
+            done < "$key.lst" > tmp.lst
+            mv tmp.lst "$key.lst"
 
-            # compare, excluding .ua TLD
-            comm -23 <(sort "${name}.lst") <(sort my-domains.lst) | \
-              grep -v '\.ua$' > "missing_${name}.txt"
-            comm -13 <(sort "${name}.lst") <(sort my-domains.lst) | \
-              grep -v '\.ua$' > "presence_${name}.txt"
+            # compare, exclude .ua
+            comm -23 <(sort "$key.lst") <(sort my-domains.lst) | grep -v '\.ua$' > missing_"$key".txt
+            comm -13 <(sort "$key.lst") <(sort my-domains.lst) | grep -v '\.ua$' > presence_"$key".txt
           done
 
           {
-            for name in "${!SOURCES[@]}"; do
-              echo "### Missing in $name ###"
-              cat "missing_${name}.txt"
+            for key in "${!S[@]}"; do
+              echo "### Missing in $key ###"
+              cat missing_"$key".txt
               echo
             done
           } > categories/Compared-Domains/missing-domains.txt
 
           {
-            for name in "${!SOURCES[@]}"; do
-              echo "### Present only in $name ###"
-              cat "presence_${name}.txt"
+            for key in "${!S[@]}"; do
+              echo "### Present only in $key ###"
+              cat presence_"$key".txt
               echo
             done
           } > categories/Compared-Domains/presence-domains.txt
@@ -130,8 +128,7 @@ jobs:
       - name: Generate domains without YouTube
         run: |
           yt="categories/Services/youtube/youtube-domains.lst"
-          [[ -f "$yt" && -f domains.lst ]] && \
-            grep -vxFf "$yt" domains.lst > domains-without-yt.lst
+          [[ -f "$yt" && -f domains.lst ]] && grep -vxFf "$yt" domains.lst > domains-without-yt.lst
 
       - name: Commit and push .lst changes
         run: |
