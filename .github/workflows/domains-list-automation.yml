@@ -71,6 +71,7 @@ jobs:
           mkdir -p "$TMP_DIR" "$OUTPUT_DIR"
           cp "$DOMAINS_FILE" "$TMP_DIR/domains.lst"
 
+          # Нормализация исходного domains.lst
           sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' "$TMP_DIR/domains.lst"
           sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$TMP_DIR/domains.lst"
           sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$TMP_DIR/domains.lst"
@@ -82,36 +83,49 @@ jobs:
               PRIMARY_DOMAINS["$d"]=1
           done < "$TMP_DIR/domains.lst"
 
+          # Загрузка и обработка источников
           declare -A SOURCES
-          while IFS= read -r line; do
-              line="${line%%#*}"
-              [ -z "$line" ] && continue
-              url=$(echo "$line" | xargs)
+          mapfile -t SOURCE_URLS < <(grep -v '^#' "$SOURCES_FILE" | sed 's/#.*//; /^$/d')
+          
+          for raw_url in "${SOURCE_URLS[@]}"; do
+              url=$(echo "$raw_url" | awk '{print $1}' | xargs)
               [[ "$url" =~ ^https?:// ]] || url="https://$url"
-              key=$(echo "$url" | awk -F'/' '{print $(NF-2)"_"$(NF-1)"_"$NF}' | cut -d. -f1)
+              key=$(echo "$url" | sed 's/[?&].*//; s|https\?://||; s|/|_|g; s/\./_/g; s/_$//')
               SOURCES["$key"]="$url"
-          done < "$SOURCES_FILE"
-
-          echo "Список источников:"
-          for key in "${!SOURCES[@]}"; do
-            echo "$key : ${SOURCES[$key]}"
           done
 
           for key in "${!SOURCES[@]}"; do
               url="${SOURCES[$key]}"
               out_file="$TMP_DIR/${key}.lst"
               
+              echo "Processing: $url"
               curl -sfL --connect-timeout 30 --retry 3 "$url" > "$out_file" || continue
 
-              # Нормализация доменов внутри скачанного списка
-              sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' "$out_file"
-              sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$out_file"
-              sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$out_file"
-              sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$out_file"
+              # Обработка hosts-формата
+              sed -i -E '
+                  /^[[:space:]]*#/d;
+                  /^[[:space:]]*$/d;
+                  s/^[0-9.]+\s+//;
+                  s/\s+/\n/g;
+                  s/[[:space:]]*#.*$//;
+                  s/^[[:space:]]*//;
+                  s/[[:space:]]*$//;
+                  /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/!d;
+              ' "$out_file"
+
+              # Общая нормализация
+              sed -i '
+                  s|^https\?://||g;
+                  s|/.*$||g;
+                  s|:.*$||g;
+                  s|^www[0-9]*\.||g;
+              ' "$out_file"
+
               LC_ALL=C sort -u "$out_file" -o "$out_file"
 
               [ -s "$out_file" ] || continue
 
+              # Фильтрация поддоменов
               filtered=()
               while IFS= read -r domain; do
                   parent="$domain"
@@ -127,6 +141,7 @@ jobs:
               mv "${out_file}.filtered" "$out_file"
               [ -s "$out_file" ] || continue
 
+              # Сравнение доменов
               LC_ALL=C comm -23 \
                   <(LC_ALL=C sort "$out_file") \
                   <(LC_ALL=C sort "$TMP_DIR/domains.lst") > "$TMP_DIR/missing_${key}.txt"
@@ -136,17 +151,19 @@ jobs:
                   <(LC_ALL=C sort "$TMP_DIR/domains.lst") > "$TMP_DIR/presence_${key}.txt"
           done
 
+          # Генерация итоговых файлов
           for type in missing presence; do
               final_file="$OUTPUT_DIR/${type}-domains.txt"
               > "$final_file"
               for key in "${!SOURCES[@]}"; do
                   tmp_file="$TMP_DIR/${type}_${key}.txt"
                   [ -s "$tmp_file" ] && {
-                      printf "### %s in %s ###\n" "${type^}" "$key" >> "$final_file"
+                      printf "### %s from %s ###\n" "${type^}" "$key" >> "$final_file"
                       cat "$tmp_file" >> "$final_file"
                       printf "\n" >> "$final_file"
                   }
               done
+              sed -i '/^$/d' "$final_file"
           done
 
           cleanup
@@ -163,7 +180,7 @@ jobs:
           for f in domains.lst domains-nekobox.lst domains-without-yt.lst; do
             [[ -f $f ]] && git add "$f"
           done
-          git commit -m "Обновление доменных .lst файлов" || echo "Нет изменений для коммита"
+          git commit -m "Update domain lists" || echo "No changes to commit"
           git push origin main
 
       - name: Commit and push Compared-Domains changes
@@ -173,5 +190,5 @@ jobs:
           for f in categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt; do
             [[ -f $f ]] && git add "$f"
           done
-          git commit -m "Автоматическое сравнение: $(date +'%Y-%m-%d')" || echo "Нет изменений для коммита"
+          git commit -m "Domain comparison: $(date +'%Y-%m-%d')" || echo "No comparison changes"
           git push origin main
