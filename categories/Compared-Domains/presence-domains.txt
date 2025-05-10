@@ -1,5 +1,4 @@
 ### Presence in inside-raw ###
-11111111.111.ru
 2ip.io
 4pda.ru
 4pda.ws
@@ -525,7 +524,6 @@ zoomadmin.com
 
 ### Presence in community ###
 10minutemail.com
-11111111.111.ru
 1337x.to
 24.kg
 2ip.io
