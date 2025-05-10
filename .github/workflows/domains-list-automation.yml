@@ -116,7 +116,7 @@ jobs:
           echo "Сравнение завершено."
 
       - name: Upload artifacts for debugging
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: domain-comparison-debug
           path: |
