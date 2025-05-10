@@ -22,6 +22,7 @@ jobs:
 
       - name: Clean domains.lst
         run: |
+          sed -i 's/^[[:space:]]*-[[:space:]]*//' domains.lst
           sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' domains.lst
           sed -i 's/^full://g; s|^https\?://||g; s|^//||g' domains.lst
           sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' domains.lst
