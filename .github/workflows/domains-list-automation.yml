@@ -7,6 +7,7 @@ on:
   push:
     paths:
       - 'domains.lst'
+      - 'sources/sources-domains.txt'
 
 jobs:
   process-and-compare-domains:
@@ -22,183 +23,151 @@ jobs:
       - name: Clean domains.lst
         run: |
           if [[ -f domains.lst ]]; then
-            # Удаляем строки с комментариями
-            sed -i '/^[[:space:]]*#/d' domains.lst
-            sed -i '/^;/d' domains.lst
-            sed -i '/^\/\//d' domains.lst
-            sed -i '/^[[:space:]]*--/d' domains.lst
-
-            # Удаляем префикс full:
-            sed -i 's/^full://g' domains.lst
-
-            # Удаляем протоколы (каждый sed отдельно)
-            sed -i 's|^https://||g' domains.lst
-            sed -i 's|^http://||g' domains.lst
-            sed -i 's|^//||g' domains.lst
-
-            # Удаляем пути и порты
-            sed -i 's|/.*$||g' domains.lst
-            sed -i 's|:.*$||g' domains.lst
-
-            # Удаляем www. (каждый sed отдельно для надежности)
-            sed -i 's|^www\.||g' domains.lst
-            sed -i 's|^www2\.||g' domains.lst
-            sed -i 's|^www3\.||g' domains.lst
-
-            # Удаляем пробелы и пустые строки
-            sed -i 's/^[[:space:]]*//g' domains.lst
-            sed -i 's/[[:space:]]*$//g' domains.lst
-            sed -i '/^[[:space:]]*$/d' domains.lst
-
-            echo "domains.lst очищен и нормализован."
+            sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' domains.lst
+            sed -i 's/^full://g; s|^https\?://||g; s|^//||g' domains.lst
+            sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]?\.||g' domains.lst
+            sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' domains.lst
+            echo "domains.lst очищен."
           else
             echo "domains.lst отсутствует." && exit 1
           fi
 
       - name: Sort domains.lst
-        run: |
-          [[ -f domains.lst ]] && LC_COLLATE=C sort -f -u domains.lst -o domains.lst
+        run: [[ -f domains.lst ]] && LC_COLLATE=C sort -f -u domains.lst -o domains.lst
 
-      - name: Filter subdomains in-place
+      - name: Filter subdomains
         run: |
           if [[ -f domains.lst ]]; then
             get_parents() {
               local domain=$1
-              local parents=()
-              while [[ $domain == *.* ]]; do
-                domain=${domain#*.}
-                parents+=("$domain")
-              done
-              echo "${parents[@]}"
+              while [[ $domain == *.* ]]; do domain=${domain#*.}; echo "$domain"; done
             }
 
             mapfile -t domains < domains.lst
             IFS=$'\n' sorted=($(printf '%s\n' "${domains[@]}" | awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
-            unset IFS
-
+            
             declare -A kept
-            > filtered_domains.txt
+            > filtered.txt
 
             for domain in "${sorted[@]}"; do
               skip=false
               for p in $(get_parents "$domain"); do
-                if [[ ${kept["$p"]+1} ]]; then
-                  skip=true
-                  break
-                fi
+                [[ ${kept["$p"]} ]] && { skip=true; break; }
               done
-              $skip || { echo "$domain" >> filtered_domains.txt; kept["$domain"]=1; }
+              $skip || { echo "$domain" >> filtered.txt; kept["$domain"]=1; }
             done
 
-            sort -u filtered_domains.txt -o domains.lst
-            rm -f filtered_domains.txt
-            echo "Поддомены отфильтрованы."
+            sort -u filtered.txt -o domains.lst
+            rm filtered.txt
+            echo "Субдомены отфильтрованы."
           fi
 
-      - name: Generate domains-nekobox.lst
-        run: |
-          [[ -f domains.lst ]] && sed 's/^/domain:/' domains.lst | sort -u > domains-nekobox.lst
+      - name: Generate NekoBox list
+        run: [[ -f domains.lst ]] && sed 's/^/domain:/' domains.lst | sort -u > domains-nekobox.lst
 
-      - name: Prepare and compare domain lists
+      - name: Compare with external sources
         run: |
-          declare -A sources=(
-            ["RussiaInside"]="https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst"
-            ["CommunityFilter"]="https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst"
-          )
+          if [[ ! -f "sources/sources-domains.txt" ]]; then
+            echo "Файл источников не найден!" && exit 1
+          fi
 
           mkdir -p categories/Compared-Domains
-          rm -f categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
-          touch categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt
-
+          rm -f categories/Compared-Domains/*.txt
           cp domains.lst my-domains.lst
 
-          has_parent_in_list() {
-            local domain=$1 list=$2
-            while [[ $domain == *.* ]]; do
-              domain=${domain#*.}
-              grep -qx "$domain" "$list" && return 0
+          declare -A SOURCES
+          while IFS= read -r line; do
+            [[ "$line" =~ ^#|^$ ]] && continue
+            url=$(echo "$line" | xargs)
+            name=$(basename "$url" | sed 's/\.[^.]*$//')
+            SOURCES["$name"]="$url"
+          done < sources/sources-domains.txt
+
+          has_parent() {
+            local d="$1" list="$2"
+            while [[ "$d" == *.* ]]; do
+              d=${d#*.}
+              grep -qxF "$d" "$list" && return 0
             done
             return 1
           }
 
-          compare_source() {
-            local name=$1 url=$2 file="${name,,}.lst"
-            wget -q -O "$file" "$url" || { echo "Не удалось загрузить $file"; exit 1; }
-
-            touch "missing_${name,,}.txt" "presence_${name,,}.txt"
-
-            while IFS= read -r domain; do
-              [[ -z $domain ]] && continue
-              if ! grep -qx "$domain" my-domains.lst && ! has_parent_in_list "$domain" my-domains.lst; then
-                echo "$domain" >> "missing_${name,,}.txt"
+          for name in "${!SOURCES[@]}"; do
+            url="${SOURCES[$name]}"
+            echo "Processing $name ($url)"
+            
+            wget -qO "${name}.lst" "$url" || { echo "Ошибка загрузки $url"; exit 1; }
+            
+            # Generate missing domains
+            while read -r domain; do
+              [[ -z "$domain" ]] && continue
+              if ! grep -qxF "$domain" my-domains.lst && ! has_parent "$domain" my-domains.lst; then
+                echo "$domain" >> "missing_${name}.txt"
               fi
-            done < "$file"
+            done < "${name}.lst"
 
-            while IFS= read -r domain; do
-              [[ -z $domain ]] && continue
-              if ! grep -qx "$domain" "$file" && ! has_parent_in_list "$domain" "$file"; then
-                echo "$domain" >> "presence_${name,,}.txt"
+            # Generate presence domains
+            while read -r domain; do
+              [[ -z "$domain" ]] && continue
+              if ! grep -qxF "$domain" "${name}.lst" && ! has_parent "$domain" "${name}.lst"; then
+                echo "$domain" >> "presence_${name}.txt"
               fi
             done < my-domains.lst
 
-            sort -u "missing_${name,,}.txt" -o "missing_${name,,}.txt"
-            sort -u "presence_${name,,}.txt" -o "presence_${name,,}.txt"
-
-            grep -v '\.ua$' "missing_${name,,}.txt" > tmp && mv tmp "missing_${name,,}.txt"
-            grep -v '\.ua$' "presence_${name,,}.txt" > tmp && mv tmp "presence_${name,,}.txt"
-          }
-
-          for name in "${!sources[@]}"; do
-            compare_source "$name" "${sources[$name]}"
+            # Cleanup and sort
+            sort -u "missing_${name}.txt" -o "missing_${name}.txt"
+            sort -u "presence_${name}.txt" -o "presence_${name}.txt"
+            grep -v '\.ua$' "missing_${name}.txt" | sponge "missing_${name}.txt"
           done
 
+          # Generate final reports
           {
-            for name in "${!sources[@]}"; do
-              echo "### missing $name"
-              echo
-              cat "missing_${name,,}.txt"
+            for name in "${!SOURCES[@]}"; do
+              echo "### Missing in $name ###"
+              cat "missing_${name}.txt"
               echo
             done
           } > categories/Compared-Domains/missing-domains.txt
 
           {
-            for name in "${!sources[@]}"; do
-              echo "### presence $name"
-              echo
-              cat "presence_${name,,}.txt"
+            for name in "${!SOURCES[@]}"; do
+              echo "### Present only in $name ###"
+              cat "presence_${name}.txt"
               echo
             done
           } > categories/Compared-Domains/presence-domains.txt
 
           echo "Сравнение завершено."
 
-      - name: Generate domains-without-yt.lst
+      - name: Generate domains without YouTube
         run: |
-          exclude_file="categories/Services/youtube/youtube-domains.lst"
-          if [[ -f "$exclude_file" && -f domains.lst ]]; then
-            grep -vxFf "$exclude_file" domains.lst | sort -u > domains-without-yt.lst
-          else
-            echo "Файл $exclude_file отсутствует или domains.lst отсутствует — пропускаем генерацию."
-          fi
+          yt_file="categories/Services/youtube/youtube-domains.lst"
+          [[ -f "$yt_file" && -f domains.lst ]] && \
+            grep -vxFf "$yt_file" domains.lst > domains-without-yt.lst || \
+            echo "Пропуск генерации domains-without-yt.lst"
 
       - name: Commit and push .lst changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # добавляем только существующие файлы
+          
+          # Add main domain files
           for f in domains.lst domains-nekobox.lst domains-without-yt.lst; do
             [[ -f $f ]] && git add "$f"
           done
-          git commit -m "Обновление доменных .lst файлов" || echo "Нет изменений для коммита"
+          
+          git commit -m "Обновление доменных списков: $(date +'%Y-%m-%d %H:%M')" || echo "Нет изменений в основных файлах"
           git push origin main
 
       - name: Commit and push Compared-Domains changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # добавляем только существующие отчётные файлы
+          
+          # Add comparison results
           for f in categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt; do
             [[ -f $f ]] && git add "$f"
           done
-          git commit -m "Автоматическое сравнение: $(date +'%Y-%m-%d')" || echo "Нет изменений для коммита"
+          
+          git commit -m "Обновление результатов сравнения: $(date +'%Y-%m-%d %H:%M')" || echo "Нет изменений в отчетах сравнения"
           git push origin main
