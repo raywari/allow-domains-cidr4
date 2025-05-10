@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get install -y wget grep
+        run: sudo apt-get install -y wget grep moreutils
 
       - name: Clean domains.lst
         run: |
@@ -87,41 +87,15 @@ jobs:
             SOURCES["$name"]="$url"
           done < sources/sources-domains.txt
 
-          has_parent() {
-            local d="$1" list="$2"
-            while [[ "$d" == *.* ]]; do
-              d=${d#*.}
-              grep -qxF "$d" "$list" && return 0
-            done
-            return 1
-          }
-
           for name in "${!SOURCES[@]}"; do
             url="${SOURCES[$name]}"
             echo "Processing $name ($url)"
 
             wget -qO "${name}.lst" "$url" || { echo "Ошибка загрузки $url"; exit 1; }
 
-            # Generate missing domains
-            while read -r domain; do
-              [[ -z "$domain" ]] && continue
-              if ! grep -qxF "$domain" my-domains.lst && ! has_parent "$domain" my-domains.lst; then
-                echo "$domain" >> "missing_${name}.txt"
-              fi
-            done < "${name}.lst"
-
-            # Generate presence domains
-            while read -r domain; do
-              [[ -z "$domain" ]] && continue
-              if ! grep -qxF "$domain" "${name}.lst" && ! has_parent "$domain" "${name}.lst"; then
-                echo "$domain" >> "presence_${name}.txt"
-              fi
-            done < my-domains.lst
-
-            # Cleanup and sort
-            sort -u "missing_${name}.txt" -o "missing_${name}.txt"
-            sort -u "presence_${name}.txt" -o "presence_${name}.txt"
-            grep -v '\.ua$' "missing_${name}.txt" | sponge "missing_${name}.txt"
+            # Compare lists
+            comm -23 <(sort -u "${name}.lst") <(sort -u my-domains.lst) | grep -v '\.ua$' > "missing_${name}.txt"
+            comm -13 <(sort -u "${name}.lst") <(sort -u my-domains.lst) > "presence_${name}.txt"
           done
 
           # Generate final reports
@@ -155,7 +129,6 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-          # Add main domain files
           for f in domains.lst domains-nekobox.lst domains-without-yt.lst; do
             [[ -f $f ]] && git add "$f"
           done
@@ -168,7 +141,6 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-          # Add comparison results
           for f in categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt; do
             [[ -f $f ]] && git add "$f"
           done
