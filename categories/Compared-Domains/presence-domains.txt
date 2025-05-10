@@ -1,4 +1,4 @@
-### Present only in inside-raw ###
+### Presence in inside-raw ###
 2ip.io
 4pda.ru
 4pda.ws
@@ -522,7 +522,7 @@ znanija.com
 zohomail.com
 zoomadmin.com
 
-### Present only in community ###
+### Presence in community ###
 10minutemail.com
 1337x.to
 24.kg
