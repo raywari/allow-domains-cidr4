@@ -7,7 +7,7 @@ on:
     paths:
       - 'domains.lst'
       - 'sources/sources-domains.txt'
-  workflow_dispatch: 
+  workflow_dispatch:
 
 jobs:
   process-and-compare-domains:
@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get install -y wget grep moreutils
+        run: sudo apt-get install -y wget curl grep moreutils
 
       - name: Clean domains.lst
         run: |
@@ -58,94 +58,100 @@ jobs:
 
       - name: Compare with external sources
         run: |
-          normalize() {
-            sed -i 's/^full://g; s|^https\\?://||g; s|^//||g' "$1"
-            sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\\?\\.||g' "$1"
-            sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$1"
-            sort -u "$1" -o "$1"
+          set -eo pipefail
+          TMP_DIR="./tmp"
+          DOMAINS_FILE="domains.lst"
+          SOURCES_FILE="sources/sources-domains.txt"
+          OUTPUT_DIR="categories/Compared-Domains"
+
+          cleanup() {
+              [ -d "$TMP_DIR" ] && rm -rf "$TMP_DIR"
           }
 
-          declare -A P
-          while read -r d; do P["$d"]=1; done < domains.lst
+          mkdir -p "$TMP_DIR" "$OUTPUT_DIR"
+          cp "$DOMAINS_FILE" "$TMP_DIR/domains.lst"
 
-          mkdir -p categories/Compared-Domains
-          cp domains.lst my-domains.lst
-          normalize my-domains.lst
+          sed -E \
+              -e 's/^[[:space:]]+//; s/[[:space:]]+$//' \
+              -e 's|^https?://||' \
+              -e 's|^www[0-9]*\.||' \
+              -e 's|/.*||' \
+              -e 's|:.*||' \
+              -e '/^$/d' \
+              "$TMP_DIR/domains.lst" | LC_ALL=C sort -u > "$TMP_DIR/domains.tmp"
+          mv "$TMP_DIR/domains.tmp" "$TMP_DIR/domains.lst"
 
-          declare -A S
-          while IFS= read -r ln; do
-            [[ "$ln" =~ ^#|^$ ]] && continue
-            url=${ln// /}
-            key=$(basename "$url" | sed 's/\.[^.]*$//')
-            S["$key"]="$url"
-          done < sources/sources-domains.txt
+          declare -A PRIMARY_DOMAINS
+          while IFS= read -r d; do
+              PRIMARY_DOMAINS["$d"]=1
+          done < "$TMP_DIR/domains.lst"
 
-          get_parents() {
-            local d=$1
-            while [[ $d == *.* ]]; do
-              d=${d#*.}
-              echo "$d"
-            done
-          }
+          declare -A SOURCES
+          while IFS= read -r line; do
+              line="${line%%#*}"
+              [ -z "$line" ] && continue
+              url=$(echo "$line" | xargs)
+              [[ "$url" =~ ^https?:// ]] || url="https://$url"
+              key=$(basename "$url" | cut -d. -f1)
+              SOURCES["$key"]="$url"
+          done < "$SOURCES_FILE"
 
-          for key in "${!S[@]}"; do
-            url=${S[$key]}
-            echo "Загружаем $url в $key.lst"
-            if ! wget -qO "$key.lst" "$url"; then
-              echo "Не удалось скачать $url, пропускаем"
-              continue
-            fi
+          for key in "${!SOURCES[@]}"; do
+              url="${SOURCES[$key]}"
+              out_file="$TMP_DIR/${key}.lst"
+              
+              curl -sfL --connect-timeout 30 --retry 3 "$url" > "$out_file" || continue
 
-            if [[ ! -s "$key.lst" ]]; then
-              echo "$key.lst пуст после скачивания, пропускаем"
-              continue
-            fi
+              sed -E \
+                  -e 's/^[[:space:]]+//; s/[[:space:]]+$//' \
+                  -e 's|^https?://||' \
+                  -e 's|^www[0-9]*\.||' \
+                  -e 's|/.*||' \
+                  -e 's|:.*||' \
+                  -e '/^$/d' \
+                  "$out_file" | LC_ALL=C sort -u > "${out_file}.tmp"
+              mv "${out_file}.tmp" "$out_file"
 
-            normalize "$key.lst"
+              [ -s "$out_file" ] || continue
 
-            if [[ ! -s "$key.lst" ]]; then
-              echo "$key.lst пуст после нормализации, пропускаем"
-              continue
-            fi
+              filtered=()
+              while IFS= read -r domain; do
+                  parent="$domain"
+                  is_sub=0
+                  while [[ "$parent" == *.* ]]; do
+                      parent="${parent#*.}"
+                      [ -n "${PRIMARY_DOMAINS[$parent]}" ] && { is_sub=1; break; }
+                  done
+                  [ $is_sub -eq 0 ] && filtered+=("$domain")
+              done < "$out_file"
+              
+              printf "%s\n" "${filtered[@]}" > "${out_file}.filtered"
+              mv "${out_file}.filtered" "$out_file"
+              [ -s "$out_file" ] || continue
 
-            > tmp.lst
-            while read -r d; do
-              skip=
-              for p in $(get_parents "$d"); do
-                [[ ${P[$p]} ]] && { skip=1; break; }
-              done
-              [[ $skip ]] || echo "$d"
-            done < "$key.lst" > tmp.lst
-            mv tmp.lst "$key.lst"
+              LC_ALL=C comm -23 \
+                  <(LC_ALL=C sort "$out_file") \
+                  <(LC_ALL=C sort "$TMP_DIR/domains.lst") > "$TMP_DIR/missing_${key}.txt"
 
-            if [[ ! -s "$key.lst" ]]; then
-              echo "$key.lst пуст после фильтрации поддоменов, пропускаем"
-              continue
-            fi
-
-            comm -23 <(sort "$key.lst") <(sort my-domains.lst) | grep -v '\.ua$' > missing_"$key".txt
-            comm -13 <(sort "$key.lst") <(sort my-domains.lst) | grep -v '\.ua$' > presence_"$key".txt
+              LC_ALL=C comm -13 \
+                  <(LC_ALL=C sort "$out_file") \
+                  <(LC_ALL=C sort "$TMP_DIR/domains.lst") > "$TMP_DIR/presence_${key}.txt"
           done
 
-          {
-            for key in "${!S[@]}"; do
-              if [[ -s missing_"$key".txt ]]; then
-                echo "### Missing in $key ###"
-                cat missing_"$key".txt
-                echo
-              fi
-            done
-          } > categories/Compared-Domains/missing-domains.txt
+          for type in missing presence; do
+              final_file="$OUTPUT_DIR/${type}-domains.txt"
+              > "$final_file"
+              for key in "${!SOURCES[@]}"; do
+                  tmp_file="$TMP_DIR/${type}_${key}.txt"
+                  [ -s "$tmp_file" ] && {
+                      printf "### %s in %s ###\n" "${type^}" "$key" >> "$final_file"
+                      cat "$tmp_file" >> "$final_file"
+                      printf "\n" >> "$final_file"
+                  }
+              done
+          done
 
-          {
-            for key in "${!S[@]}"; do
-              if [[ -s presence_"$key".txt ]]; then
-                echo "### Present only in $key ###"
-                cat presence_"$key".txt
-                echo
-              fi
-            done
-          } > categories/Compared-Domains/presence-domains.txt
+          cleanup
 
       - name: Generate domains without YouTube
         run: |
