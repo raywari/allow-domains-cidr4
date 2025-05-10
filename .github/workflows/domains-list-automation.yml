@@ -25,7 +25,7 @@ jobs:
           if [[ -f domains.lst ]]; then
             sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' domains.lst
             sed -i 's/^full://g; s|^https\?://||g; s|^//||g' domains.lst
-            sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]?\.||g' domains.lst
+            sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' domains.lst
             sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' domains.lst
             echo "domains.lst очищен."
           else
@@ -89,13 +89,26 @@ jobs:
 
           for name in "${!SOURCES[@]}"; do
             url="${SOURCES[$name]}"
-            echo "Processing $name ($url)"
+            echo "=== Загрузка $name ($url) ==="
 
             wget -qO "${name}.lst" "$url" || { echo "Ошибка загрузки $url"; exit 1; }
+
+            echo "$(wc -l "${name}.lst") строк в ${name}.lst (до очистки)"
+
+            # Clean downloaded list
+            sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "${name}.lst"
+            sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "${name}.lst"
+            sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "${name}.lst"
+
+            echo "$(wc -l "${name}.lst") строк в ${name}.lst (после очистки)"
+            echo "$(wc -l my-domains.lst) строк в my-domains.lst"
 
             # Compare lists
             comm -23 <(sort -u "${name}.lst") <(sort -u my-domains.lst) | grep -v '\.ua$' > "missing_${name}.txt"
             comm -13 <(sort -u "${name}.lst") <(sort -u my-domains.lst) > "presence_${name}.txt"
+
+            echo "$(wc -l missing_${name}.txt) отсутствующих доменов в missing_${name}.txt"
+            echo "$(wc -l presence_${name}.txt) доменов только в источнике в presence_${name}.txt"
           done
 
           # Generate final reports
