@@ -23,37 +23,36 @@ jobs:
 
       - name: Clean domains.lst
         run: |
-          if [[ -f domains.lst ]]; then
-            sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' domains.lst
-            sed -i 's/^full://g; s|^https\?://||g; s|^//||g' domains.lst
-            sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' domains.lst
-            sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' domains.lst
-            echo "domains.lst очищен."
-          else
-            echo "domains.lst отсутствует." && exit 1
-          fi
+          sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' domains.lst
+          sed -i 's/^full://g; s|^https\?://||g; s|^//||g' domains.lst
+          sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' domains.lst
+          sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' domains.lst
+          echo "domains.lst очищен и готов."
 
       - name: Sort domains.lst
-        run: |
-          LC_COLLATE=C sort -f -u domains.lst -o domains.lst
+        run: LC_COLLATE=C sort -f -u domains.lst -o domains.lst
 
       - name: Filter subdomains
         run: |
           get_parents() {
-            local domain=$1
-            while [[ $domain == *.* ]]; do domain=${domain#*.}; echo "$domain"; done
-          }
-          mapfile -t domains < domains.lst
-          IFS=$'\n' sorted=($(printf '%s\n' "${domains[@]}" | awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
-          declare -A kept; > filtered.txt
-          for domain in "${sorted[@]}"; do
-            skip=false
-            for p in $(get_parents "$domain"); do
-              [[ ${kept["$p"]} ]] && { skip=true; break; }
+            local d=$1
+            while [[ $d == *.* ]]; do
+              d=${d#*.}
+              echo "$d"
             done
-            $skip || { echo "$domain" >> filtered.txt; kept["$domain"]=1; }
+          }
+          mapfile -t all < domains.lst
+          IFS=$'\n' sorted=($(printf '%s\n' "${all[@]}" | awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
+          declare -A keep; > filtered.txt
+          for dom in "${sorted[@]}"; do
+            skip=
+            for p in $(get_parents "$dom"); do
+              [[ ${keep[$p]} ]] && { skip=1; break; }
+            done
+            [[ $skip ]] || { echo "$dom" >> filtered.txt; keep[$dom]=1; }
           done
-          sort -u filtered.txt -o domains.lst; rm filtered.txt
+          sort -u filtered.txt -o domains.lst
+          rm filtered.txt
           echo "Субдомены отфильтрованы."
 
       - name: Generate NekoBox list
@@ -61,82 +60,73 @@ jobs:
 
       - name: Compare with external sources (debug)
         run: |
-          normalize_domains() {
+          normalize() {
             sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$1"
             sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$1"
             sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$1"
             sort -u "$1" -o "$1"
           }
 
-          [[ -f "sources/sources-domains.txt" ]] || { echo "Файл источников не найден!"; exit 1; }
+          [[ -f sources/sources-domains.txt ]] || { echo "❌ sources-domains.txt не найден"; exit 1; }
           mkdir -p categories/Compared-Domains
-          rm -f categories/Compared-Domains/*.txt
+
           cp domains.lst my-domains.lst
-          normalize_domains my-domains.lst
-          declare -A SOURCES
-          while IFS= read -r line; do
+          normalize my-domains.lst
+
+          declare -A SRC
+          while read -r line; do
             [[ "$line" =~ ^#|^$ ]] && continue
-            url=$(echo "$line" | xargs)
-            name=$(basename "$url" | sed 's/\.[^.]*$//')
-            SOURCES["$name"]="$url"
+            url=${line// /}
+            key=$(basename "$url" | sed 's/\.[^.]*$//')
+            SRC[$key]=$url
           done < sources/sources-domains.txt
 
-          for name in "${!SOURCES[@]}"; do
-            url="${SOURCES[$name]}"
-            echo "=== Загрузка $name ($url) ==="
-            wget -qO "${name}.lst" "$url" || { echo "Ошибка загрузки $url"; exit 1; }
+          for key in "${!SRC[@]}"; do
+            url=${SRC[$key]}
+            echo -e "\n=== 👉 Source: $key ($url) ==="
 
-            echo "$(wc -l "${name}.lst") строк в ${name}.lst (до очистки)"
-            normalize_domains "${name}.lst"
-            echo "$(wc -l "${name}.lst") строк в ${name}.lst (после очистки)"
-            echo "$(wc -l my-domains.lst) строк в my-domains.lst"
+            wget -qO "${key}.lst" "$url" || { echo "❌ Не удалось скачать $url"; continue; }
+            echo "до очистки: $(wc -l < "${key}.lst") строк"
 
-            echo "Первые строки ${name}.lst:";  head -n 5 "${name}.lst"
-            echo "Первые строки my-domains.lst:"; head -n 5 my-domains.lst
+            normalize "${key}.lst"
+            echo "после очистки: $(wc -l < "${key}.lst") строк"
+            echo "my-domains.lst: $(wc -l < my-domains.lst) строк"
 
-            comm -23 <(sort -u "${name}.lst") <(sort -u my-domains.lst) | grep -v '\.ua$' > "missing_${name}.txt"
-            comm -13 <(sort -u "${name}.lst") <(sort -u my-domains.lst) > "presence_${name}.txt"
+            echo "-- первые 5 ${key}.lst --"; head -n5 "${key}.lst"
+            echo "-- последние 5 ${key}.lst --"; tail -n5 "${key}.lst"
 
-            echo "$(wc -l missing_${name}.txt) отсутствующих в missing_${name}.txt"
-            echo "$(wc -l presence_${name}.txt) только в источнике в presence_${name}.txt"
+            comm -23 <(sort "${key}.lst") <(sort my-domains.lst) | grep -v '\.ua$' > missing_"$key".txt
+            comm -13 <(sort "${key}.lst") <(sort my-domains.lst) > presence_"$key".txt
+
+            echo "❗️ missing_${key}.txt: $(wc -l < missing_"$key".txt) строк"
+            echo "✅ presence_${key}.txt: $(wc -l < presence_"$key".txt) строк"
           done
 
+          # Собираем в результат
           {
-            for name in "${!SOURCES[@]}"; do
-              echo "### Missing in $name ###"; cat "missing_${name}.txt"; echo
+            for key in "${!SRC[@]}"; do
+              echo "### Missing in $key ###"
+              cat missing_"$key".txt
+              echo
             done
           } > categories/Compared-Domains/missing-domains.txt
 
           {
-            for name in "${!SOURCES[@]}"; do
-              echo "### Present only in $name ###"; cat "presence_${name}.txt"; echo
+            for key in "${!SRC[@]}"; do
+              echo "### Present only in $key ###"
+              cat presence_"$key".txt
+              echo
             done
           } > categories/Compared-Domains/presence-domains.txt
 
-          echo "Сравнение завершено."
+          echo -e "\n✅ Сравнение завершено."
+          echo "Список всех файлов в корне задания:"
+          ls -lh .
 
-      - name: Upload artifacts for debugging
-        uses: actions/upload-artifact@v2
-        with:
-          name: domain-comparison-debug
-          path: |
-            *.lst
-            missing_*.txt
-            presence_*.txt
-            my-domains.lst
-
-      - name: Commit and push .lst changes
+      - name: Commit and push all results
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git add domains.lst domains-nekobox.lst domains-without-yt.lst || true
-          git commit -m "Обновление доменных списков: $(date +'%Y-%m-%d %H:%M')" || echo "Нет изменений"
-          git push
-
-      - name: Commit and push Compared-Domains changes
-        run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-          git add categories/Compared-Domains/*.txt || true
-          git commit -m "Обновление результатов сравнения: $(date +'%Y-%m-%d %H:%M')" || echo "Нет изменений"
+          git add domains.lst domains-nekobox.lst my-domains.lst */*.lst missing_*.txt presence_*.txt categories/Compared-Domains/*.txt || true
+          git commit -m "Debug: обновление списков и результатов ($(date +'%Y-%m-%d %H:%M'))" || echo "✓ Нет новых изменений"
           git push
