@@ -36,10 +36,7 @@ jobs:
         run: |
           get_parents() {
             local d=$1
-            while [[ $d == *.* ]]; do
-              d=${d#*.}
-              echo "$d"
-            done
+            while [[ $d == *.* ]]; do d=${d#*.}; echo "$d"; done
           }
           mapfile -t all < domains.lst
           IFS=$'\n' sorted=($(printf '%s\n' "${all[@]}" | awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
@@ -51,8 +48,7 @@ jobs:
             done
             [[ $skip ]] || { echo "$dom" >> filtered.txt; keep[$dom]=1; }
           done
-          sort -u filtered.txt -o domains.lst
-          rm filtered.txt
+          sort -u filtered.txt -o domains.lst; rm filtered.txt
           echo "Субдомены отфильтрованы."
 
       - name: Generate NekoBox list
@@ -60,6 +56,17 @@ jobs:
 
       - name: Compare with external sources (debug)
         run: |
+          echo "=== Содержимое папки sources/ ==="
+          ls -R sources/
+
+          echo -e "\n=== contents of sources/sources-domains.txt ==="
+          if [[ -f sources/sources-domains.txt ]]; then
+            sed -n '1,20p' sources/sources-domains.txt || true
+          else
+            echo "❌ sources/sources-domains.txt не найден"
+            exit 1
+          fi
+
           normalize() {
             sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$1"
             sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$1"
@@ -67,27 +74,29 @@ jobs:
             sort -u "$1" -o "$1"
           }
 
-          [[ -f sources/sources-domains.txt ]] || { echo "❌ sources-domains.txt не найден"; exit 1; }
           mkdir -p categories/Compared-Domains
-
           cp domains.lst my-domains.lst
           normalize my-domains.lst
 
           declare -A SRC
-          while read -r line; do
+          while IFS= read -r line; do
             [[ "$line" =~ ^#|^$ ]] && continue
             url=${line// /}
             key=$(basename "$url" | sed 's/\.[^.]*$//')
             SRC[$key]=$url
           done < sources/sources-domains.txt
 
+          if [[ ${#SRC[@]} -eq 0 ]]; then
+            echo "❌ Не найдено ни одной ссылки в sources/sources-domains.txt"
+            exit 1
+          fi
+
           for key in "${!SRC[@]}"; do
             url=${SRC[$key]}
             echo -e "\n=== 👉 Source: $key ($url) ==="
-
             wget -qO "${key}.lst" "$url" || { echo "❌ Не удалось скачать $url"; continue; }
-            echo "до очистки: $(wc -l < "${key}.lst") строк"
 
+            echo "до очистки: $(wc -l < "${key}.lst") строк"
             normalize "${key}.lst"
             echo "после очистки: $(wc -l < "${key}.lst") строк"
             echo "my-domains.lst: $(wc -l < my-domains.lst) строк"
@@ -98,11 +107,10 @@ jobs:
             comm -23 <(sort "${key}.lst") <(sort my-domains.lst) | grep -v '\.ua$' > missing_"$key".txt
             comm -13 <(sort "${key}.lst") <(sort my-domains.lst) > presence_"$key".txt
 
-            echo "❗️ missing_${key}.txt: $(wc -l < missing_"$key".txt) строк"
+            echo "❗ missing_${key}.txt: $(wc -l < missing_"$key".txt) строк"
             echo "✅ presence_${key}.txt: $(wc -l < presence_"$key".txt) строк"
           done
 
-          # Собираем в результат
           {
             for key in "${!SRC[@]}"; do
               echo "### Missing in $key ###"
@@ -120,13 +128,13 @@ jobs:
           } > categories/Compared-Domains/presence-domains.txt
 
           echo -e "\n✅ Сравнение завершено."
-          echo "Список всех файлов в корне задания:"
+          echo "Список файлов на рабочем каталоге:"
           ls -lh .
 
       - name: Commit and push all results
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git add domains.lst domains-nekobox.lst my-domains.lst */*.lst missing_*.txt presence_*.txt categories/Compared-Domains/*.txt || true
-          git commit -m "Debug: обновление списков и результатов ($(date +'%Y-%m-%d %H:%M'))" || echo "✓ Нет новых изменений"
+          git add . || true
+          git commit -m "Debug: обновление списков и результатов ($(date +'%Y-%m-%d %H:%M'))" || echo "✓ Нет изменений"
           git push
