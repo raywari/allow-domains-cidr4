@@ -59,8 +59,8 @@ jobs:
       - name: Compare with external sources
         run: |
           normalize() {
-            sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$1"
-            sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$1"
+            sed -i 's/^full://g; s|^https\\?://||g; s|^//||g' "$1"
+            sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\\?\\.||g' "$1"
             sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$1"
             sort -u "$1" -o "$1"
           }
