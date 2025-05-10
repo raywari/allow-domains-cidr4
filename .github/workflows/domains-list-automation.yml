@@ -158,12 +158,13 @@ jobs:
               for key in "${!SOURCES[@]}"; do
                   tmp_file="$TMP_DIR/${type}_${key}.txt"
                   [ -s "$tmp_file" ] && {
-                      printf "### %s from %s ###\n" "${type^}" "$key" >> "$final_file"
-                      cat "$tmp_file" >> "$final_file"
-                      printf "\n" >> "$final_file"
+                      source_url="${SOURCES[$key]}"
+                      printf "# %s\n# Source: %s\n\n" "${type^} domains" "$source_url" >> "$final_file"
+                      cat "$tmp_file" | sed 's/^/- /' >> "$final_file"
+                      printf "\n\n" >> "$final_file"
                   }
               done
-              sed -i '/^$/d' "$final_file"
+              sed -i -e '/^$/N;/^\n$/D' "$final_file"
           done
 
           cleanup
