@@ -132,7 +132,6 @@
 - googletagmanager.com
 - gordonua.com
 - gpt3-openai.com
-- gpu-monkey.com
 - grammarly.com
 - grazie.ai
 - groza.media
@@ -329,7 +328,6 @@
 - reuters.com
 - rferl.org
 - riafan.ru
-- roskomsvoboda.org
 - rpt.usuppliers.uber.com
 - rr3.sn-pouxga5o-vu2l.gvt1.com
 - rr3.sn-pouxga5o-vu2s.gvt1.com
@@ -351,7 +349,6 @@
 - scontent.whatsapp.net
 - screamingfrog.co.uk
 - search.externulls.com
-- searchfloor.org
 - sebeanus.online
 - seeurlpcl.com
 - self.events.data.microsoft.com
@@ -409,7 +406,6 @@
 - supercellid.com
 - supercellstore.com
 - sysdig.com
-- t-invariant.org
 - t-ru.org
 - t-s.news
 - t3.chat
@@ -498,8 +494,6 @@
 - wunderground.com
 - xdaforums.com
 - xnxx-ru.com
-- xnxx.com
-- xvideos-cdn.com
 - yaoilib.me
 - younettranslate.com
 - youtube-ui.l.google.com

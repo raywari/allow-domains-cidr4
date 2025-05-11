@@ -1,4 +1,13 @@
 # Missing domains
+# Source: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
+
+- api.jetbrains.ai
+- xnxx-cdn.com
+- xnxx.net
+- xnxx.tv
+- xnxx3.com
+
+# Missing domains
 # Source: https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst
 
 - gvt1.com
