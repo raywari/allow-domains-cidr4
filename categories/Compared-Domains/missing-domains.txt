@@ -2,6 +2,7 @@
 # Source: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
 
 - api.jetbrains.ai
+- hd-rezka.tv
 - xnxx-cdn.com
 - xnxx.net
 - xnxx.tv
