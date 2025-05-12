@@ -7,6 +7,7 @@ on:
     paths:
       - 'domains.lst'
       - 'sources/sources-domains.txt'
+      - '.github/workflows/apt-cache/apt-domains-list-automation.txt'
   workflow_dispatch:
 
 jobs:
@@ -17,8 +18,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache APT packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/apt/archives
+            /var/lib/apt/lists
+          key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/apt-cache/apt-domains-list-automation.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
+
       - name: Install dependencies
-        run: sudo apt-get install -y wget curl grep moreutils
+        run: |
+          sudo apt-get update
+          sudo xargs -a .github/workflows/apt-cache/apt-domains-list-automation.txt apt-get install -y
 
       - name: Clean domains.lst
         run: |
@@ -72,7 +85,6 @@ jobs:
           mkdir -p "$TMP_DIR" "$OUTPUT_DIR"
           cp "$DOMAINS_FILE" "$TMP_DIR/domains.lst"
 
-          # Нормализация исходного domains.lst
           sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' "$TMP_DIR/domains.lst"
           sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$TMP_DIR/domains.lst"
           sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$TMP_DIR/domains.lst"
@@ -84,10 +96,9 @@ jobs:
               PRIMARY_DOMAINS["$d"]=1
           done < "$TMP_DIR/domains.lst"
 
-          # Загрузка и обработка источников
           declare -A SOURCES
           mapfile -t SOURCE_URLS < <(grep -v '^#' "$SOURCES_FILE" | sed 's/#.*//; /^$/d')
-          
+
           for raw_url in "${SOURCE_URLS[@]}"; do
               url=$(echo "$raw_url" | awk '{print $1}' | xargs)
               [[ "$url" =~ ^https?:// ]] || url="https://$url"
@@ -98,11 +109,10 @@ jobs:
           for key in "${!SOURCES[@]}"; do
               url="${SOURCES[$key]}"
               out_file="$TMP_DIR/${key}.lst"
-              
+
               echo "Processing: $url"
               curl -sfL --connect-timeout 30 --retry 3 "$url" > "$out_file" || continue
 
-              # Обработка hosts-формата
               sed -i -E '
                   /^[[:space:]]*#/d;
                   /^[[:space:]]*$/d;
@@ -114,7 +124,6 @@ jobs:
                   /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/!d;
               ' "$out_file"
 
-              # Общая нормализация
               sed -i '
                   s|^https\?://||g;
                   s|/.*$||g;
@@ -126,7 +135,6 @@ jobs:
 
               [ -s "$out_file" ] || continue
 
-              # Фильтрация поддоменов
               filtered=()
               while IFS= read -r domain; do
                   parent="$domain"
@@ -137,12 +145,11 @@ jobs:
                   done
                   [ $is_sub -eq 0 ] && filtered+=("$domain")
               done < "$out_file"
-              
+
               printf "%s\n" "${filtered[@]}" > "${out_file}.filtered"
               mv "${out_file}.filtered" "$out_file"
               [ -s "$out_file" ] || continue
 
-              # Сравнение доменов
               LC_ALL=C comm -23 \
                   <(LC_ALL=C sort "$out_file") \
                   <(LC_ALL=C sort "$TMP_DIR/domains.lst") > "$TMP_DIR/missing_${key}.txt"
@@ -152,7 +159,6 @@ jobs:
                   <(LC_ALL=C sort "$TMP_DIR/domains.lst") > "$TMP_DIR/presence_${key}.txt"
           done
 
-          # Генерация итоговых файлов
           for type in missing presence; do
               final_file="$OUTPUT_DIR/${type}-domains.txt"
               > "$final_file"

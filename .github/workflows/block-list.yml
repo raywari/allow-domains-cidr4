@@ -7,6 +7,7 @@ on:
     paths:
       - 'categories/Block/**.lst'
       - 'sources/sources-block.txt'
+      - '.github/workflows/apt-cache/apt-block-list.txt'
   workflow_dispatch:
 
 jobs:
@@ -15,6 +16,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Cache APT packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/apt/archives
+            /var/lib/apt/lists
+          key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/apt-cache/apt-block-list.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo xargs -a .github/workflows/apt-cache/apt-block-list.txt apt-get install -y
 
       - name: Prepare environment
         run: |
@@ -26,22 +42,12 @@ jobs:
       - name: Validate and fix entries
         run: |
           cd categories/Block
-          
-          # Сохраняем оригинальные записи без комментариев и пустых строк
           grep -v '^[[:space:]]*#' block-ips.lst | grep -v '^[[:space:]]*$' > original-ips.tmp
           grep -v '^[[:space:]]*#' block-domains.lst | grep -v '^[[:space:]]*$' > original-domains.tmp
-          
-          # Очищаем префиксы 0.0.0.0 или 127.0.0.1
           sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' original-ips.tmp original-domains.tmp
-          
-          # Создаем временные файлы для корректных списков
           > valid-ips.tmp
           > valid-domains.tmp
-          
-          # Регулярка для IP: только цифры и точки (валидные IPv4)
           ip_regex='^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$'
-          
-          # Обрабатываем записи из block-ips.lst
           while IFS= read -r entry; do
             if [[ -n "$entry" ]]; then
               if echo "$entry" | grep -qE "$ip_regex"; then
@@ -51,8 +57,6 @@ jobs:
               fi
             fi
           done < original-ips.tmp
-          
-          # Обрабатываем записи из block-domains.lst
           while IFS= read -r entry; do
             if [[ -n "$entry" ]]; then
               if echo "$entry" | grep -qE "$ip_regex"; then
@@ -62,23 +66,17 @@ jobs:
               fi
             fi
           done < original-domains.tmp
-          
-          # Перемещаем временные файлы в основные
           cat valid-ips.tmp > block-ips.lst
           cat valid-domains.tmp > block-domains.lst
-          
-          # Очищаем временные файлы
           rm -f original-ips.tmp original-domains.tmp valid-ips.tmp valid-domains.tmp
 
       - name: Fetch external data
         run: |
           temp_file="$GITHUB_WORKSPACE/temp.txt"
           > "$temp_file"
-
           while IFS= read -r line || [ -n "$line" ]; do
             [[ "$line" =~ ^[[:space:]]*# || -z "$line" ]] && continue
             line=$(echo "$line" | xargs)
-
             echo "Processing URL: $line"
             curl -sSfL "$line" | \
               grep -v '^#' | \
@@ -89,23 +87,16 @@ jobs:
       - name: Update lists
         run: |
           cd categories/Block
-          
-          # Добавляем новые IP
           grep -E '^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$' \
             "$GITHUB_WORKSPACE/temp.txt" >> block-ips.lst
-
-          # Добавляем новые домены (исключая IP)
           grep -vFf block-ips.lst "$GITHUB_WORKSPACE/temp.txt" >> block-domains.lst
 
       - name: Final processing
         run: |
           cd categories/Block
-          
-          # Функция для фильтрации субдоменов
           filter_subdomains() {
             local input_file=$1
             local output_file=$2
-            
             get_parents() {
               local domain=$1
               local parents=()
@@ -115,15 +106,11 @@ jobs:
               done
               echo "${parents[@]}"
             }
-
-            # Сортируем домены по уровню вложенности
             mapfile -t domains < "$input_file"
             IFS=$'\n' sorted=($(printf '%s\n' "${domains[@]}" | awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
             unset IFS
-
             declare -A kept
             > temp_filtered.txt
-
             for domain in "${sorted[@]}"; do
               skip=false
               for p in $(get_parents "$domain"); do
@@ -137,23 +124,16 @@ jobs:
                 kept["$domain"]=1
               fi
             done
-
             sort -u temp_filtered.txt -o "$output_file"
             rm -f temp_filtered.txt
           }
-
-          # Применяем фильтрацию только для доменов
           if [[ -s block-domains.lst ]]; then
             echo "Фильтрация субдоменов..."
             filter_subdomains block-domains.lst filtered-domains.lst
             mv filtered-domains.lst block-domains.lst
           fi
-
-          # Применяем sort -u к обоим файлам перед генерацией hosts
           sort -u block-ips.lst -o block-ips.lst
           sort -u block-domains.lst -o block-domains.lst
-
-          # Генерация hosts файла
           {
             echo "# Auto-generated hosts"
             echo -e "\n# IP addresses"
