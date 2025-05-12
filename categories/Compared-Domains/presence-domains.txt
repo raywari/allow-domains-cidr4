@@ -210,6 +210,7 @@
 - mouser.com
 - mrakopedia.net
 - musemuse.cn
+- myrotvorets.center
 - nasvsehtoshnit.ru
 - neputin.org
 - netflix.com.au
@@ -1002,6 +1003,7 @@
 - mydoramy.club
 - myheritage.com
 - myjetbrains.com
+- myrotvorets.center
 - nasvsehtoshnit.ru
 - navalny.com
 - nba.com

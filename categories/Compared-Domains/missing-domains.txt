@@ -165,7 +165,6 @@
 - monotypefonts.com
 - myfonts.com
 - myprepaidcenter.com
-- myrotvorets.center
 - norton.com
 - nvidia.com
 - oclc.org
