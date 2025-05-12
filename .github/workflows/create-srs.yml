@@ -24,7 +24,7 @@ jobs:
             git fetch origin main
             AUTHOR=$(git log origin/main -1 --pretty=format:'%an')
             echo "Last commit author: $AUTHOR"
-            if [ "$AUTHOR" = "actions-user" ]; then
+            if [ "$AUTHOR" = "GitHub Action" ]; then
               echo "Found commit from actions-user, continuing..."
               break
             fi
