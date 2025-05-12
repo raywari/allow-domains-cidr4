@@ -411,7 +411,6 @@
 - t3.chat
 - tailscale.com
 - techpowerup.com
-- test.com
 - tfbnw.net
 - thefacebook.com
 - theins.info
@@ -1368,7 +1367,6 @@
 - tellapart.com
 - tempmail.plus
 - temu.com
-- test.com
 - tfbnw.net
 - the-village.ru
 - theaudiodb.com
@@ -2478,7 +2476,6 @@
 - tellapart.com
 - tempmail.plus
 - temu.com
-- test.com
 - tfbnw.net
 - the-village.ru
 - thebarentsobserver.com
