@@ -9,7 +9,7 @@ import subprocess
 
 # Пути к файлам
 domains_file = 'domains.lst'  # В корне
-subnets_file = 'cidr4/summary/raw.lst'  # Подсети
+subnets_file = 'categories/CIDR4/summary.lst'  # Подсети
 output_srs = 'domains-cidr4.srs'  # Итоговый файл в корне
 
 def domains_from_file(filepath):
