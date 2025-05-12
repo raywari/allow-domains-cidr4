@@ -12,10 +12,29 @@ permissions:
   contents: write
 
 jobs:
-  generate-lists:
+  wait-and-generate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4.2.2
+
+      - name: Wait until last commit is from actions-user
+        run: |
+          echo "Waiting for the last commit to be from 'actions-user'..."
+          while true; do
+            git fetch origin main
+            AUTHOR=$(git log origin/main -1 --pretty=format:'%an')
+            echo "Last commit author: $AUTHOR"
+            if [ "$AUTHOR" = "actions-user" ]; then
+              echo "Found commit from actions-user, continuing..."
+              break
+            fi
+            echo "Not from actions-user, waiting 5 seconds..."
+            sleep 5
+          done
+
+      - name: Pull latest changes
+        run: |
+          git pull origin main
 
       - name: Compile ruleset srs
         run: |
@@ -36,28 +55,3 @@ jobs:
           git add categories/SRS/domains-cidr4.srs
           git commit -m "Update SRS ruleset on $(date +'%d.%m.%Y %H:%M')" || echo "No changes to commit"
           git push
-
-  wait-for-actions-user:
-    needs: generate-lists
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4.2.2
-
-      - name: Wait until last commit is from actions-user
-        run: |
-          echo "Waiting for the last commit to be from 'actions-user'..."
-          while true; do
-            AUTHOR=$(git log -1 --pretty=format:'%an')
-            echo "Last commit author: $AUTHOR"
-            if [ "$AUTHOR" = "actions-user" ]; then
-              echo "Found commit from actions-user, continuing..."
-              break
-            fi
-            echo "Not from actions-user, waiting 5 seconds..."
-            sleep 5
-            git fetch origin main
-            git reset --hard origin/main
-          done
-
-      - name: Done
-        run: echo "Workflow completed successfully."
