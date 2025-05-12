@@ -17,16 +17,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Cache APT archives
-        uses: actions/cache@v4
-        with:
-          path: /var/cache/apt/archives/*.deb
-          key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/apt-cache/apt-domains-list-automation.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-apt-
-
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y wget curl grep moreutils
+        run: sudo apt-get install -y wget curl grep moreutils
 
       - name: Clean domains.lst
         run: |
@@ -93,7 +85,7 @@ jobs:
 
           declare -A SOURCES
           mapfile -t SOURCE_URLS < <(grep -v '^#' "$SOURCES_FILE" | sed 's/#.*//; /^$/d')
-
+          
           for raw_url in "${SOURCE_URLS[@]}"; do
               url=$(echo "$raw_url" | awk '{print $1}' | xargs)
               [[ "$url" =~ ^https?:// ]] || url="https://$url"
@@ -104,7 +96,7 @@ jobs:
           for key in "${!SOURCES[@]}"; do
               url="${SOURCES[$key]}"
               out_file="$TMP_DIR/${key}.lst"
-
+              
               echo "Processing: $url"
               curl -sfL --connect-timeout 30 --retry 3 "$url" > "$out_file" || continue
 
@@ -140,10 +132,11 @@ jobs:
                   done
                   [ $is_sub -eq 0 ] && filtered+=("$domain")
               done < "$out_file"
-
+              
               printf "%s\n" "${filtered[@]}" > "${out_file}.filtered"
               mv "${out_file}.filtered" "$out_file"
               [ -s "$out_file" ] || continue
+
 
               LC_ALL=C comm -23 \
                   <(LC_ALL=C sort "$out_file") \
