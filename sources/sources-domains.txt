@@ -1,3 +1,3 @@
 https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
 https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst
-https://raw.githubusercontent.com/dartraiden/no-russia-hosts/refs/heads/master/hosts.txt
+https://community.antifilter.download/list/domains.lst
