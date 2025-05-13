@@ -196,6 +196,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Pull latest changes
+        run: git pull origin main
+
       - name: Create directory structure
         run: |
           mkdir -p \
@@ -287,6 +290,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Pull latest changes
+        run: git pull origin main
 
       - name: Generate routing config JSON
         run: |
