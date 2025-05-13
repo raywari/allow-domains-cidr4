@@ -60,106 +60,114 @@ jobs:
       - name: Compare with external sources
         run: |
           set -eo pipefail
-          TMP_DIR="./tmp"
+
+          BASE_TMP_DIR="./tmp"
           DOMAINS_FILE="domains.lst"
+          RENAMED_DOMAINS_FILE="domains-raywari.lst"
           SOURCES_FILE="sources/sources-domains.txt"
           OUTPUT_DIR="categories/Compared-Domains"
 
           cleanup() {
-              [ -d "$TMP_DIR" ] && rm -rf "$TMP_DIR"
+            [ -d "$BASE_TMP_DIR" ] && rm -rf "$BASE_TMP_DIR"
           }
 
-          mkdir -p "$TMP_DIR" "$OUTPUT_DIR"
-          cp "$DOMAINS_FILE" "$TMP_DIR/domains.lst"
+          mkdir -p "$BASE_TMP_DIR" "$OUTPUT_DIR"
 
-          sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' "$TMP_DIR/domains.lst"
-          sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$TMP_DIR/domains.lst"
-          sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$TMP_DIR/domains.lst"
-          sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$TMP_DIR/domains.lst"
-          LC_ALL=C sort -u "$TMP_DIR/domains.lst" -o "$TMP_DIR/domains.lst"
+          # Note: оригинальный domains.lst не изменяется, работа ведётся с копией domains-raywari.lst в $BASE_TMP_DIR
+          cp "$DOMAINS_FILE" "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
+
+          # Очистка и сортировка domains-raywari.lst
+          sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
+          sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
+          sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
+          sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
+          LC_ALL=C sort -u "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE" -o "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
 
           declare -A PRIMARY_DOMAINS
           while IFS= read -r d; do
-              PRIMARY_DOMAINS["$d"]=1
-          done < "$TMP_DIR/domains.lst"
+            PRIMARY_DOMAINS["$d"]=1
+          done < "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
 
           declare -A SOURCES
           mapfile -t SOURCE_URLS < <(grep -v '^#' "$SOURCES_FILE" | sed 's/#.*//; /^$/d')
 
           for raw_url in "${SOURCE_URLS[@]}"; do
-              url=$(echo "$raw_url" | awk '{print $1}' | xargs)
-              [[ "$url" =~ ^https?:// ]] || url="https://$url"
-              key=$(echo "$url" | sed 's/[?&].*//; s|https\?://||; s|/|_|g; s/\./_/g; s/_$//')
-              SOURCES["$key"]="$url"
+            url=$(echo "$raw_url" | awk '{print $1}' | xargs)
+            [[ "$url" =~ ^https?:// ]] || url="https://$url"
+            key=$(echo "$url" | sed 's/[?&].*//; s|https\?://||; s|/|_|g; s/\./_/g; s/_$//')
+            SOURCES["$key"]="$url"
           done
 
           for key in "${!SOURCES[@]}"; do
-              url="${SOURCES[$key]}"
-              out_file="$TMP_DIR/${key}.lst"
-              
-              echo "Processing: $url"
-              curl -sfL --connect-timeout 30 --retry 3 "$url" > "$out_file" || continue
+            url="${SOURCES[$key]}"
 
-              sed -i -E '
-                  /^[[:space:]]*#/d;
-                  /^[[:space:]]*$/d;
-                  s/^[0-9.]+\s+//;
-                  s/\s+/\n/g;
-                  s/[[:space:]]*#.*$//;
-                  s/^[[:space:]]*//;
-                  s/[[:space:]]*$//;
-                  /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/!d;
-              ' "$out_file"
+            # Создание отдельного временного каталога для каждой загрузки
+            TMP_DIR="$BASE_TMP_DIR/$key"
+            mkdir -p "$TMP_DIR"
 
-              sed -i '
-                  s|^https\?://||g;
-                  s|/.*$||g;
-                  s|:.*$||g;
-                  s|^www[0-9]*\.||g;
-              ' "$out_file"
+            out_file="$TMP_DIR/${key}.lst"
+            echo "Processing: $url"
+            curl -sfL --connect-timeout 30 --retry 3 "$url" > "$out_file" || continue
 
-              LC_ALL=C sort -u "$out_file" -o "$out_file"
+            sed -i -E '
+              /^[[:space:]]*#/d;
+              /^[[:space:]]*$/d;
+              s/^[0-9.]+\s+//;
+              s/\s+/\n/g;
+              s/[[:space:]]*#.*$//;
+              s/^[[:space:]]*//;
+              s/[[:space:]]*$//;
+              /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/!d;
+            ' "$out_file"
 
-              [ -s "$out_file" ] || continue
+            sed -i '
+              s|^https\?://||g;
+              s|/.*$||g;
+              s|:.*$||g;
+              s|^www[0-9]*\.||g;
+            ' "$out_file"
 
-              filtered=()
-              while IFS= read -r domain; do
-                  parent="$domain"
-                  is_sub=0
-                  while [[ "$parent" == *.* ]]; do
-                      parent="${parent#*.}"
-                      [ -n "${PRIMARY_DOMAINS[$parent]}" ] && { is_sub=1; break; }
-                  done
-                  [ $is_sub -eq 0 ] && filtered+=("$domain")
-              done < "$out_file"
-              
-              printf "%s\n" "${filtered[@]}" > "${out_file}.filtered"
-              mv "${out_file}.filtered" "$out_file"
-              [ -s "$out_file" ] || continue
+            LC_ALL=C sort -u "$out_file" -o "$out_file"
+            [ -s "$out_file" ] || { rm -rf "$TMP_DIR"; continue; }
 
+            filtered=()
+            while IFS= read -r domain; do
+              parent="$domain"
+              is_sub=0
+              while [[ "$parent" == *.* ]]; do
+                parent="${parent#*.}"
+                [ -n "${PRIMARY_DOMAINS[$parent]}" ] && { is_sub=1; break; }
+              done
+              [ $is_sub -eq 0 ] && filtered+=("$domain")
+            done < "$out_file"
 
-              LC_ALL=C comm -23 \
-                  <(LC_ALL=C sort "$out_file") \
-                  <(LC_ALL=C sort "$TMP_DIR/domains.lst") > "$TMP_DIR/missing_${key}.txt"
+            printf "%s\n" "${filtered[@]}" > "${out_file}.filtered"
+            mv "${out_file}.filtered" "$out_file"
+            [ -s "$out_file" ] || { rm -rf "$TMP_DIR"; continue; }
 
-              LC_ALL=C comm -13 \
-                  <(LC_ALL=C sort "$out_file") \
-                  <(LC_ALL=C sort "$TMP_DIR/domains.lst") > "$TMP_DIR/presence_${key}.txt"
+            LC_ALL=C comm -23 \
+              <(LC_ALL=C sort "$out_file") \
+              <(LC_ALL=C sort "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE") > "$TMP_DIR/missing_${key}.txt"
+
+            LC_ALL=C comm -13 \
+              <(LC_ALL=C sort "$out_file") \
+              <(LC_ALL=C sort "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE") > "$TMP_DIR/presence_${key}.txt"
           done
 
           for type in missing presence; do
-              final_file="$OUTPUT_DIR/${type}-domains.txt"
-              > "$final_file"
-              for key in "${!SOURCES[@]}"; do
-                  tmp_file="$TMP_DIR/${type}_${key}.txt"
-                  [ -s "$tmp_file" ] && {
-                      source_url="${SOURCES[$key]}"
-                      printf "# %s\n# Source: %s\n\n" "${type^} domains" "$source_url" >> "$final_file"
-                      cat "$tmp_file" | sed 's/^/- /' >> "$final_file"
-                      printf "\n\n" >> "$final_file"
-                  }
-              done
-              sed -i -e '/^$/N;/^\n$/D' "$final_file"
+            final_file="$OUTPUT_DIR/${type}-domains.txt"
+            > "$final_file"
+            for key in "${!SOURCES[@]}"; do
+              TMP_DIR="$BASE_TMP_DIR/$key"
+              tmp_file="$TMP_DIR/${type}_${key}.txt"
+              [ -s "$tmp_file" ] && {
+                source_url="${SOURCES[$key]}"
+                printf "# %s\n# Source: %s\n\n" "${type^} domains" "$source_url" >> "$final_file"
+                cat "$tmp_file" | sed 's/^/- /' >> "$final_file"
+                printf "\n\n" >> "$final_file"
+              }
+            done
+            sed -i -e '/^$/N;/^\n$/D' "$final_file"
           done
 
           cleanup
