@@ -32,9 +32,11 @@
 - amd.com
 - androidpolice.com
 - anidub.pro
+- animestars.org
 - antiwar.in
 - api.github.com
 - aplawrence.com
+- app.amplitude.com
 - appspot.com
 - appstorrent.ru
 - aqicn.org
@@ -66,7 +68,6 @@
 - cambiumnetworks.com
 - cdn.betterttv.net
 - cdn.sapphire.microsoftapp.net
-- cdn77-pic.xnxx-cdn.com
 - ce1-048-404gv.video-ik-ok-ii.xyz
 - certifytheweb.com
 - citrix.com
@@ -102,6 +103,7 @@
 - envato.com
 - envatousercontent.com
 - err.ee
+- eu-iot-prod.aws.tcljd.com
 - ev-ph.rdtcdn.com
 - event.pixiv-recommend.net
 - f95zone.to
@@ -114,11 +116,13 @@
 - fb.me
 - feedcdn.sapphire.microsoftapp.net
 - fex.net
+- flashscore.com
 - fork.pet
 - fpt2.microsoft.com
 - g2a.com
 - gamesfirsthelsinki.com
 - gateway.bingviz.microsoftapp.net
+- geekyfuroshiki.com
 - geller-pa.googleapis.com
 - gemini.google
 - gemini.google.com
@@ -147,6 +151,7 @@
 - hbomax.com
 - hdrezka.cm
 - hentaichan.live
+- honeywell.com
 - hotleak.vip
 - howlongtobeat.com
 - hrw.org
@@ -215,6 +220,7 @@
 - myrotvorets.center
 - nasvsehtoshnit.ru
 - neputin.org
+- netapp.com
 - netflix.com.au
 - netflixdnstest1.com
 - netflixdnstest10.com
@@ -253,6 +259,7 @@
 - openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 - openaicomproductionae4b.blob.core.windows.net
 - opentrackr.org
+- orbit-games.com
 - ovdinfo.legal
 - ozi-ru.org
 - p1-tt-ipv6.byteimg.com
@@ -331,6 +338,7 @@
 - reuters.com
 - rferl.org
 - riafan.ru
+- ridl.io
 - rpt.usuppliers.uber.com
 - rr3.sn-pouxga5o-vu2l.gvt1.com
 - rr3.sn-pouxga5o-vu2s.gvt1.com
@@ -346,6 +354,7 @@
 - s-bid.rmp.rakuten.com
 - sakh.com
 - sapphire.api.microsoftapp.net
+- saveeditonline.com
 - saverudata.info
 - scdn.co
 - schaeffler.com
@@ -362,6 +371,7 @@
 - sf16-ttcdn-tos.ipstatp.com
 - sf6-ttcdn-tos.pstatp.com
 - sgsnssdk.com
+- siemens-home.bsh-group.com
 - signal.art
 - signal.group
 - signal.link
@@ -371,6 +381,7 @@
 - skyscanner.com
 - slideshare.net
 - smashwords.com
+- snapmagic.com
 - snd.sc
 - sndcdn.com
 - soapui.org
@@ -496,8 +507,10 @@
 - wstracker.online
 - wunderground.com
 - xdaforums.com
+- xerox.com
 - xnxx-ru.com
 - yaoilib.me
+- yeggi.com
 - younettranslate.com
 - youtube-ui.l.google.com
 - youtube.googleapis.com
@@ -594,6 +607,7 @@
 - anthropic.com
 - antiwar.in
 - aol.com
+- api.jetbrains.ai
 - api.service-kp.com
 - appspot.com
 - arbat.media
@@ -660,7 +674,6 @@
 - cdn.betterttv.net
 - cdn.sapphire.microsoftapp.net
 - cdn.web-platform.io
-- cdn77-pic.xnxx-cdn.com
 - cdnbunny.org
 - cdromance.org
 - cdw.com
@@ -864,6 +877,7 @@
 - hayday.com
 - haydaygame.com
 - hbomax.com
+- hd-rezka.tv
 - hdrezka.ac
 - hdrezka.ag
 - hdrezka.cm
@@ -1466,6 +1480,7 @@
 - unscreen.com
 - upwork.com
 - usa.one
+- usatoday.com
 - v16-tiktokcdn-com.akamaized.net
 - vagrantcloud.com
 - vbcdn.com
@@ -1519,7 +1534,11 @@
 - wpengine.com
 - wstracker.online
 - xdaforums.com
+- xnxx-cdn.com
 - xnxx-ru.com
+- xnxx.net
+- xnxx.tv
+- xnxx3.com
 - xsts.auth.xboxlive.com
 - xtracloud.net
 - xv-ru.com
@@ -1617,13 +1636,16 @@
 - animedia.tv
 - animego.org
 - animespirit.ru
+- animestars.org
 - anistar.org
 - anistars.ru
 - annas-archive.org
 - anthropic.com
 - antiwar.in
 - aol.com
+- api.jetbrains.ai
 - api.service-kp.com
+- app.amplitude.com
 - appspot.com
 - arbat.media
 - archive.ph
@@ -1690,7 +1712,6 @@
 - cbilling.vip
 - cdn.sapphire.microsoftapp.net
 - cdn.web-platform.io
-- cdn77-pic.xnxx-cdn.com
 - cdnbunny.org
 - cdromance.org
 - cdw.com
@@ -1778,6 +1799,7 @@
 - envatousercontent.com
 - epidemz.net.co
 - err.ee
+- eu-iot-prod.aws.tcljd.com
 - euronews.com
 - euroradio.fm
 - eutrp.eu
@@ -1809,6 +1831,7 @@
 - filmix.day
 - filmix.fm
 - filmix.la
+- flashscore.com
 - flibusta.net
 - flipboard.com
 - flir.com
@@ -1836,6 +1859,7 @@
 - gamesrepack.com
 - gaming.amazon.com
 - gateway.bingviz.microsoftapp.net
+- geekyfuroshiki.com
 - geforcenow.com
 - gelbooru.com
 - geller-pa.googleapis.com
@@ -1879,6 +1903,7 @@
 - hashicorp.com
 - hayday.com
 - haydaygame.com
+- hd-rezka.tv
 - hdkinoteatr.com
 - hdrezka.ac
 - hdrezka.cm
@@ -1890,6 +1915,7 @@
 - hollisterco.com
 - holod.media
 - home-connect.com
+- honeywell.com
 - hostgator.com
 - hostinger.com
 - hotels.com
@@ -2050,6 +2076,7 @@
 - nba.com
 - neo4j.com
 - neputin.org
+- netapp.com
 - netflix.ca
 - netflix.com.au
 - netflix.net
@@ -2129,6 +2156,7 @@
 - opentrackr.org
 - opposition-news.com
 - oracle.com
+- orbit-games.com
 - ovd.info
 - ovd.legal
 - ovd.news
@@ -2250,6 +2278,7 @@
 - rezonans.media
 - rferl.org
 - riafan.ru
+- ridl.io
 - riperam.org
 - roar-review.com
 - root-nation.com
@@ -2287,6 +2316,7 @@
 - salesforceliveagent.com
 - sap.com
 - sapphire.api.microsoftapp.net
+- saveeditonline.com
 - saverudata.net
 - scdn.co
 - schaeffler.com
@@ -2316,6 +2346,7 @@
 - shop.gameloft.com
 - showip.net
 - sibreal.org
+- siemens-home.bsh-group.com
 - signal.group
 - signal.link
 - signal.me
@@ -2335,6 +2366,7 @@
 - smartbear.co
 - smartbear.com
 - smartdeploy.com
+- snapmagic.com
 - snd.sc
 - sndcdn.com
 - snort.org
@@ -2503,6 +2535,7 @@
 - unscreen.com
 - upwork.com
 - usa.one
+- usatoday.com
 - v16-tiktokcdn-com.akamaized.net
 - vagrantcloud.com
 - vbcdn.com
@@ -2558,14 +2591,20 @@
 - wstracker.online
 - x.com
 - xdaforums.com
+- xerox.com
+- xnxx-cdn.com
 - xnxx-ru.com
 - xnxx.com
+- xnxx.net
+- xnxx.tv
+- xnxx3.com
 - xsts.auth.xboxlive.com
 - xtracloud.net
 - xv-ru.com
 - xvideos-cdn.com
 - xvideos.com
 - yaoilib.me
+- yeggi.com
 - yle.fi
 - younettranslate.com
 - youtube-ui.l.google.com
