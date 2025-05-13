@@ -422,7 +422,7 @@ jobs:
                       "name": "rule_4",
                       "network": "",
                       "noDrop": false,
-                      "outboundID": -1,
+                      "outboundID": -2,
                       "override_address": "",
                       "override_port": 0,
                       "process_name": [
