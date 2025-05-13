@@ -1,3 +1,31 @@
+# Missing domains
+# Source: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
+
+- api.jetbrains.ai
+- hd-rezka.tv
+- usatoday.com
+- xnxx-cdn.com
+- xnxx.net
+- xnxx.tv
+- xnxx3.com
+
+# Missing domains
+# Source: https://community.antifilter.download/list/domains.lst
+
+- animestars.org
+- app.amplitude.com
+- eu-iot-prod.aws.tcljd.com
+- flashscore.com
+- geekyfuroshiki.com
+- honeywell.com
+- netapp.com
+- orbit-games.com
+- ridl.io
+- saveeditonline.com
+- siemens-home.bsh-group.com
+- snapmagic.com
+- xerox.com
+- yeggi.com
 10minutemail.com
 1337x.to
 24.kg
