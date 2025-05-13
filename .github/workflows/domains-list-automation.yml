@@ -264,10 +264,16 @@ jobs:
 
           mapfile -t domains < domains.lst
           domain_entries=()
-          for domain in "${domains[@]}"; do
-              domain_entries+=("                \"$domain\"")
+          for i in "${!domains[@]}"; do
+             domain="\"${domains[$i]}\""
+             if [ "$i" -lt $((${#domains[@]} - 1)) ]; then
+                 domain_entries+=("                $domain,")
+             else
+                domain_entries+=("                $domain")
+             fi
           done
-          (IFS=$',\n'; printf "%s\n" "${domain_entries[@]}") >> "$tmp_file"
+
+          (IFS=$'\n'; printf "%s\n" "${domain_entries[@]}") >> "$tmp_file"
 
           cat << 'EOF' >> "$tmp_file"
                   ],
