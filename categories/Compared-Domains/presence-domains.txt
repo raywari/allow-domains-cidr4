@@ -121,7 +121,9 @@
 - gateway.bingviz.microsoftapp.net
 - geller-pa.googleapis.com
 - gemini.google
+- gemini.google.com
 - generativeai.google
+- generativelanguage.googleapis.com
 - geni.us
 - genius.com
 - ggpht.cn
