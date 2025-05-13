@@ -302,10 +302,15 @@ jobs:
 
           mapfile -t cidrs < categories/CIDR4/summary.lst
           cidr_entries=()
-          for cidr in "${cidrs[@]}"; do
-              cidr_entries+=("                \"$cidr\"")
+          for i in "${!cidrs[@]}"; do
+            cidr="\"${cidrs[$i]}\""
+            if [ "$i" -lt $((${#cidrs[@]} - 1)) ]; then
+              cidr_entries+=("                $cidr,")
+            else
+              cidr_entries+=("                $cidr")
+            fi
           done
-          (IFS=,$'\n'; echo "${cidr_entries[*]}") >> "$tmp_file"
+          (IFS=$'\n'; printf "%s\n" "${cidr_entries[@]}") >> "$tmp_file"
 
           cat << 'EOF' >> "$tmp_file"
                   ],
