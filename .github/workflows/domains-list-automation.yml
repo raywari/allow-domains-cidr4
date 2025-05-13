@@ -176,7 +176,7 @@ jobs:
           for f in domains.lst domains-nekobox.lst domains-without-yt.lst; do
             [[ -f $f ]] && git add "$f"
           done
-          git commit -m "Update domain lists" || echo "No changes to commit"
+          git commit -m "Updated domain lists" || echo "No changes to commit"
           git push origin main
 
       - name: Commit and push Compared-Domains changes
@@ -186,7 +186,7 @@ jobs:
           for f in categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt; do
             [[ -f $f ]] && git add "$f"
           done
-          git commit -m "Domain comparison: $(date +'%Y-%m-%d')" || echo "No comparison changes"
+          git commit -m "Domains compared" || echo "No comparison changes"
           git push origin main
 
   process-subnets:
@@ -249,7 +249,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add categories/CIDR4 categories/CIDR6
-          git commit -m "Update CIDR lists $(date +'%Y-%m-%d')" || echo "No changes to commit"
+          git commit -m "Update CIDR lists" || echo "No changes to commit"
           git push origin main
 
   generate-srs:
@@ -281,7 +281,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add categories/Rulesets/domains-cidr4.srs
-          git commit -m "Update SRS ruleset: $(date +'%d.%m.%Y %H:%M')" || echo "No SRS changes"
+          git commit -m "Update SRS ruleset" || echo "No SRS changes"
           git push origin main
 
   generate-routing-nekobox-config:
@@ -430,5 +430,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add categories/Rulesets/nekoray-mahdi.json
-          git commit -m "Update routing config: $(date +'%d.%m.%Y %H:%M')" || echo "No config changes"
+          git commit -m "Update routing config" || echo "No config changes"
           git push origin main
