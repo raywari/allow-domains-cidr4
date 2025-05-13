@@ -231,7 +231,7 @@ jobs:
       - name: Generate routing config JSON
         run: |
           rm -f categories/Rulesets/nekoray-mahdi.json
-
+          
           tmp_file=$(mktemp)
 
           cat << 'EOF' > "$tmp_file"
@@ -263,15 +263,14 @@ jobs:
                       "domain_suffix": [
           EOF
 
-          first=true
-          while IFS= read -r domain; do
-              if [ "$first" = true ]; then
-                  echo "                \"$domain\"" >> "$tmp_file"
-                  first=false
+          mapfile -t domains < domains.lst
+          for i in "${!domains[@]}"; do
+              if [ "$i" -eq 0 ]; then
+                  echo "                \"${domains[$i]}\"" >> "$tmp_file"
               else
-                  echo "                ,\"$domain\"" >> "$tmp_file"
+                  echo "                ,\"${domains[$i]}\"" >> "$tmp_file"
               fi
-          done < domains.lst
+          done
 
           cat << 'EOF' >> "$tmp_file"
                   ],
@@ -298,15 +297,15 @@ jobs:
                   "ip_cidr": [
           EOF
 
-          first=true
-          while IFS= read -r cidr; do
-              if [ "$first" = true ]; then
-                  echo "                \"$cidr\"" >> "$tmp_file"
-                  first=false
+          # Читаем CIDR-ы из categories/CIDR4/summary.lst и добавляем их в JSON
+          mapfile -t cidrs < categories/CIDR4/summary.lst
+          for i in "${!cidrs[@]}"; do
+              if [ "$i" -eq 0 ]; then
+                  echo "                \"${cidrs[$i]}\"" >> "$tmp_file"
               else
-                  echo "                ,\"$cidr\"" >> "$tmp_file"
+                  echo "                ,\"${cidrs[$i]}\"" >> "$tmp_file"
               fi
-          done < categories/CIDR4/summary.lst
+          done
 
           cat << 'EOF' >> "$tmp_file"
                   ],
