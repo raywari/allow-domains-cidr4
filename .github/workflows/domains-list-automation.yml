@@ -2,11 +2,11 @@ name: Domains Automation
 
 on:
   schedule:
-    - cron: '0 10 * * *'
+    - cron: "0 10 * * *"
   push:
     paths:
-      - 'domains.lst'
-      - 'sources/sources-domains.txt'
+      - "domains.lst"
+      - "sources/sources-domains.txt"
   workflow_dispatch:
 
 permissions:
@@ -85,7 +85,7 @@ jobs:
 
           declare -A SOURCES
           mapfile -t SOURCE_URLS < <(grep -v '^#' "$SOURCES_FILE" | sed 's/#.*//; /^$/d')
-          
+
           for raw_url in "${SOURCE_URLS[@]}"; do
               url=$(echo "$raw_url" | awk '{print $1}' | xargs)
               [[ "$url" =~ ^https?:// ]] || url="https://$url"
@@ -221,126 +221,148 @@ jobs:
           git commit -m "Update SRS ruleset: $(date +'%d.%m.%Y %H:%M')" || echo "No SRS changes"
           git push origin main
 
-  generate-routing-nekobox-config:
-    runs-on: ubuntu-latest
-    needs: generate-srs
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+generate-routing-nekobox-config:
+  runs-on: ubuntu-latest
+  needs: generate-srs
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Generate routing config JSON
-        run: |
-          rm -f categories/Rulesets/nekoray-mahdi.json
-          tmp_file=$(mktemp)
+    - name: Generate routing config JSON
+      run: |
+        rm -f categories/Rulesets/nekoray-mahdi.json
+        tmp_file=$(mktemp)
 
-          cat << 'EOF' > "$tmp_file"
-          {
-              "id": 222222223,
-              "name": "routing",
-              "rules": [
-                  {
-                      "actionType": "hijack-dns",
-                      "invert": false,
-                      "ip_is_private": false,
-                      "ip_version": "",
-                      "name": "rule_1",
-                      "network": "",
-                      "noDrop": false,
-                      "outboundID": -2,
-                      "override_address": "",
-                      "override_port": 0,
-                      "protocol": "dns",
-                      "rejectMethod": "",
-                      "simple_action": 0,
-                      "sniffOverrideDest": false,
-                      "source_ip_is_private": false,
-                      "strategy": "",
-                      "type": 0
-                  },
-                  {
-                      "actionType": "route",
-                      "domain_suffix": [
-          EOF
+        cat << 'EOF' > "$tmp_file"
+        {
+            "id": 222222223,
+            "name": "routing",
+            "rules": [
+                {
+                    "actionType": "hijack-dns",
+                    "invert": false,
+                    "ip_is_private": false,
+                    "ip_version": "",
+                    "name": "rule_1",
+                    "network": "",
+                    "noDrop": false,
+                    "outboundID": -2,
+                    "override_address": "",
+                    "override_port": 0,
+                    "protocol": "dns",
+                    "rejectMethod": "",
+                    "simple_action": 0,
+                    "sniffOverrideDest": false,
+                    "source_ip_is_private": false,
+                    "strategy": "",
+                    "type": 0
+                },
+                {
+                    "actionType": "route",
+                    "domain_suffix": [
+        EOF
 
-          mapfile -t domains < domains.lst
-          domain_entries=()
-          for i in "${!domains[@]}"; do
-             domain="\"${domains[$i]}\""
-             if [ "$i" -lt $((${#domains[@]} - 1)) ]; then
-                 domain_entries+=("                $domain,")
-             else
-                domain_entries+=("                $domain")
-             fi
-          done
+        mapfile -t domains < domains.lst
+        domain_entries=()
+        for i in "${!domains[@]}"; do
+          domain="\"${domains[$i]}\""
+          if [ "$i" -lt $((${#domains[@]} - 1)) ]; then
+              domain_entries+=("                $domain,")
+          else
+              domain_entries+=("                $domain")
+          fi
+        done
 
-          (IFS=$'\n'; printf "%s\n" "${domain_entries[@]}") >> "$tmp_file"
+        (IFS=$'\n'; printf "%s\n" "${domain_entries[@]}") >> "$tmp_file"
 
-          cat << 'EOF' >> "$tmp_file"
-                  ],
-                  "invert": false,
-                  "ip_is_private": false,
-                  "ip_version": "",
-                  "name": "rule_2",
-                  "network": "",
-                  "noDrop": false,
-                  "outboundID": -1,
-                  "override_address": "",
-                  "override_port": 0,
-                  "protocol": "",
-                  "rejectMethod": "",
-                  "simple_action": 0,
-                  "sniffOverrideDest": false,
-                  "source_ip_is_private": false,
-                  "strategy": "",
-                  "type": 0
-              },
-              {
-                  "actionType": "route",
-                  "invert": false,
-                  "ip_cidr": [
-          EOF
+        cat << 'EOF' >> "$tmp_file"
+                    ],
+                    "invert": false,
+                    "ip_is_private": false,
+                    "ip_version": "",
+                    "name": "rule_2",
+                    "network": "",
+                    "noDrop": false,
+                    "outboundID": -1,
+                    "override_address": "",
+                    "override_port": 0,
+                    "protocol": "",
+                    "rejectMethod": "",
+                    "simple_action": 0,
+                    "sniffOverrideDest": false,
+                    "source_ip_is_private": false,
+                    "strategy": "",
+                    "type": 0
+                },
+                {
+                    "actionType": "route",
+                    "invert": false,
+                    "ip_cidr": [
+        EOF
 
-          mapfile -t cidrs < categories/CIDR4/summary.lst
-          cidr_entries=()
-          for i in "${!cidrs[@]}"; do
-            cidr="\"${cidrs[$i]}\""
-            if [ "$i" -lt $((${#cidrs[@]} - 1)) ]; then
-              cidr_entries+=("                $cidr,")
-            else
-              cidr_entries+=("                $cidr")
-            fi
-          done
-          (IFS=$'\n'; printf "%s\n" "${cidr_entries[@]}") >> "$tmp_file"
+        mapfile -t cidrs < categories/CIDR4/summary.lst
+        cidr_entries=()
+        for i in "${!cidrs[@]}"; do
+          cidr="\"${cidrs[$i]}\""
+          if [ "$i" -lt $((${#cidrs[@]} - 1)) ]; then
+            cidr_entries+=("                $cidr,")
+          else
+            cidr_entries+=("                $cidr")
+          fi
+        done
+        (IFS=$'\n'; printf "%s\n" "${cidr_entries[@]}") >> "$tmp_file"
 
-          cat << 'EOF' >> "$tmp_file"
-                  ],
-                  "ip_is_private": false,
-                  "ip_version": "",
-                  "name": "rule_3",
-                  "network": "",
-                  "noDrop": false,
-                  "outboundID": -2,
-                  "override_address": "",
-                  "override_port": 0,
-                  "protocol": "",
-                  "rejectMethod": "",
-                  "simple_action": 1600940404,
-                  "sniffOverrideDest": false,
-                  "source_ip_is_private": false,
-                  "strategy": "",
-                  "type": 0
-              }
-          ]
-          }
-          EOF
+        cat << 'EOF' >> "$tmp_file"
+                    ],
+                    "ip_is_private": false,
+                    "ip_version": "",
+                    "name": "rule_3",
+                    "network": "",
+                    "noDrop": false,
+                    "outboundID": -1,
+                    "override_address": "",
+                    "override_port": 0,
+                    "protocol": "",
+                    "rejectMethod": "",
+                    "simple_action": 1600940404,
+                    "sniffOverrideDest": false,
+                    "source_ip_is_private": false,
+                    "strategy": "",
+                    "type": 0
+                },
+                {
+                    "actionType": "route",
+                    "invert": false,
+                    "ip_is_private": false,
+                    "ip_version": "",
+                    "name": "rule_4",
+                    "network": "",
+                    "noDrop": false,
+                    "outboundID": -1,
+                    "override_address": "",
+                    "override_port": 0,
+                    "process_name": [
+                        "Discord.exe"
+                    ],
+                    "protocol": "",
+                    "rejectMethod": "",
+                    "simple_action": 0,
+                    "sniffOverrideDest": false,
+                    "source_ip_is_private": false,
+                    "strategy": "",
+                    "type": 0
+                }
+            ]
+        }
+        EOF
 
-          mkdir -p categories/Rulesets
-          mv "$tmp_file" categories/Rulesets/nekoray-mahdi.json
+        mkdir -p categories/Rulesets
+        mv "$tmp_file" categories/Rulesets/nekoray-mahdi.json
 
-      - name: Commit and push routing config
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add categories/Rulesets/nekoray-mahdi.json
-          git commit -m "Update routing config: $(date +'%d.%m.%Y %H:%M')" || echo "No config changes"
-          git push origin main
+    - name: Commit and push routing config
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add categories/Rulesets/nekoray-mahdi.json
+        git commit -m "Update routing config: $(date +'%d.%m.%Y %H:%M')" || echo "No config changes"
+        git push origin main
