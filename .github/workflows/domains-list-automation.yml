@@ -267,7 +267,7 @@ jobs:
           for domain in "${domains[@]}"; do
               domain_entries+=("                \"$domain\"")
           done
-          (IFS=$',\n'; printf "%s\n" "${domain_entries[*]}") >> "$tmp_file"
+          (IFS=$',\n'; printf "%s\n" "${domain_entries[@]}") >> "$tmp_file"
 
           cat << 'EOF' >> "$tmp_file"
                   ],
