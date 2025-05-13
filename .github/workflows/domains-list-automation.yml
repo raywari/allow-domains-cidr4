@@ -13,7 +13,7 @@ permissions:
   contents: write
 
 jobs:
-  process-and-compare-domains:
+  process-domains:
     runs-on: ubuntu-latest
 
     steps:
@@ -191,7 +191,7 @@ jobs:
 
   generate-srs:
     runs-on: ubuntu-24.04
-    needs: process-and-compare
+    needs: process-domains
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -223,7 +223,7 @@ jobs:
 
   generate-routing-nekobox-config:
     runs-on: ubuntu-latest
-    needs: process-and-compare-domains
+    needs: generate-srs
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
