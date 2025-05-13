@@ -202,10 +202,10 @@ jobs:
       - name: Create directory structure
         run: |
           mkdir -p \
-            categories/CIDR4/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter} \
-            categories/CIDR6/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter}
+            categories/CIDR4/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter,Hetzner,OVH} \
+            categories/CIDR6/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter,Hetzner,OVH}
 
-      - name: Fetch Cloudflare networks
+      - name: Get Cloudflare networks
         run: |
           curl -sSfL "https://www.cloudflare.com/ips-v4" | sort -u > categories/CIDR4/services/Cloudflare-ECH/cloudflare-ECH.lst
           curl -sSfL "https://www.cloudflare.com/ips-v6" | sort -u > categories/CIDR6/services/Cloudflare-ECH/cloudflare-ECH.lst
@@ -238,10 +238,20 @@ jobs:
           awk '/13414$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/services/X-Twitter/x_twitter.lst
           awk '/13414$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/services/X-Twitter/x_twitter.lst
 
+      - name: Extract Hetzner networks
+        run: |
+          awk '/24940$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/services/Hetzner/hetzner.lst
+          awk '/24940$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/services/Hetzner/hetzner.lst
+
+      - name: Extract OVH networks
+        run: |
+          awk '/16276$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/services/OVH/ovh.lst
+          awk '/16276$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/services/OVH/ovh.lst
+
       - name: Generate summaries
         run: |
-          cat categories/CIDR4/services/*/*.lst | sort -u > categories/CIDR4/summary.lst
-          cat categories/CIDR6/services/*/*.lst | sort -u > categories/CIDR6/summary.lst
+          cat categories/CIDR4/services/{Cloudflare-ECH/cloudflare-ECH.lst,Discord/discord-voice.lst,Meta/meta.lst,X-Twitter/x_twitter.lst} | sort -u > categories/CIDR4/summary.lst
+          cat categories/CIDR6/services/{Cloudflare-ECH/cloudflare-ECH.lst,Discord/discord-voice.lst,Meta/meta.lst,X-Twitter/x_twitter.lst} | sort -u > categories/CIDR6/summary.lst
           rm bgp_table.txt
 
       - name: Commit changes
