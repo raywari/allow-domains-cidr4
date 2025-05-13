@@ -189,9 +189,69 @@ jobs:
           git commit -m "Domain comparison: $(date +'%Y-%m-%d')" || echo "No comparison changes"
           git push origin main
 
+  process-subnets:
+    runs-on: ubuntu-latest
+    needs: process-domains
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create directory structure
+        run: |
+          mkdir -p \
+            categories/CIDR4/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter} \
+            categories/CIDR6/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter}
+
+      - name: Fetch Cloudflare networks
+        run: |
+          curl -sSfL "https://www.cloudflare.com/ips-v4" | sort -u > categories/CIDR4/services/Cloudflare-ECH/cloudflare-ECH.lst
+          curl -sSfL "https://www.cloudflare.com/ips-v6" | sort -u > categories/CIDR6/services/Cloudflare-ECH/cloudflare-ECH.lst
+
+      - name: Get Discord CIDRs
+        run: |
+          curl -sSfL "https://iplist.opencck.org/?format=text&data=cidr4&site=discord.gg&site=discord.media" | sort -u > categories/CIDR4/services/Discord/discord-voice.lst
+          curl -sSfL "https://iplist.opencck.org/?format=text&data=cidr6&site=discord.gg&site=discord.media" | sort -u > categories/CIDR6/services/Discord/discord-voice.lst
+
+      - name: Get Telegram networks
+        run: |
+          TEMP_FILE=$(mktemp)
+          curl -sSfL "https://core.telegram.org/resources/cidr.txt" > "$TEMP_FILE"
+          grep -F '.' "$TEMP_FILE" | sort -u > categories/CIDR4/services/Telegram/telegram.lst
+          grep -F ':' "$TEMP_FILE" | sort -u > categories/CIDR6/services/Telegram/telegram.lst
+          rm "$TEMP_FILE"
+
+      - name: Download BGP data
+        run: |
+          USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+          curl --retry 3 -sSfL -A "$USER_AGENT" "https://bgp.tools/table.txt" > bgp_table.txt || exit 1
+
+      - name: Extract Meta networks
+        run: |
+          awk '/32934$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/services/Meta/meta.lst
+          awk '/32934$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/services/Meta/meta.lst
+
+      - name: Extract Twitter networks
+        run: |
+          awk '/13414$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/services/X-Twitter/x_twitter.lst
+          awk '/13414$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/services/X-Twitter/x_twitter.lst
+
+      - name: Generate summaries
+        run: |
+          cat categories/CIDR4/services/*/*.lst | sort -u > categories/CIDR4/summary.lst
+          cat categories/CIDR6/services/*/*.lst | sort -u > categories/CIDR6/summary.lst
+          rm bgp_table.txt
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add categories/CIDR4 categories/CIDR6
+          git commit -m "Update CIDR lists $(date +'%Y-%m-%d')" || echo "No changes to commit"
+          git push origin main
+
   generate-srs:
     runs-on: ubuntu-24.04
-    needs: process-domains
+    needs: process-subnets
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -365,77 +425,4 @@ jobs:
           git config --local user.name "GitHub Action"
           git add categories/Rulesets/nekoray-mahdi.json
           git commit -m "Update routing config: $(date +'%d.%m.%Y %H:%M')" || echo "No config changes"
-          git push origin main
-
-  process-subnets:
-    runs-on: ubuntu-latest
-    needs: generate-routing-nekobox-config
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y curl
-
-      - name: Create directory structure
-        run: mkdir -p categories/CIDR4 categories/CIDR6
-
-      - name: Extract Cloudflare networks
-        run: |
-          curl -sSfL "https://www.cloudflare.com/ips-v4" | sort -u > categories/CIDR4/cloudflare.lst
-          curl -sSfL "https://www.cloudflare.com/ips-v6" | sort -u > categories/CIDR6/cloudflare.lst
-
-      - name: Extract Discord CIDRs
-        run: |
-          curl -sSfL "https://iplist.opencck.org/?format=text&data=cidr4&site=discord.gg&site=discord.media" | sort -u > categories/CIDR4/discord.lst
-          curl -sSfL "https://iplist.opencck.org/?format=text&data=cidr6&site=discord.gg&site=discord.media" | sort -u > categories/CIDR6/discord.lst
-
-      - name: Extract Telegram networks
-        run: |
-          TEMP_FILE=$(mktemp)
-          curl -sSfL "https://core.telegram.org/resources/cidr.txt" > "$TEMP_FILE"
-          grep -F '.' "$TEMP_FILE" | sort -u > categories/CIDR4/telegram.lst
-          grep -F ':' "$TEMP_FILE" | sort -u > categories/CIDR6/telegram.lst
-          rm "$TEMP_FILE"
-
-      - name: Download BGP data
-        run: |
-          USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-          curl -sSfL -A "$USER_AGENT" "https://bgp.tools/table.txt" > bgp_table.txt || {
-            echo "Failed to download BGP data"
-            exit 1
-          }
-
-      - name: Extract Meta networks
-        run: |
-          awk '/32934$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/meta.lst
-          awk '/32934$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/meta.lst
-
-      - name: Extract Twitter networks
-        run: |
-          awk '/13414$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/twitter.lst
-          awk '/13414$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/twitter.lst
-
-      - name: Extract Hetzner networks
-        run: |
-          awk '/24940$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/hetzner.lst
-          awk '/24940$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/hetzner.lst
-
-      - name: Extract OVH networks
-        run: |
-          awk '/16276$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/ovh.lst
-          awk '/16276$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/ovh.lst
-
-      - name: Generate summaries
-        run: |
-          cat categories/CIDR4/{cloudflare,discord,meta,twitter}.lst | sort -u > categories/CIDR4/summary.lst
-          cat categories/CIDR6/{cloudflare,discord,meta,twitter}.lst | sort -u > categories/CIDR6/summary.lst
-          rm bgp_table.txt
-
-      - name: Commit changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add categories/CIDR* categories/Rulesets/nekoray-mahdi.json
-          git commit -m "Update CIDR lists" || echo "No changes to commit"
           git push origin main
