@@ -94,6 +94,7 @@
 - dobrochan.net
 - donmai.us
 - doxajournal.ru
+- doxbin.com
 - eagle.sapphire.microsoftapp.net
 - ec3-9e8-200gv.video-ik-ok-ii.xyz
 - edge.microsoft.com
@@ -754,6 +755,7 @@
 - doramy.club
 - dovod.online
 - doxa.team
+- doxbin.com
 - dpidetector.org
 - dreamhost.com
 - ducati.com
@@ -1779,6 +1781,7 @@
 - dovod.online
 - doxa.team
 - doxajournal.ru
+- doxbin.com
 - dpidetector.org
 - dreamhost.com
 - ducati.com
