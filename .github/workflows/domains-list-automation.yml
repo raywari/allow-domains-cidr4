@@ -305,7 +305,9 @@ jobs:
                 domain_suffix: (
                   $domains | split("\n") | map(select(. != "") | if . == "ua" then ".ua" else . end)
                 ),
-                ip_cidr: ($cidrs | split("\n") | map(select(. != ""))
+                ip_cidr: (
+                  $cidrs | split("\n") | map(select(. != ""))
+                )
               }
             ]
           }' > rules.json
