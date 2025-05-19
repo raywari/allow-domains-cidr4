@@ -284,15 +284,41 @@ jobs:
 
       - name: Compile ruleset SRS
         run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/app \
-            itdoginfo/compilesrs:0.1.11 \
-            python3 /app/scripts/convert.py
+          sudo apt-get update && sudo apt-get install -y tar wget jq
 
-      - name: Move generated file
-        run: |
+          wget https://github.com/SagerNet/sing-box/releases/download/v1.11.11/sing-box-1.11.11-linux-amd64.tar.gz
+          tar -xzvf sing-box-1.11.11-linux-amd64.tar.gz
+
+          if [[ ! -f categories/CIDR4/summary.lst || ! -f domains.lst ]]; then
+              echo "::error::Missing source files summary.lst или domains.lst"
+              exit 1
+          fi
+
+          cp categories/CIDR4/summary.lst cidr.txt
+          cp domains.lst domains.txt
+          rm categories/Rulesets/domains-cidr4.srs
+
+          jq -n --rawfile domains domains.txt --rawfile cidrs cidr.txt '{
+            version: 3,
+            rules: [
+              {
+                domain_suffix: (
+                  $domains | split("\n") | map(select(. != "") | if . == "ua" then ".ua" else . end)
+                ),
+                ip_cidr: ($cidrs | split("\n") | map(select(. != ""))
+              }
+            ]
+          }' > rules.json
+
+          sing-box-1.11.11-linux-amd64/sing-box rule-set compile rules.json || {
+              echo "::error::Failed to compile ruleset";
+              exit 1;
+          }
+          
           mkdir -p categories/Rulesets
-          mv domains-cidr4.srs categories/Rulesets/
+          mv rules.srs categories/Rulesets/domains-cidr4.srs
+
+          rm -rf domains.txt cidr.txt rules.json sing-box-1.11.11-linux-amd64*
 
       - name: Commit SRS changes
         run: |
