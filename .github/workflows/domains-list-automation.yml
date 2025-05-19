@@ -296,7 +296,7 @@ jobs:
 
           cp categories/CIDR4/summary.lst cidr.txt
           cp domains.lst domains.txt
-          rm categories/Rulesets/domains-cidr4.srs
+          rm -f categories/Rulesets/domains-cidr4.srs
 
           jq -n --rawfile domains domains.txt --rawfile cidrs cidr.txt '{
             version: 3,
