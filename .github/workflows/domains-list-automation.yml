@@ -273,6 +273,8 @@ jobs:
   generate-srs:
     runs-on: ubuntu-24.04
     needs: process-subnets
+    env:
+      SING_BOX_VERSION: "1.11.11"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -286,8 +288,8 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y tar wget jq
 
-          wget https://github.com/SagerNet/sing-box/releases/download/v1.11.11/sing-box-1.11.11-linux-amd64.tar.gz
-          tar -xzvf sing-box-1.11.11-linux-amd64.tar.gz
+          wget https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz
+          tar -xzvf sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz
 
           if [[ ! -f categories/CIDR4/summary.lst || ! -f domains.lst ]]; then
               echo "::error::Missing source files summary.lst или domains.lst"
@@ -312,15 +314,15 @@ jobs:
             ]
           }' > rules.json
 
-          sing-box-1.11.11-linux-amd64/sing-box rule-set compile rules.json || {
+          sing-box-${SING_BOX_VERSION}-linux-amd64/sing-box rule-set compile rules.json || {
               echo "::error::Failed to compile ruleset";
               exit 1;
           }
-          
+
           mkdir -p categories/Rulesets
           mv rules.srs categories/Rulesets/domains-cidr4.srs
 
-          rm -rf domains.txt cidr.txt rules.json sing-box-1.11.11-linux-amd64*
+          rm -rf domains.txt cidr.txt rules.json sing-box-${SING_BOX_VERSION}-linux-amd64*
 
       - name: Commit SRS changes
         run: |
