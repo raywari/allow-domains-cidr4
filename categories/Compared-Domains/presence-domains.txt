@@ -40,6 +40,8 @@
 - appspot.com
 - appstorrent.ru
 - aqicn.org
+- arbatmedia.kz
+- arsvest.ru
 - assets.strpst.com
 - astra.press
 - atlassian.com
@@ -47,6 +49,7 @@
 - aws.amazon.com
 - bard.google.com
 - beeg.com
+- berlin-visual.com
 - bestchange.net
 - bf3-204-206gv.video-ik-ok-ii.xyz
 - bgpmon.net
@@ -70,6 +73,8 @@
 - cdn.sapphire.microsoftapp.net
 - ce1-048-404gv.video-ik-ok-ii.xyz
 - certifytheweb.com
+- chatgpt.livekit.cloud
+- chronicles.media
 - citrix.com
 - clamav.net
 - clash.com
@@ -85,6 +90,7 @@
 - deepmind.google
 - deezer.com
 - delfi.ee
+- dev.to
 - devops.com
 - discordapp.io
 - discordapp.org
@@ -120,6 +126,7 @@
 - flashscore.com
 - fork.pet
 - fpt2.microsoft.com
+- freeburyatia.org
 - g2a.com
 - gamesfirsthelsinki.com
 - gateway.bingviz.microsoftapp.net
@@ -140,6 +147,7 @@
 - gordonua.com
 - gpt3-openai.com
 - grammarly.com
+- graniru.org
 - grazie.ai
 - groza.media
 - gstatic.com
@@ -153,6 +161,7 @@
 - hdrezka.cm
 - hentaichan.live
 - honeywell.com
+- host.livekit.cloud
 - hotleak.vip
 - howlongtobeat.com
 - hrw.org
@@ -171,12 +180,14 @@
 - itdog.info
 - jabra.com
 - jauns.lv
+- kedr.media
 - kemono.party
 - kinobase.org
 - kinokopilka.pro
 - kinovod.pro
 - kpapp.link
 - lampa.mx
+- le-production.tv
 - leica-geosystems.com
 - lenovo.com
 - lf1-ttcdn-tos.pstatp.com
@@ -234,12 +245,14 @@
 - netflixdnstest8.com
 - netflixdnstest9.com
 - netflixstudios.com
+- newizv.ru
 - newstudio.tv
 - nordaccount.com
 - nordcdn.com
 - notebooklm.google
 - notifications-pa.googleapis.com
 - notionusercontent.com
+- novaya.media
 - ns-1475.awsdns-56.org
 - ns-1574.awsdns-04.co.uk
 - ns-440.awsdns-55.com
@@ -298,10 +311,12 @@
 - pixivision.net
 - plab.site
 - play.google.com
+- poligon.media
 - porsche.com
 - postfix.org
 - previews.externulls.com
 - production-openaicom-storage.azureedge.net
+- prosleduet.media
 - protonmail.ch
 - protonmail.com
 - proxyscrape.com
@@ -337,6 +352,7 @@
 - research.uber.com
 - resp.app
 - reuters.com
+- rezka-ua.in
 - rferl.org
 - riafan.ru
 - ridl.io
@@ -345,6 +361,7 @@
 - rr3.sn-pouxga5o-vu2s.gvt1.com
 - rsf.org
 - ruckuswireless.com
+- rucriminal.info
 - rulate.ru
 - rule34.xxx
 - rus-media.org
@@ -385,9 +402,14 @@
 - snapmagic.com
 - snd.sc
 - sndcdn.com
+- snob.ru
 - soapui.org
+- sobes.press
 - sobesednik.ru
+- sobytiya.info
 - software-static.download.prss.microsoft.com
+- sota.vision
+- sotaproject.com
 - soundcloud.cloud
 - sovanews.tv
 - spiegel.de
@@ -420,6 +442,7 @@
 - supercellgames.com
 - supercellid.com
 - supercellstore.com
+- svtv-static.net
 - sysdig.com
 - t-ru.org
 - t-s.news
@@ -429,6 +452,8 @@
 - tfbnw.net
 - thefacebook.com
 - theins.info
+- themoscowtimes.com
+- thenewtab.io
 - thepiratebay.org
 - thumbs.externulls.com
 - tiktok-lb-alisg.byteoversea.net
@@ -460,10 +485,12 @@
 - tracker.wf
 - trae.ai
 - translyaciya.com
+- trv-science.ru
 - ttlivecdn.com
 - ttlivecdn.com.c.worldfcdn.com
 - ttoversea.net
 - ttoverseaus.net
+- turn.livekit.cloud
 - ua
 - ubnt.com
 - ufile.io
@@ -486,6 +513,7 @@
 - videocardz.com
 - videocardz.net
 - vipdrive.net
+- votvot.tv
 - voynaplemyon.com
 - vp.externulls.com
 - vrmedia-nss.xhcdn.com
@@ -494,6 +522,7 @@
 - vrv.co
 - vyos.io
 - watchguard.com
+- webchannel-alkalimakersuite-pa.clients6.google.com
 - wetransfer.com
 - wheather.com
 - whispersystems.org
@@ -529,6 +558,7 @@
 - ytimg.l.google.com
 - yummyanime.tv
 - zannn.top
+- zasekin.ru
 - zeflix.online
 - zerossl.com
 - zetalliance.org
@@ -612,8 +642,10 @@
 - api.service-kp.com
 - appspot.com
 - arbat.media
+- arbatmedia.kz
 - archive.ph
 - archiveofourown.org
+- arsvest.ru
 - as6723.net
 - assets.heroku.com
 - assets.strpst.com
@@ -633,6 +665,7 @@
 - beeg.com
 - bell-sw.com
 - bellingcat.com
+- berlin-visual.com
 - bestbuy.com
 - bestchange.net
 - bestchange.ru
@@ -682,7 +715,9 @@
 - censortracker.org
 - chaos.com
 - chat.com
+- chatgpt.livekit.cloud
 - chaturbate.com
+- chronicles.media
 - clash.com
 - clashmini.com
 - clashofclans.com
@@ -724,6 +759,7 @@
 - depositphotos.com
 - designer.microsoft.com
 - designify.com
+- dev.to
 - developer.nvidia.com
 - digikey.com
 - digitalcontent.sky
@@ -821,6 +857,7 @@
 - foxnews.com
 - fpt2.microsoft.com
 - framer.com
+- freeburyatia.org
 - freedomletters.org
 - freeimages.com
 - freemedia.io
@@ -861,6 +898,7 @@
 - gr-assets.com
 - grafana.com
 - grani.ru
+- graniru.org
 - graty.me
 - graylog.org
 - groq.com
@@ -890,6 +928,7 @@
 - herokucdn.com
 - hollisterco.com
 - home-connect.com
+- host.livekit.cloud
 - hostgator.com
 - hostinger.com
 - hotels.com
@@ -943,6 +982,7 @@
 - kaktus.media
 - kamatera.com
 - kara.su
+- kedr.media
 - kemono.su
 - keysight.com
 - kinogo.la
@@ -961,6 +1001,7 @@
 - lamcdn.net
 - lampa.mx
 - ldoceonline.com
+- le-production.tv
 - leafletjs.com
 - leica-geosystems.com
 - lf1-ttcdn-tos.pstatp.com
@@ -1050,6 +1091,7 @@
 - netlify.com
 - networksolutions.com
 - newark.com
+- newizv.ru
 - newsru.co.il
 - newsru.com
 - nfl.com
@@ -1077,6 +1119,7 @@
 - notion.so
 - notionusercontent.com
 - novaline.fm
+- novaya.media
 - novaya.no
 - ns-1475.awsdns-56.org
 - ns-1574.awsdns-04.co.uk
@@ -1157,6 +1200,7 @@
 - play.google.com
 - playboy.com
 - plugshare.com
+- poligon.media
 - politico.eu
 - politiken.dk
 - polymarket.com
@@ -1173,6 +1217,7 @@
 - prnt.sc
 - proactivebackend-pa.googleapis.com
 - production-openaicom-storage.azureedge.net
+- prosleduet.media
 - prosleduetmedia.com
 - prostovpn.org
 - proton.me
@@ -1228,6 +1273,7 @@
 - returnyoutubedislikeapi.com
 - reuters.com
 - reve.art
+- rezka-ua.in
 - rezka.ag
 - rezka.my
 - rezkify.com
@@ -1244,6 +1290,7 @@
 - rsf.org
 - rublacklist.net
 - ruckuswireless.com
+- rucriminal.info
 - rulate.ru
 - rule34.art
 - rule34.xxx
@@ -1319,11 +1366,16 @@
 - smartdeploy.com
 - snd.sc
 - sndcdn.com
+- snob.ru
 - snort.org
 - snyk.io
+- sobes.press
 - sobesednik.com
+- sobytiya.info
 - software-static.download.prss.microsoft.com
 - solarwinds.com
+- sota.vision
+- sotaproject.com
 - soundcloud.cloud
 - sovanews.tv
 - sovetromantica.com
@@ -1373,6 +1425,7 @@
 - surfshark.com
 - surveymonkey.com
 - suspilne.media
+- svtv-static.net
 - swissinfo.ch
 - synoforum.com
 - t-invariant.org
@@ -1398,6 +1451,8 @@
 - thebell.io
 - thefacebook.com
 - theins.info
+- themoscowtimes.com
+- thenewtab.io
 - thetruestory.news
 - threads.net
 - threema.ch
@@ -1445,6 +1500,7 @@
 - translyaciya.com
 - trellix.com
 - trueblackmetalradio.com
+- trv-science.ru
 - tsmc.com
 - ttlivecdn.com
 - ttlivecdn.com.c.worldfcdn.com
@@ -1452,6 +1508,7 @@
 - ttoverseaus.net
 - ttwstatic.com
 - turbobit.net
+- turn.livekit.cloud
 - tuta.com
 - tuta.io
 - tvfreedom.io
@@ -1506,6 +1563,7 @@
 - voanews.com
 - voidboost.cc
 - volkswagen-classic-parts.com
+- votvot.tv
 - voynaplemyon.com
 - vp.externulls.com
 - vpngate.net
@@ -1518,6 +1576,7 @@
 - w.atwiki.jp
 - walmart.com
 - watermarkremover.io
+- webchannel-alkalimakersuite-pa.clients6.google.com
 - webnames.ca
 - webtoons.com
 - weebly.com
@@ -1574,6 +1633,7 @@
 - zahav.ru
 - zannn.top
 - zapier.com
+- zasekin.ru
 - zbigz.com
 - zedge.net
 - zeflix.online
@@ -1650,8 +1710,10 @@
 - app.amplitude.com
 - appspot.com
 - arbat.media
+- arbatmedia.kz
 - archive.ph
 - archiveofourown.org
+- arsvest.ru
 - as6723.net
 - assets.heroku.com
 - assets.strpst.com
@@ -1673,6 +1735,7 @@
 - beeg.com
 - bell-sw.com
 - bellingcat.com
+- berlin-visual.com
 - bestbuy.com
 - bestchange.net
 - bestchange.ru
@@ -1721,7 +1784,9 @@
 - censortracker.org
 - chaos.com
 - chat.com
+- chatgpt.livekit.cloud
 - cherta.media
+- chronicles.media
 - clash.com
 - clashmini.com
 - clashofclans.com
@@ -1765,6 +1830,7 @@
 - depositphotos.com
 - designer.microsoft.com
 - designify.com
+- dev.to
 - developer.nvidia.com
 - digikey.com
 - digitalcontent.sky
@@ -1853,6 +1919,7 @@
 - foxnews.com
 - fpt2.microsoft.com
 - framer.com
+- freeburyatia.org
 - freedomletters.org
 - freeimages.com
 - freemedia.io
@@ -1890,6 +1957,7 @@
 - gr-assets.com
 - grafana.com
 - grani.ru
+- graniru.org
 - graty.me
 - graylog.org
 - groq.com
@@ -1919,6 +1987,7 @@
 - holod.media
 - home-connect.com
 - honeywell.com
+- host.livekit.cloud
 - hostgator.com
 - hostinger.com
 - hotels.com
@@ -1976,6 +2045,7 @@
 - kasparov.ru
 - kavkaz-uzel.eu
 - kavkazr.com
+- kedr.media
 - kemono.su
 - keysight.com
 - kinobase.org
@@ -2001,6 +2071,7 @@
 - lamcdn.net
 - lampa.mx
 - ldoceonline.com
+- le-production.tv
 - leafletjs.com
 - leica-geosystems.com
 - lf1-ttcdn-tos.pstatp.com
@@ -2099,6 +2170,7 @@
 - netlify.com
 - networksolutions.com
 - newark.com
+- newizv.ru
 - news.google.com
 - newsru.co.il
 - newsru.com
@@ -2126,6 +2198,7 @@
 - notion.so
 - notionusercontent.com
 - novaline.fm
+- novaya.media
 - novaya.no
 - novayagazeta.eu
 - novayagazeta.ru
@@ -2208,6 +2281,7 @@
 - play.google.com
 - playboy.com
 - plugshare.com
+- poligon.media
 - politico.eu
 - politiken.dk
 - polymarket.com
@@ -2221,6 +2295,7 @@
 - privatekeys.pw
 - proactivebackend-pa.googleapis.com
 - proekt.media
+- prosleduet.media
 - prosleduetmedia.com
 - prostovpn.org
 - proton.me
@@ -2276,6 +2351,7 @@
 - returnyoutubedislikeapi.com
 - reuters.com
 - reve.art
+- rezka-ua.in
 - rezka.my
 - rezkify.com
 - rezonans.media
@@ -2292,6 +2368,7 @@
 - rsf.org
 - rublacklist.net
 - ruckuswireless.com
+- rucriminal.info
 - rulate.ru
 - rule34.art
 - rule34.xxx
@@ -2372,12 +2449,17 @@
 - snapmagic.com
 - snd.sc
 - sndcdn.com
+- snob.ru
 - snort.org
 - snyk.io
+- sobes.press
 - sobesednik.com
 - sobesednik.ru
+- sobytiya.info
 - solarwinds.com
 - sora.com
+- sota.vision
+- sotaproject.com
 - soundcloud.cloud
 - sovetromantica.com
 - spacelift.io
@@ -2425,6 +2507,7 @@
 - surveymonkey.com
 - suspilne.media
 - svoboda.org
+- svtv-static.net
 - svtv.org
 - swissinfo.ch
 - synoforum.com
@@ -2454,6 +2537,8 @@
 - theins.info
 - theins.press
 - theins.ru
+- themoscowtimes.com
+- thenewtab.io
 - thepiratebay.org
 - thetruestory.news
 - threads.net
@@ -2502,6 +2587,7 @@
 - translyaciya.com
 - trellix.com
 - trueblackmetalradio.com
+- trv-science.ru
 - tsmc.com
 - ttlivecdn.com
 - ttlivecdn.com.c.worldfcdn.com
@@ -2509,6 +2595,7 @@
 - ttoverseaus.net
 - ttwstatic.com
 - turbobit.net
+- turn.livekit.cloud
 - tuta.com
 - tuta.io
 - tvfreedom.io
@@ -2565,6 +2652,7 @@
 - voidboost.cc
 - volkswagen-classic-parts.com
 - vot-tak.tv
+- votvot.tv
 - voynaplemyon.com
 - vp.externulls.com
 - vpngate.net
@@ -2577,6 +2665,7 @@
 - w.atwiki.jp
 - walmart.com
 - watermarkremover.io
+- webchannel-alkalimakersuite-pa.clients6.google.com
 - webnames.ca
 - webtoons.com
 - weebly.com
@@ -2628,6 +2717,7 @@
 - zahav.ru
 - zannn.top
 - zapier.com
+- zasekin.ru
 - zbigz.com
 - zedge.net
 - zeflix.online
