@@ -1274,7 +1274,6 @@
 - reuters.com
 - reve.art
 - rezka-ua.in
-- rezka.ag
 - rezka.my
 - rezkify.com
 - rezonans.media
