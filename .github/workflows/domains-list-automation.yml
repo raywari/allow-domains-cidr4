@@ -14,20 +14,18 @@ on:
 permissions:
   contents: write
 
-env:
-  DOMAINS_FILE: domains.lst
-  SOURCES_DOMAINS_FILE: sources/sources-domains.txt
-  SOURCES_BLOCK_FILE: sources/sources-block.txt
-  CATEGORIES_BLOCK_DIR: categories/Block
-  CATEGORIES_COMPARED_DOMAINS_DIR: categories/Compared-Domains
-  CATEGORIES_CIDR4_DIR: categories/CIDR4
-  CATEGORIES_CIDR6_DIR: categories/CIDR6
-  CATEGORIES_RULESETS_DIR: categories/Rulesets
-
 jobs:
   process-domains:
     runs-on: ubuntu-latest
     env:
+      DOMAINS_FILE: domains.lst
+      SOURCES_DOMAINS_FILE: sources/sources-domains.txt
+      SOURCES_BLOCK_FILE: sources/sources-block.txt
+      CATEGORIES_BLOCK_DIR: categories/Block
+      CATEGORIES_COMPARED_DOMAINS_DIR: categories/Compared-Domains
+      CATEGORIES_CIDR4_DIR: categories/CIDR4
+      CATEGORIES_CIDR6_DIR: categories/CIDR6
+      CATEGORIES_RULESETS_DIR: categories/Rulesets
       RENAMED_DOMAINS_FILE: domains-raywari.lst
       YOUTUBE_DOMAINS_FILE: categories/Services/youtube/youtube-domains.lst
       DOMAINS_WITHOUT_YT_FILE: domains-without-yt.lst
@@ -218,6 +216,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: process-domains
     env:
+      DOMAINS_FILE: domains.lst
+      SOURCES_DOMAINS_FILE: sources/sources-domains.txt
+      SOURCES_BLOCK_FILE: sources/sources-block.txt
+      CATEGORIES_BLOCK_DIR: categories/Block
+      CATEGORIES_COMPARED_DOMAINS_DIR: categories/Compared-Domains
+      CATEGORIES_CIDR4_DIR: categories/CIDR4
+      CATEGORIES_CIDR6_DIR: categories/CIDR6
+      CATEGORIES_RULESETS_DIR: categories/Rulesets
       BGP_TABLE_FILE: bgp_table.txt
     steps:
       - name: Checkout repository
@@ -298,6 +304,14 @@ jobs:
     env:
       SING_BOX_VERSION: "1.11.11"
       SRS_OUTPUT_FILE: domains-cidr4.srs
+      DOMAINS_FILE: domains.lst
+      SOURCES_DOMAINS_FILE: sources/sources-domains.txt
+      SOURCES_BLOCK_FILE: sources/sources-block.txt
+      CATEGORIES_BLOCK_DIR: categories/Block
+      CATEGORIES_COMPARED_DOMAINS_DIR: categories/Compared-Domains
+      CATEGORIES_CIDR4_DIR: categories/CIDR4
+      CATEGORIES_CIDR6_DIR: categories/CIDR6
+      CATEGORIES_RULESETS_DIR: categories/Rulesets
       CIDR_SUMMARY_FILE: "$CATEGORIES_CIDR4_DIR"/summary.lst
 
     steps:
@@ -361,6 +375,14 @@ jobs:
     needs: generate-srs
     env:
       NEKOBOX_CONFIG_FILE: nekoray-mahdi.json
+      DOMAINS_FILE: domains.lst
+      SOURCES_DOMAINS_FILE: sources/sources-domains.txt
+      SOURCES_BLOCK_FILE: sources/sources-block.txt
+      CATEGORIES_BLOCK_DIR: categories/Block
+      CATEGORIES_COMPARED_DOMAINS_DIR: categories/Compared-Domains
+      CATEGORIES_CIDR4_DIR: categories/CIDR4
+      CATEGORIES_CIDR6_DIR: categories/CIDR6
+      CATEGORIES_RULESETS_DIR: categories/Rulesets
       CIDR4_SUMMARY_FILE: "$CATEGORIES_CIDR4_DIR"/summary.lst
     steps:
       - name: Checkout repository
@@ -469,6 +491,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: generate-routing-nekobox-config
     env:
+      DOMAINS_FILE: domains.lst
+      SOURCES_DOMAINS_FILE: sources/sources-domains.txt
+      SOURCES_BLOCK_FILE: sources/sources-block.txt
+      CATEGORIES_BLOCK_DIR: categories/Block
+      CATEGORIES_COMPARED_DOMAINS_DIR: categories/Compared-Domains
+      CATEGORIES_CIDR4_DIR: categories/CIDR4
+      CATEGORIES_CIDR6_DIR: categories/CIDR6
+      CATEGORIES_RULESETS_DIR: categories/Rulesets
       BLOCK_IPS_FILE: block-ips.lst
       BLOCK_DOMAINS_FILE: block-domains.lst
       BLOCK_HOSTS_FILE: hosts
