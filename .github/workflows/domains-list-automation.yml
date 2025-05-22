@@ -44,14 +44,14 @@ jobs:
 
       - name: Clean domains.lst
         run: |
-          sed -i 's/^[[:space:]]*-[[:space:]]*//' ${{ env.DOMAINS_FILE }}
-          sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' ${{ env.DOMAINS_FILE }}
-          sed -i 's/^full://g; s|^https\?://||g; s|^//||g' ${{ env.DOMAINS_FILE }}
-          sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' ${{ env.DOMAINS_FILE }}
-          sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' ${{ env.DOMAINS_FILE }}
+          sed -i 's/^[[:space:]]*-[[:space:]]*//' "$DOMAINS_FILE"
+          sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' "$DOMAINS_FILE"
+          sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$DOMAINS_FILE"
+          sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$DOMAINS_FILE"
+          sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$DOMAINS_FILE"
 
       - name: Sort domains.lst
-        run: LC_COLLATE=C sort -f -u ${{ env.DOMAINS_FILE }} -o ${{ env.DOMAINS_FILE }}
+        run: LC_COLLATE=C sort -f -u "$DOMAINS_FILE" -o "$DOMAINS_FILE"
 
       - name: Filter subdomains in domains.lst
         run: |
@@ -62,7 +62,7 @@ jobs:
               echo "$d"
             done
           }
-          mapfile -t all < ${{ env.DOMAINS_FILE }}
+          mapfile -t all < "$DOMAINS_FILE"
           IFS=$'\n' sorted=($(printf '%s\n' "${all[@]}" |
             awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
           declare -A keep; > filtered.txt
@@ -73,7 +73,7 @@ jobs:
             done
             [[ $skip ]] || { echo "$dom" >> filtered.txt; keep[$dom]=1; }
           done
-          sort -u filtered.txt -o ${{ env.DOMAINS_FILE }}
+          sort -u filtered.txt -o "$DOMAINS_FILE"
           rm filtered.txt
 
       - name: Compare with external sources
@@ -81,10 +81,10 @@ jobs:
           set -eo pipefail
 
           BASE_TMP_DIR="./tmp"
-          DOMAINS_FILE_VAR="${{ env.DOMAINS_FILE }}"
-          RENAMED_DOMAINS_FILE_VAR="${{ env.RENAMED_DOMAINS_FILE }}"
-          SOURCES_FILE_VAR="${{ env.SOURCES_DOMAINS_FILE }}"
-          OUTPUT_DIR_VAR="${{ env.CATEGORIES_COMPARED_DOMAINS_DIR }}"
+          DOMAINS_FILE_VAR="$DOMAINS_FILE"
+          RENAMED_DOMAINS_FILE_VAR="$RENAMED_DOMAINS_FILE"
+          SOURCES_FILE_VAR="$SOURCES_DOMAINS_FILE"
+          OUTPUT_DIR_VAR="$CATEGORIES_COMPARED_DOMAINS_DIR"
 
           cleanup() {
             [ -d "$BASE_TMP_DIR" ] && rm -rf "$BASE_TMP_DIR"
@@ -187,14 +187,14 @@ jobs:
 
       - name: Generate domains without YouTube
         run: |
-          yt="${{ env.YOUTUBE_DOMAINS_FILE }}"
-          [[ -f "$yt" && -f ${{ env.DOMAINS_FILE }} ]] && grep -vxFf "$yt" ${{ env.DOMAINS_FILE }} > ${{ env.DOMAINS_WITHOUT_YT_FILE }}
+          yt="$YOUTUBE_DOMAINS_FILE"
+          [[ -f "$yt" && -f "$DOMAINS_FILE" ]] && grep -vxFf "$yt" "$DOMAINS_FILE" > "$DOMAINS_WITHOUT_YT_FILE"
 
       - name: Commit and push .lst changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          for f in ${{ env.DOMAINS_FILE }} ${{ env.DOMAINS_NEKOBOX_FILE }} ${{ env.DOMAINS_WITHOUT_YT_FILE }}; do
+          for f in "$DOMAINS_FILE" "$DOMAINS_NEKOBOX_FILE" "$DOMAINS_WITHOUT_YT_FILE"; do
             [[ -f $f ]] && git add "$f"
           done
           git commit -m "Updated domain lists" || echo "No changes to commit"
@@ -204,7 +204,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          for f in ${{ env.CATEGORIES_COMPARED_DOMAINS_DIR }}/missing-domains.txt ${{ env.CATEGORIES_COMPARED_DOMAINS_DIR }}/presence-domains.txt; do
+          for f in "$CATEGORIES_COMPARED_DOMAINS_DIR"/missing-domains.txt "$CATEGORIES_COMPARED_DOMAINS_DIR"/presence-domains.txt; do
             [[ -f $f ]] && git add "$f"
           done
           git commit -m "Domains compared" || echo "No comparison changes"
@@ -228,63 +228,63 @@ jobs:
       - name: Create directory structure
         run: |
           mkdir -p \
-            ${{ env.CATEGORIES_CIDR4_DIR }}/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter,Hetzner,OVH} \
-            ${{ env.CATEGORIES_CIDR6_DIR }}/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter,Hetzner,OVH}
+            "$CATEGORIES_CIDR4_DIR"/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter,Hetzner,OVH} \
+            "$CATEGORIES_CIDR6_DIR"/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter,Hetzner,OVH}
 
       - name: Get Cloudflare networks
         run: |
-          curl -sSfL "https://www.cloudflare.com/ips-v4" | sort -u > ${{ env.CATEGORIES_CIDR4_DIR }}/services/Cloudflare-ECH/cloudflare-ECH.lst
-          curl -sSfL "https://www.cloudflare.com/ips-v6" | sort -u > ${{ env.CATEGORIES_CIDR6_DIR }}/services/Cloudflare-ECH/cloudflare-ECH.lst
+          curl -sSfL "https://www.cloudflare.com/ips-v4" | sort -u > "$CATEGORIES_CIDR4_DIR"/services/Cloudflare-ECH/cloudflare-ECH.lst
+          curl -sSfL "https://www.cloudflare.com/ips-v6" | sort -u > "$CATEGORIES_CIDR6_DIR"/services/Cloudflare-ECH/cloudflare-ECH.lst
 
       - name: Get Discord CIDRs
         run: |
-          curl -sSfL "https://iplist.opencck.org/?format=text&data=cidr4&site=discord.gg&site=discord.media" | sort -u > ${{ env.CATEGORIES_CIDR4_DIR }}/services/Discord/discord-voice.lst
-          curl -sSfL "https://iplist.opencck.org/?format=text&data=cidr6&site=discord.gg&site=discord.media" | sort -u > ${{ env.CATEGORIES_CIDR6_DIR }}/services/Discord/discord-voice.lst
+          curl -sSfL "https://iplist.opencck.org/?format=text&data=cidr4&site=discord.gg&site=discord.media" | sort -u > "$CATEGORIES_CIDR4_DIR"/services/Discord/discord-voice.lst
+          curl -sSfL "https://iplist.opencck.org/?format=text&data=cidr6&site=discord.gg&site=discord.media" | sort -u > "$CATEGORIES_CIDR6_DIR"/services/Discord/discord-voice.lst
 
       - name: Get Telegram networks
         run: |
           TEMP_FILE=$(mktemp)
           curl -sSfL "https://core.telegram.org/resources/cidr.txt" > "$TEMP_FILE"
-          grep -F '.' "$TEMP_FILE" | sort -u > ${{ env.CATEGORIES_CIDR4_DIR }}/services/Telegram/telegram.lst
-          grep -F ':' "$TEMP_FILE" | sort -u > ${{ env.CATEGORIES_CIDR6_DIR }}/services/Telegram/telegram.lst
+          grep -F '.' "$TEMP_FILE" | sort -u > "$CATEGORIES_CIDR4_DIR"/services/Telegram/telegram.lst
+          grep -F ':' "$TEMP_FILE" | sort -u > "$CATEGORIES_CIDR6_DIR"/services/Telegram/telegram.lst
           rm "$TEMP_FILE"
 
       - name: Download BGP data
         run: |
           USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-          curl --retry 3 -sSfL -A "$USER_AGENT" "https://bgp.tools/table.txt" > ${{ env.BGP_TABLE_FILE }} || exit 1
+          curl --retry 3 -sSfL -A "$USER_AGENT" "https://bgp.tools/table.txt" > "$BGP_TABLE_FILE" || exit 1
 
       - name: Extract Meta networks
         run: |
-          awk '/32934$/ {print $1}' ${{ env.BGP_TABLE_FILE }} | grep -F '.' | sort -u > ${{ env.CATEGORIES_CIDR4_DIR }}/services/Meta/meta.lst
-          awk '/32934$/ {print $1}' ${{ env.BGP_TABLE_FILE }} | grep -F ':' | sort -u > ${{ env.CATEGORIES_CIDR6_DIR }}/services/Meta/meta.lst
+          awk '/32934$/ {print $1}' "$BGP_TABLE_FILE" | grep -F '.' | sort -u > "$CATEGORIES_CIDR4_DIR"/services/Meta/meta.lst
+          awk '/32934$/ {print $1}' "$BGP_TABLE_FILE" | grep -F ':' | sort -u > "$CATEGORIES_CIDR6_DIR"/services/Meta/meta.lst
 
       - name: Extract Twitter networks
         run: |
-          awk '/13414$/ {print $1}' ${{ env.BGP_TABLE_FILE }} | grep -F '.' | sort -u > ${{ env.CATEGORIES_CIDR4_DIR }}/services/X-Twitter/x_twitter.lst
-          awk '/13414$/ {print $1}' ${{ env.BGP_TABLE_FILE }} | grep -F ':' | sort -u > ${{ env.CATEGORIES_CIDR6_DIR }}/services/X-Twitter/x_twitter.lst
+          awk '/13414$/ {print $1}' "$BGP_TABLE_FILE" | grep -F '.' | sort -u > "$CATEGORIES_CIDR4_DIR"/services/X-Twitter/x_twitter.lst
+          awk '/13414$/ {print $1}' "$BGP_TABLE_FILE" | grep -F ':' | sort -u > "$CATEGORIES_CIDR6_DIR"/services/X-Twitter/x_twitter.lst
 
       - name: Extract Hetzner networks
         run: |
-          awk '/24940$/ {print $1}' ${{ env.BGP_TABLE_FILE }} | grep -F '.' | sort -u > ${{ env.CATEGORIES_CIDR4_DIR }}/services/Hetzner/hetzner.lst
-          awk '/24940$/ {print $1}' ${{ env.BGP_TABLE_FILE }} | grep -F ':' | sort -u > ${{ env.CATEGORIES_CIDR6_DIR }}/services/Hetzner/hetzner.lst
+          awk '/24940$/ {print $1}' "$BGP_TABLE_FILE" | grep -F '.' | sort -u > "$CATEGORIES_CIDR4_DIR"/services/Hetzner/hetzner.lst
+          awk '/24940$/ {print $1}' "$BGP_TABLE_FILE" | grep -F ':' | sort -u > "$CATEGORIES_CIDR6_DIR"/services/Hetzner/hetzner.lst
 
       - name: Extract OVH networks
         run: |
-          awk '/16276$/ {print $1}' ${{ env.BGP_TABLE_FILE }} | grep -F '.' | sort -u > ${{ env.CATEGORIES_CIDR4_DIR }}/services/OVH/ovh.lst
-          awk '/16276$/ {print $1}' ${{ env.BGP_TABLE_FILE }} | grep -F ':' | sort -u > ${{ env.CATEGORIES_CIDR6_DIR }}/services/OVH/ovh.lst
+          awk '/16276$/ {print $1}' "$BGP_TABLE_FILE" | grep -F '.' | sort -u > "$CATEGORIES_CIDR4_DIR"/services/OVH/ovh.lst
+          awk '/16276$/ {print $1}' "$BGP_TABLE_FILE" | grep -F ':' | sort -u > "$CATEGORIES_CIDR6_DIR"/services/OVH/ovh.lst
 
       - name: Generate summaries
         run: |
-          cat ${{ env.CATEGORIES_CIDR4_DIR }}/services/{Cloudflare-ECH/cloudflare-ECH.lst,Discord/discord-voice.lst,Meta/meta.lst,X-Twitter/x_twitter.lst} | sort -u > ${{ env.CATEGORIES_CIDR4_DIR }}/summary.lst
-          cat ${{ env.CATEGORIES_CIDR6_DIR }}/services/{Cloudflare-ECH/cloudflare-ECH.lst,Discord/discord-voice.lst,Meta/meta.lst,X-Twitter/x_twitter.lst} | sort -u > ${{ env.CATEGORIES_CIDR6_DIR }}/summary.lst
-          rm ${{ env.BGP_TABLE_FILE }}
+          cat "$CATEGORIES_CIDR4_DIR"/services/{Cloudflare-ECH/cloudflare-ECH.lst,Discord/discord-voice.lst,Meta/meta.lst,X-Twitter/x_twitter.lst} | sort -u > "$CATEGORIES_CIDR4_DIR"/summary.lst
+          cat "$CATEGORIES_CIDR6_DIR"/services/{Cloudflare-ECH/cloudflare-ECH.lst,Discord/discord-voice.lst,Meta/meta.lst,X-Twitter/x_twitter.lst} | sort -u > "$CATEGORIES_CIDR6_DIR"/summary.lst
+          rm "$BGP_TABLE_FILE"
 
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add ${{ env.CATEGORIES_CIDR4_DIR }} ${{ env.CATEGORIES_CIDR6_DIR }}
+          git add "$CATEGORIES_CIDR4_DIR" "$CATEGORIES_CIDR6_DIR"
           git commit -m "Update CIDR lists" || echo "No changes to commit"
           git push origin main
 
@@ -294,7 +294,7 @@ jobs:
     env:
       SING_BOX_VERSION: "1.11.11"
       SRS_OUTPUT_FILE: domains-cidr4.srs
-      CIDR_SUMMARY_FILE: ${{ env.CATEGORIES_CIDR4_DIR }}/summary.lst
+      CIDR_SUMMARY_FILE: "$CATEGORIES_CIDR4_DIR"/summary.lst
 
     steps:
       - name: Checkout repository
@@ -308,17 +308,17 @@ jobs:
 
       - name: Compile ruleset SRS
         run: |
-          wget https://github.com/SagerNet/sing-box/releases/download/v${{ env.SING_BOX_VERSION }}/sing-box-${{ env.SING_BOX_VERSION }}-linux-amd64.tar.gz
-          tar -xzvf sing-box-${{ env.SING_BOX_VERSION }}-linux-amd64.tar.gz
+          wget https://github.com/SagerNet/sing-box/releases/download/v"$SING_BOX_VERSION"/sing-box-"$SING_BOX_VERSION"-linux-amd64.tar.gz
+          tar -xzvf sing-box-"$SING_BOX_VERSION"-linux-amd64.tar.gz
 
-          if [[ ! -f ${{ env.CIDR_SUMMARY_FILE }} || ! -f ${{ env.DOMAINS_FILE }} ]]; then
+          if [[ ! -f "$CIDR_SUMMARY_FILE" || ! -f "$DOMAINS_FILE" ]]; then
               echo "::error::Missing source files summary.lst или domains.lst"
               exit 1
           fi
 
-          cp ${{ env.CIDR_SUMMARY_FILE }} cidr.txt
-          cp ${{ env.DOMAINS_FILE }} domains.txt
-          rm -f ${{ env.CATEGORIES_RULESETS_DIR }}/${{ env.SRS_OUTPUT_FILE }}
+          cp "$CIDR_SUMMARY_FILE" cidr.txt
+          cp "$DOMAINS_FILE" domains.txt
+          rm -f "$CATEGORIES_RULESETS_DIR"/"$SRS_OUTPUT_FILE"
 
           jq -n --rawfile domains domains.txt --rawfile cidrs cidr.txt '{
             version: 3,
@@ -334,21 +334,21 @@ jobs:
             ]
           }' > rules.json
 
-          sing-box-${{ env.SING_BOX_VERSION }}-linux-amd64/sing-box rule-set compile rules.json || {
+          sing-box-"$SING_BOX_VERSION"-linux-amd64/sing-box rule-set compile rules.json || {
               echo "::error::Failed to compile ruleset";
               exit 1;
           }
 
-          mkdir -p ${{ env.CATEGORIES_RULESETS_DIR }}
-          mv rules.srs ${{ env.CATEGORIES_RULESETS_DIR }}/${{ env.SRS_OUTPUT_FILE }}
+          mkdir -p "$CATEGORIES_RULESETS_DIR"
+          mv rules.srs "$CATEGORIES_RULESETS_DIR"/"$SRS_OUTPUT_FILE"
 
-          rm -rf domains.txt cidr.txt rules.json sing-box-${{ env.SING_BOX_VERSION }}-linux-amd64*
+          rm -rf domains.txt cidr.txt rules.json sing-box-"$SING_BOX_VERSION"-linux-amd64*
 
       - name: Commit SRS changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add ${{ env.CATEGORIES_RULESETS_DIR }}/${{ env.SRS_OUTPUT_FILE }}
+          git add "$CATEGORIES_RULESETS_DIR"/"$SRS_OUTPUT_FILE"
           git commit -m "Update SRS ruleset" || echo "No SRS changes"
           git push origin main
 
@@ -357,7 +357,7 @@ jobs:
     needs: generate-srs
     env:
       NEKOBOX_CONFIG_FILE: nekoray-mahdi.json
-      CIDR4_SUMMARY_FILE: ${{ env.CATEGORIES_CIDR4_DIR }}/summary.lst
+      CIDR4_SUMMARY_FILE: "$CATEGORIES_CIDR4_DIR"/summary.lst # Добавлено для ясности
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -367,11 +367,11 @@ jobs:
 
       - name: Generate routing config JSON
         run: |
-          rm -f ${{ env.CATEGORIES_RULESETS_DIR }}/${{ env.NEKOBOX_CONFIG_FILE }}
-          mkdir -p ${{ env.CATEGORIES_RULESETS_DIR }}
+          rm -f "$CATEGORIES_RULESETS_DIR"/"$NEKOBOX_CONFIG_FILE"
+          mkdir -p "$CATEGORIES_RULESETS_DIR"
 
-          domains=$(jq -R . < ${{ env.DOMAINS_FILE }} | jq -s .)
-          cidrs=$(jq -R . < ${{ env.CIDR4_SUMMARY_FILE }} | jq -s .)
+          domains=$(jq -R . < "$DOMAINS_FILE" | jq -s .)
+          cidrs=$(jq -R . < "$CIDR4_SUMMARY_FILE" | jq -s .)
 
           jq -n --argjson domains "$domains" --argjson cidrs "$cidrs" '
             {
@@ -458,7 +458,7 @@ jobs:
                   type: 0
                 }
               ]
-            }' | jq --indent 2 . > ${{ env.CATEGORIES_RULESETS_DIR }}/${{ env.NEKOBOX_CONFIG_FILE }}
+            }' | jq --indent 2 . > "$CATEGORIES_RULESETS_DIR"/"$NEKOBOX_CONFIG_FILE"
 
   update-block-lists:
     name: update-block-lists
@@ -480,17 +480,17 @@ jobs:
 
       - name: Prepare environment
         run: |
-          mkdir -p ${{ env.CATEGORIES_BLOCK_DIR }} sources
-          cd ${{ env.CATEGORIES_BLOCK_DIR }}
-          touch ${{ env.BLOCK_IPS_FILE }} ${{ env.BLOCK_DOMAINS_FILE }}
+          mkdir -p "$CATEGORIES_BLOCK_DIR" sources
+          cd "$CATEGORIES_BLOCK_DIR"
+          touch "$BLOCK_IPS_FILE" "$BLOCK_DOMAINS_FILE"
           rm -f ../temp.* *.tmp
 
       - name: Validate and fix entries
         run: |
-          cd ${{ env.CATEGORIES_BLOCK_DIR }}
+          cd "$CATEGORIES_BLOCK_DIR"
 
-          grep -v '^[[:space:]]*#' ${{ env.BLOCK_IPS_FILE }} | grep -v '^[[:space:]]*$' > original-ips.tmp
-          grep -v '^[[:space:]]*#' ${{ env.BLOCK_DOMAINS_FILE }} | grep -v '^[[:space:]]*$' > original-domains.tmp
+          grep -v '^[[:space:]]*#' "$BLOCK_IPS_FILE" | grep -v '^[[:space:]]*$' > original-ips.tmp
+          grep -v '^[[:space:]]*#' "$BLOCK_DOMAINS_FILE" | grep -v '^[[:space:]]*$' > original-domains.tmp
 
           sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' original-ips.tmp original-domains.tmp
 
@@ -519,8 +519,8 @@ jobs:
             fi
           done < original-domains.tmp
 
-          cat valid-ips.tmp > ${{ env.BLOCK_IPS_FILE }}
-          cat valid-domains.tmp > ${{ env.BLOCK_DOMAINS_FILE }}
+          cat valid-ips.tmp > "$BLOCK_IPS_FILE"
+          cat valid-domains.tmp > "$BLOCK_DOMAINS_FILE"
 
           rm -f original-ips.tmp original-domains.tmp valid-ips.tmp valid-domains.tmp
 
@@ -538,20 +538,20 @@ jobs:
               grep -v '^#' | \
               sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]+//' | \
               grep -v '^[[:space:]]*$' >> "$temp_file" || true
-          done < ${{ env.SOURCES_BLOCK_FILE }}
+          done < "$SOURCES_BLOCK_FILE"
 
       - name: Update lists
         run: |
-          cd ${{ env.CATEGORIES_BLOCK_DIR }}
+          cd "$CATEGORIES_BLOCK_DIR"
 
           grep -E '^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$' \
-            "$GITHUB_WORKSPACE/temp.txt" >> ${{ env.BLOCK_IPS_FILE }}
+            "$GITHUB_WORKSPACE/temp.txt" >> "$BLOCK_IPS_FILE"
 
-          grep -vFf ${{ env.BLOCK_IPS_FILE }} "$GITHUB_WORKSPACE/temp.txt" >> ${{ env.BLOCK_DOMAINS_FILE }}
+          grep -vFf "$BLOCK_IPS_FILE" "$GITHUB_WORKSPACE/temp.txt" >> "$BLOCK_DOMAINS_FILE"
 
       - name: Final processing
         run: |
-          cd ${{ env.CATEGORIES_BLOCK_DIR }}
+          cd "$CATEGORIES_BLOCK_DIR"
 
           filter_subdomains() {
             local input_file=$1
@@ -592,22 +592,22 @@ jobs:
             rm -f temp_filtered.txt
           }
 
-          if [[ -s ${{ env.BLOCK_DOMAINS_FILE }} ]]; then
+          if [[ -s "$BLOCK_DOMAINS_FILE" ]]; then
             echo "Фильтрация субдоменов..."
-            filter_subdomains ${{ env.BLOCK_DOMAINS_FILE }} filtered-domains.lst
-            mv filtered-domains.lst ${{ env.BLOCK_DOMAINS_FILE }}
+            filter_subdomains "$BLOCK_DOMAINS_FILE" filtered-domains.lst
+            mv filtered-domains.lst "$BLOCK_DOMAINS_FILE"
           fi
 
-          sort -u ${{ env.BLOCK_IPS_FILE }} -o ${{ env.BLOCK_IPS_FILE }}
-          sort -u ${{ env.BLOCK_DOMAINS_FILE }} -o ${{ env.BLOCK_DOMAINS_FILE }}
+          sort -u "$BLOCK_IPS_FILE" -o "$BLOCK_IPS_FILE"
+          sort -u "$BLOCK_DOMAINS_FILE" -o "$BLOCK_DOMAINS_FILE"
 
           {
             echo "# Auto-generated hosts"
             echo -e "\n# IP addresses"
-            awk '{print "0.0.0.0 "$0}' ${{ env.BLOCK_IPS_FILE }}
+            awk '{print "0.0.0.0 "$0}' "$BLOCK_IPS_FILE"
             echo -e "\n# Domains"
-            awk '{print "0.0.0.0 "$0}' ${{ env.BLOCK_DOMAINS_FILE }}
-          } > ${{ env.BLOCK_HOSTS_FILE }}
+            awk '{print "0.0.0.0 "$0}' "$BLOCK_DOMAINS_FILE"
+          } > "$BLOCK_HOSTS_FILE"
 
       - name: Cleanup
         run: |
@@ -617,6 +617,6 @@ jobs:
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git add ${{ env.CATEGORIES_BLOCK_DIR }}/
+          git add "$CATEGORIES_BLOCK_DIR"/
           git commit -m "Update block lists" || exit 0
           git push origin main
