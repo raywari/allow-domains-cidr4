@@ -427,6 +427,7 @@
 - static.whatsapp.net
 - statichdrezka.ac
 - stats.externulls.com
+- stitch.withgoogle.com
 - stockx.com
 - store.externulls.com
 - stream.voidboost.in
@@ -1399,6 +1400,7 @@
 - statology.org
 - stats.externulls.com
 - steamstat.info
+- stitch.withgoogle.com
 - stockx.com
 - store.externulls.com
 - strana.news
@@ -2478,6 +2480,7 @@
 - statology.org
 - stats.externulls.com
 - steamstat.info
+- stitch.withgoogle.com
 - store.externulls.com
 - strana.news
 - strana.today
