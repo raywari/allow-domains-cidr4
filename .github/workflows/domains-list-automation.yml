@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: write
+
 env:
   DOMAINS_FILE: domains.lst
   SOURCES_DOMAINS_FILE: sources/sources-domains.txt
@@ -91,7 +92,9 @@ jobs:
           }
 
           mkdir -p "$BASE_TMP_DIR" "$OUTPUT_DIR_VAR"
+
           cp "$DOMAINS_FILE_VAR" "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE_VAR"
+
           sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE_VAR"
           sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE_VAR"
           sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE_VAR"
@@ -115,6 +118,7 @@ jobs:
 
           for key in "${!SOURCES[@]}"; do
             url="${SOURCES[$key]}"
+
             TMP_DIR="$BASE_TMP_DIR/$key"
             mkdir -p "$TMP_DIR"
 
@@ -357,7 +361,7 @@ jobs:
     needs: generate-srs
     env:
       NEKOBOX_CONFIG_FILE: nekoray-mahdi.json
-      CIDR4_SUMMARY_FILE: "$CATEGORIES_CIDR4_DIR"/summary.lst # Добавлено для ясности
+      CIDR4_SUMMARY_FILE: "$CATEGORIES_CIDR4_DIR"/summary.lst
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
