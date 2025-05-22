@@ -21,6 +21,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y wget curl grep moreutils tar wget jq
@@ -205,6 +208,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Pull latest changes
         run: git pull origin main
@@ -281,6 +287,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
       - name: Pull latest changes
@@ -333,18 +340,6 @@ jobs:
           git commit -m "Update SRS ruleset" || echo "No SRS changes"
           git push origin main
 
-  generate-routing-nekobox-config:
-    runs-on: ubuntu-latest
-    needs: generate-srs
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Pull latest changes
-        run: git pull origin main
-
-      - name: Generate routing config JSON
-        run: |
           rm -f categories/Rulesets/nekoray-mahdi.json
           mkdir -p categories/Rulesets
 
@@ -377,7 +372,7 @@ jobs:
                 },
                 {
                   actionType: "route",
-                  domain_suffix: $domains,
+                   domain_suffix: ($domains | map(select(. != "") | if . == "ua" then ".ua" else . end)),
                   invert: false,
                   ip_is_private: false,
                   ip_version: "",
@@ -436,21 +431,19 @@ jobs:
                   type: 0
                 }
               ]
-            }' > categories/Rulesets/nekoray-mahdi.json
-
-      - name: Commit and push routing config
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add categories/Rulesets/nekoray-mahdi.json
-          git commit -m "Update routing config" || echo "No config changes"
-          git push origin main
+            }' | jq --indent 2 . > categories/Rulesets/nekoray-mahdi.json
 
   update-block-lists:
     name: update-block-lists
     runs-on: ubuntu-latest
     needs: generate-routing-nekobox-config
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
       - name: Pull latest changes
         run: git pull origin main
 
