@@ -41,7 +41,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y wget curl grep moreutils tar wget jq
+        run: sudo apt-get update && sudo apt-get install -y wget curl grep moreutils tar jq
 
       - name: Clean domains.lst
         run: |
@@ -403,7 +403,7 @@ jobs:
                 },
                 {
                   actionType: "route",
-                  domain_suffix: ($domains | map(select(. != "") | if . == "ua" then ".ua" else . end)),
+                  domain_suffix: ($domains | map(select(. != "") | if . == "ua" then ".ua" else . end),
                   invert: false,
                   ip_is_private: false,
                   ip_version: "",
@@ -619,8 +619,8 @@ jobs:
 
       - name: Commit changes
         run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add "$CATEGORIES_BLOCK_DIR"/
           git commit -m "Update block lists" || exit 0
           git push origin main
