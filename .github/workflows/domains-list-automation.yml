@@ -443,6 +443,14 @@ jobs:
               ]
             }' | jq --indent 2 . > categories/Rulesets/nekoray-mahdi.json
 
+      - name: Commit nekoray changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add categories/Rulesets/nekoray-mahdi.json
+          git commit -m "Update nekoray config" || echo "No changes"
+          git push origin main
+
   update-block-lists:
     name: update-block-lists
     runs-on: ubuntu-latest
