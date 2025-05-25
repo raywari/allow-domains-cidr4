@@ -36,11 +36,11 @@
 - antiwar.in
 - api.github.com
 - aplawrence.com
-- app.amplitude.com
 - appspot.com
 - appstorrent.ru
 - aqicn.org
 - arbatmedia.kz
+- arm.com
 - arsvest.ru
 - assets.strpst.com
 - astra.press
@@ -605,6 +605,7 @@
 - amd.com
 - amdm.ru
 - amedia.site
+- amplitude.com
 - amx.com
 - androidpolice.com
 - anidub.com
@@ -746,6 +747,7 @@
 - designify.com
 - dev.to
 - developer.nvidia.com
+- digash.live
 - digikey.com
 - digitalcontent.sky
 - dis.gd
@@ -1051,6 +1053,7 @@
 - muscdn.com
 - musemuse.cn
 - musical.ly
+- musixmatch.com
 - mydoramy.club
 - myheritage.com
 - myjetbrains.com
@@ -1360,6 +1363,7 @@
 - sovetromantica.com
 - spacelift.io
 - spektr.press
+- spiceworks.com
 - spiegel.de
 - spitfireaudio.com
 - spoti.fi
@@ -1480,6 +1484,7 @@
 - translyaciya.com
 - trellix.com
 - trueblackmetalradio.com
+- truthsocial.com
 - trv-science.ru
 - tsmc.com
 - ttlivecdn.com
@@ -1568,6 +1573,7 @@
 - wikidot.com
 - wilsoncenter.org
 - windows10spotlight.com
+- windsurf.com
 - wise.com
 - withyoutube.com
 - wk.cz
@@ -1667,6 +1673,7 @@
 - amdm.ru
 - amedia.site
 - amnezia.org
+- amplitude.com
 - amx.com
 - androidpolice.com
 - anidub.com
@@ -1687,12 +1694,12 @@
 - aol.com
 - api.jetbrains.ai
 - api.service-kp.com
-- app.amplitude.com
 - appspot.com
 - arbat.media
 - arbatmedia.kz
 - archive.ph
 - archiveofourown.org
+- arm.com
 - arsvest.ru
 - as6723.net
 - assets.heroku.com
@@ -1813,6 +1820,7 @@
 - designify.com
 - dev.to
 - developer.nvidia.com
+- digash.live
 - digikey.com
 - digitalcontent.sky
 - discordapp.io
@@ -2124,6 +2132,7 @@
 - muscdn.com
 - musemuse.cn
 - musical.ly
+- musixmatch.com
 - mydoramy.club
 - myheritage.com
 - myjetbrains.com
@@ -2441,6 +2450,7 @@
 - sovetromantica.com
 - spacelift.io
 - spektr.press
+- spiceworks.com
 - spiegel.de
 - spitfireaudio.com
 - spoti.fi
@@ -2565,6 +2575,7 @@
 - translyaciya.com
 - trellix.com
 - trueblackmetalradio.com
+- truthsocial.com
 - trv-science.ru
 - tsmc.com
 - ttlivecdn.com
@@ -2654,6 +2665,7 @@
 - wikidot.com
 - wilsoncenter.org
 - windows10spotlight.com
+- windsurf.com
 - withyoutube.com
 - wk.cz
 - wonderzine.com
