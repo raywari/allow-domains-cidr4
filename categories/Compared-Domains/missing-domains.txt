@@ -1,4 +1,19 @@
 # Missing domains
+# Source: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
+
+- amplitude.com
+- digash.live
+- musixmatch.com
+- spiceworks.com
+- truthsocial.com
+- windsurf.com
+
+# Missing domains
+# Source: https://community.antifilter.download/list/domains.lst
+
+- arm.com
+
+# Missing domains
 # Source: https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst
 
 - gvt1.com

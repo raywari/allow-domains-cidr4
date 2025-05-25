@@ -77,7 +77,6 @@
 - chatgpt.livekit.cloud
 - chronicles.media
 - citrix.com
-- clamav.net
 - clash.com
 - clashmini.com
 - clashroyale.com
@@ -97,7 +96,6 @@
 - discordapp.org
 - discordcdn.com
 - discordstatus.com
-- disneyplus.com
 - dobrochan.net
 - donmai.us
 - doxajournal.ru
@@ -158,7 +156,6 @@
 - hath.network
 - hayday.com
 - haydaygame.com
-- hbomax.com
 - hdrezka.cm
 - hdrezka.fm
 - hentaichan.live
@@ -190,7 +187,6 @@
 - kinovod.pro
 - kpapp.link
 - lampa.mx
-- le-production.tv
 - leica-geosystems.com
 - lenovo.com
 - lf1-ttcdn-tos.pstatp.com
@@ -211,12 +207,10 @@
 - macpaw.com
 - macvendors.com
 - makersuite.google.com
-- max.com
 - mbed.com
 - mchost.guru
 - mdza.io
 - mediazona.online
-- megapeer.ru
 - memohrc.org
 - memopzk.org
 - memorialcenter.org
@@ -250,8 +244,6 @@
 - netflixstudios.com
 - newizv.ru
 - newstudio.tv
-- nordaccount.com
-- nordcdn.com
 - notebooklm.google
 - notifications-pa.googleapis.com
 - notionusercontent.com
@@ -349,8 +341,6 @@
 - research.uber.com
 - resp.app
 - reuters.com
-- rezka-ua.in
-- rferl.org
 - riafan.ru
 - ridl.io
 - rpt.usuppliers.uber.com
@@ -360,7 +350,6 @@
 - ruckuswireless.com
 - rucriminal.info
 - rulate.ru
-- rule34.xxx
 - rus-media.org
 - rus.ec
 - rustorka.com
@@ -503,7 +492,6 @@
 - velocidrone.com
 - veritas.com
 - viber.co
-- viber.com
 - viber.me
 - video-akpcw-cdn-spotify-com.akamaized.net
 - video-analytics.google.com
@@ -518,8 +506,6 @@
 - vroid.com
 - vroid.pixiv.help
 - vrv.co
-- vyos.io
-- watchguard.com
 - webchannel-alkalimakersuite-pa.clients6.google.com
 - wetransfer.com
 - wheather.com
