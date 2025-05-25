@@ -1,14 +1,3 @@
-- amplitude.com
-- digash.live
-- musixmatch.com
-- spiceworks.com
-- truthsocial.com
-- windsurf.com
-
-# Missing domains
-# Source: https://community.antifilter.download/list/domains.lst
-
-- arm.com
 10minutemail.com
 1337x.to
 24.kg
@@ -67,6 +56,7 @@ amd.com
 amdm.ru
 amedia.site
 amnezia.org
+amplitude.com
 amx.com
 analog.com
 androidpolice.com
@@ -91,7 +81,6 @@ api.github.com
 api.jetbrains.ai
 api.service-kp.com
 aplawrence.com
-app.amplitude.com
 appspot.com
 appstorrent.ru
 aqicn.org
@@ -99,6 +88,7 @@ arbat.media
 arbatmedia.kz
 archive.ph
 archiveofourown.org
+arm.com
 arsvest.ru
 as6723.net
 assets.heroku.com
@@ -252,6 +242,7 @@ dev.to
 developer.nvidia.com
 deviantart.com
 devops.com
+digash.live
 digikey.com
 digitalcontent.sky
 digitalocean.com
@@ -652,6 +643,7 @@ multporn.net
 muscdn.com
 musemuse.cn
 musical.ly
+musixmatch.com
 mydoramy.club
 myheritage.com
 myjetbrains.com
@@ -1038,6 +1030,7 @@ sovanews.tv
 sovetromantica.com
 spacelift.io
 spektr.press
+spiceworks.com
 spiegel.de
 spitfireaudio.com
 spoti.fi
@@ -1182,6 +1175,7 @@ trailhead.com
 translyaciya.com
 trellix.com
 trueblackmetalradio.com
+truthsocial.com
 trv-science.ru
 tsmc.com
 ttlivecdn.com
@@ -1294,6 +1288,7 @@ wikidot.com
 wilsoncenter.org
 windguru.cz
 windows10spotlight.com
+windsurf.com
 wise.com
 withyoutube.com
 wixmp.com
