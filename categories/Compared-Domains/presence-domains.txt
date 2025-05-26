@@ -290,6 +290,7 @@
 - pcbway.com
 - pcbway.ru
 - pdq.com
+- phoenixcontact.com
 - php.su
 - piccy.info
 - pixabay.com
@@ -2255,6 +2256,7 @@
 - pexels.com
 - phncdn.com
 - phncdn.com.sds.rncdn7.com
+- phoenixcontact.com
 - pimpletv.ru
 - pingdom.com
 - piratbit.top

@@ -2,7 +2,6 @@
 # Source: https://community.antifilter.download/list/domains.lst
 
 - pepperl-fuchs.com
-- phoenixcontact.com
 
 # Missing domains
 # Source: https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst
