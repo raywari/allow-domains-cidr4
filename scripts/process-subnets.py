@@ -5,7 +5,7 @@ from pathlib import Path
 
 # ===== SETTINGS =====
 SERVICES = {
-    'Cloudflare': ('url', 'https://www.cloudflare.com/ips-v4', 'https://www.cloudflare.com/ips-v6'),
+    'Cloudflare-ECH': ('url', 'https://www.cloudflare.com/ips-v4', 'https://www.cloudflare.com/ips-v6'),
     'Discord': ('url_params', 'https://iplist.opencck.org/?format=text&data={cidr}&site=discord.gg&site=discord.media'),
     'Telegram': ('single_url', 'https://core.telegram.org/resources/cidr.txt'),
     'Meta': ('asn', 32934),
@@ -14,9 +14,9 @@ SERVICES = {
     'OVH': ('asn', 16276),
 }
 
-SUMMARY = ['Cloudflare', 'Discord', 'Meta', 'Twitter']
+SUMMARY = ['Cloudflare-ECH', 'Discord', 'Meta', 'Twitter']
 
-USER_AGENT = "Mozilla/5.0"
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 BGP_URL = "https://bgp.tools/table.txt"
 # ===== END SETTINGS =====
 
