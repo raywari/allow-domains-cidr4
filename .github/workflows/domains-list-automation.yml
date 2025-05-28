@@ -2,13 +2,13 @@ name: Domains Automation
 
 on:
   schedule:
-    - cron: "0 10 * * *"
+    - cron: '0 10 * * *'
   push:
     paths:
-      - "domains.lst"
-      - "sources/sources-domains.txt"
-      - "categories/Block/**.lst"
-      - "sources/sources-block.txt"
+      - 'domains.lst'
+      - 'sources/**'
+      - 'categories/**'
+      - 'scripts/**'
   workflow_dispatch:
 
 permissions:
@@ -17,187 +17,36 @@ permissions:
 jobs:
   process-domains:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main
           fetch-depth: 0
+          
+      - name: Pull latest changes
+        run: git pull origin HEAD:main
+        
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y wget curl grep moreutils tar wget jq
+        run: pip install requests
 
-      - name: Clean domains.lst
-        run: |
-          sed -i 's/^[[:space:]]*-[[:space:]]*//' domains.lst
-          sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' domains.lst
-          sed -i 's/^full://g; s|^https\?://||g; s|^//||g' domains.lst
-          sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' domains.lst
-          sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' domains.lst
+      - name: Run v2fly-domains script
+        run: python scripts/v2fly-domains.py
 
-      - name: Sort domains.lst
-        run: LC_COLLATE=C sort -f -u domains.lst -o domains.lst
+      - name: Run process-domains script
+        run: python scripts/process-domains.py
 
-      - name: Filter subdomains in domains.lst
-        run: |
-          get_parents() {
-            local d=$1
-            while [[ $d == *.* ]]; do
-              d=${d#*.}
-              echo "$d"
-            done
-          }
-          mapfile -t all < domains.lst
-          IFS=$'\n' sorted=($(printf '%s\n' "${all[@]}" |
-            awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
-          declare -A keep; > filtered.txt
-          for dom in "${sorted[@]}"; do
-            skip=
-            for p in $(get_parents "$dom"); do
-              [[ ${keep[$p]} ]] && { skip=1; break; }
-            done
-            [[ $skip ]] || { echo "$dom" >> filtered.txt; keep[$dom]=1; }
-          done
-          sort -u filtered.txt -o domains.lst
-          rm filtered.txt
-
-      - name: Compare with external sources
-        run: |
-          set -eo pipefail
-
-          BASE_TMP_DIR="./tmp"
-          DOMAINS_FILE="domains.lst"
-          RENAMED_DOMAINS_FILE="domains-raywari.lst"
-          SOURCES_FILE="sources/sources-domains.txt"
-          OUTPUT_DIR="categories/Compared-Domains"
-
-          cleanup() {
-            [ -d "$BASE_TMP_DIR" ] && rm -rf "$BASE_TMP_DIR"
-          }
-
-          mkdir -p "$BASE_TMP_DIR" "$OUTPUT_DIR"
-
-          cp "$DOMAINS_FILE" "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
-
-          sed -i '/^[[:space:]]*#/d; /^;/d; /^\/\//d; /^[[:space:]]*--/d' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
-          sed -i 's/^full://g; s|^https\?://||g; s|^//||g' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
-          sed -i 's|/.*$||g; s|:.*$||g; s|^www[2-9]\?\.||g' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
-          sed -i 's/^[[:space:]]*//; s/[[:space:]]*$//; /^$/d' "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
-          LC_ALL=C sort -u "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE" -o "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
-
-          declare -A PRIMARY_DOMAINS
-          while IFS= read -r d; do
-            PRIMARY_DOMAINS["$d"]=1
-          done < "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE"
-
-          declare -A SOURCES
-          mapfile -t SOURCE_URLS < <(grep -v '^#' "$SOURCES_FILE" | sed 's/#.*//; /^$/d')
-
-          for raw_url in "${SOURCE_URLS[@]}"; do
-            url=$(echo "$raw_url" | awk '{print $1}' | xargs)
-            [[ "$url" =~ ^https?:// ]] || url="https://$url"
-            key=$(echo "$url" | sed 's/[?&].*//; s|https\?://||; s|/|_|g; s/\./_/g; s/_$//')
-            SOURCES["$key"]="$url"
-          done
-
-          for key in "${!SOURCES[@]}"; do
-            url="${SOURCES[$key]}"
-
-            TMP_DIR="$BASE_TMP_DIR/$key"
-            mkdir -p "$TMP_DIR"
-
-            out_file="$TMP_DIR/${key}.lst"
-            echo "Processing: $url"
-            curl -sfL --connect-timeout 30 --retry 3 "$url" > "$out_file" || continue
-
-            sed -i -E '
-              /^[[:space:]]*#/d;
-              /^[[:space:]]*$/d;
-              s/^[0-9.]+\s+//;
-              s/\s+/\n/g;
-              s/[[:space:]]*#.*$//;
-              s/^[[:space:]]*//;
-              s/[[:space:]]*$//;
-              /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/!d;
-            ' "$out_file"
-
-            sed -i '
-              s|^https\?://||g;
-              s|/.*$||g;
-              s|:.*$||g;
-              s|^www[0-9]*\.||g;
-            ' "$out_file"
-
-            LC_ALL=C sort -u "$out_file" -o "$out_file"
-            [ -s "$out_file" ] || { rm -rf "$TMP_DIR"; continue; }
-
-            filtered=()
-            while IFS= read -r domain; do
-              parent="$domain"
-              is_sub=0
-              while [[ "$parent" == *.* ]]; do
-                parent="${parent#*.}"
-                [ -n "${PRIMARY_DOMAINS[$parent]}" ] && { is_sub=1; break; }
-              done
-              [ $is_sub -eq 0 ] && filtered+=("$domain")
-            done < "$out_file"
-
-            printf "%s\n" "${filtered[@]}" > "${out_file}.filtered"
-            mv "${out_file}.filtered" "$out_file"
-            [ -s "$out_file" ] || { rm -rf "$TMP_DIR"; continue; }
-
-            LC_ALL=C comm -23 \
-              <(LC_ALL=C sort "$out_file") \
-              <(LC_ALL=C sort "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE") > "$TMP_DIR/missing_${key}.txt"
-
-            LC_ALL=C comm -13 \
-              <(LC_ALL=C sort "$out_file") \
-              <(LC_ALL=C sort "$BASE_TMP_DIR/$RENAMED_DOMAINS_FILE") > "$TMP_DIR/presence_${key}.txt"
-          done
-
-          for type in missing presence; do
-            final_file="$OUTPUT_DIR/${type}-domains.txt"
-            > "$final_file"
-            for key in "${!SOURCES[@]}"; do
-              TMP_DIR="$BASE_TMP_DIR/$key"
-              tmp_file="$TMP_DIR/${type}_${key}.txt"
-              [ -s "$tmp_file" ] && {
-                source_url="${SOURCES[$key]}"
-                printf "# %s\n# Source: %s\n\n" "${type^} domains" "$source_url" >> "$final_file"
-                cat "$tmp_file" | sed 's/^/- /' >> "$final_file"
-                printf "\n\n" >> "$final_file"
-              }
-            done
-            sed -i -e '/^$/N;/^\n$/D' "$final_file"
-          done
-
-          cleanup
-
-      - name: Generate domains without YouTube
-        run: |
-          yt="categories/Services/youtube/youtube-domains.lst"
-          [[ -f "$yt" && -f domains.lst ]] && grep -vxFf "$yt" domains.lst > domains-without-yt.lst
-
-      - name: Commit and push .lst changes
+      - name: Commit and push domains/compare results
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          for f in domains.lst domains-nekobox.lst domains-without-yt.lst; do
-            [[ -f $f ]] && git add "$f"
-          done
-          git commit -m "Updated domain lists" || echo "No changes to commit"
-          git push origin main
-
-      - name: Commit and push Compared-Domains changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          for f in categories/Compared-Domains/missing-domains.txt categories/Compared-Domains/presence-domains.txt; do
-            [[ -f $f ]] && git add "$f"
-          done
-          git commit -m "Domains compared" || echo "No comparison changes"
-          git push origin main
+          git add domains.lst domains-without-yt.lst categories/Compared-Domains
+          git commit -m "Update domains lists" || echo "No changes"
+          git push origin HEAD:main
 
   process-subnets:
     runs-on: ubuntu-latest
@@ -206,404 +55,118 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main
           fetch-depth: 0
 
       - name: Pull latest changes
-        run: git pull origin main
+        run: git pull origin HEAD:main
 
-      - name: Create directory structure
-        run: |
-          mkdir -p \
-            categories/CIDR4/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter,Hetzner,OVH} \
-            categories/CIDR6/services/{Cloudflare-ECH,Discord,Meta,Telegram,X-Twitter,Hetzner,OVH}
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-      - name: Get Cloudflare networks
-        run: |
-          curl -sSfL "https://www.cloudflare.com/ips-v4" | sort -u > categories/CIDR4/services/Cloudflare-ECH/cloudflare-ECH.lst
-          curl -sSfL "https://www.cloudflare.com/ips-v6" | sort -u > categories/CIDR6/services/Cloudflare-ECH/cloudflare-ECH.lst
+      - name: Install dependencies
+        run: pip install requests
 
-      - name: Get Discord CIDRs
-        run: |
-          curl -sSfL "https://iplist.opencck.org/?format=text&data=cidr4&site=discord.gg&site=discord.media" | sort -u > categories/CIDR4/services/Discord/discord-voice.lst
-          curl -sSfL "https://iplist.opencck.org/?format=text&data=cidr6&site=discord.gg&site=discord.media" | sort -u > categories/CIDR6/services/Discord/discord-voice.lst
+      - name: Run process-subnets script
+        run: python scripts/process-subnets.py
 
-      - name: Get Telegram networks
-        run: |
-          TEMP_FILE=$(mktemp)
-          curl -sSfL "https://core.telegram.org/resources/cidr.txt" > "$TEMP_FILE"
-          grep -F '.' "$TEMP_FILE" | sort -u > categories/CIDR4/services/Telegram/telegram.lst
-          grep -F ':' "$TEMP_FILE" | sort -u > categories/CIDR6/services/Telegram/telegram.lst
-          rm "$TEMP_FILE"
-
-      - name: Download BGP data
-        run: |
-          USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-          curl --retry 3 -sSfL -A "$USER_AGENT" "https://bgp.tools/table.txt" > bgp_table.txt || exit 1
-
-      - name: Extract Meta networks
-        run: |
-          awk '/32934$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/services/Meta/meta.lst
-          awk '/32934$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/services/Meta/meta.lst
-
-      - name: Extract Twitter networks
-        run: |
-          awk '/13414$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/services/X-Twitter/x_twitter.lst
-          awk '/13414$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/services/X-Twitter/x_twitter.lst
-
-      - name: Extract Hetzner networks
-        run: |
-          awk '/24940$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/services/Hetzner/hetzner.lst
-          awk '/24940$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/services/Hetzner/hetzner.lst
-
-      - name: Extract OVH networks
-        run: |
-          awk '/16276$/ {print $1}' bgp_table.txt | grep -F '.' | sort -u > categories/CIDR4/services/OVH/ovh.lst
-          awk '/16276$/ {print $1}' bgp_table.txt | grep -F ':' | sort -u > categories/CIDR6/services/OVH/ovh.lst
-
-      - name: Generate summaries
-        run: |
-          cat categories/CIDR4/services/{Cloudflare-ECH/cloudflare-ECH.lst,Discord/discord-voice.lst,Meta/meta.lst,X-Twitter/x_twitter.lst} | sort -u > categories/CIDR4/summary.lst
-          cat categories/CIDR6/services/{Cloudflare-ECH/cloudflare-ECH.lst,Discord/discord-voice.lst,Meta/meta.lst,X-Twitter/x_twitter.lst} | sort -u > categories/CIDR6/summary.lst
-          rm bgp_table.txt
-
-      - name: Commit changes
+      - name: Commit and push CIDR changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add categories/CIDR4 categories/CIDR6
-          git commit -m "Update CIDR lists" || echo "No changes to commit"
-          git push origin main
+          git add categories/CIDR4 categories/CIDR6 categories/CIDR4/summary.lst categories/CIDR6/summary.lst
+          git commit -m "Update CIDR lists" || echo "No changes"
+          git push origin HEAD:main
 
   generate-srs:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     needs: process-subnets
     env:
-      SING_BOX_VERSION: "1.11.11"
+      SING_BOX_VERSION: '1.11.11'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main
           fetch-depth: 0
 
       - name: Pull latest changes
-        run: git pull origin main
+        run: git pull origin HEAD:main
 
-      - name: Compile ruleset SRS
-        run: |
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-          wget https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz
-          tar -xzvf sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz
+      - name: Install dependencies
+        run: pip install requests
 
-          if [[ ! -f categories/CIDR4/summary.lst || ! -f domains.lst ]]; then
-              echo "::error::Missing source files summary.lst или domains.lst"
-              exit 1
-          fi
+      - name: Run generate-srs script
+        run: python scripts/generate-srs.py
 
-          cp categories/CIDR4/summary.lst cidr.txt
-          cp domains.lst domains.txt
-          rm -f categories/Rulesets/domains-cidr4.srs
-
-          jq -n --rawfile domains domains.txt --rawfile cidrs cidr.txt '{
-            version: 3,
-            rules: [
-              {
-                domain_suffix: (
-                  $domains | split("\n") | map(select(. != "") | if . == "ua" then ".ua" else . end)
-                ),
-                ip_cidr: (
-                  $cidrs | split("\n") | map(select(. != ""))
-                )
-              }
-            ]
-          }' > rules.json
-
-          sing-box-${SING_BOX_VERSION}-linux-amd64/sing-box rule-set compile rules.json || {
-              echo "::error::Failed to compile ruleset";
-              exit 1;
-          }
-
-          mkdir -p categories/Rulesets
-          mv rules.srs categories/Rulesets/domains-cidr4.srs
-
-          rm -rf domains.txt cidr.txt rules.json sing-box-${SING_BOX_VERSION}-linux-amd64*
-
-      - name: Commit SRS changes
+      - name: Commit and push SRS ruleset
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add categories/Rulesets/domains-cidr4.srs
-          git commit -m "Update SRS ruleset" || echo "No SRS changes"
-          git push origin main
+          git commit -m "Update SRS ruleset" || echo "No changes"
+          git push origin HEAD:main
 
-  generate-routing-nekobox-config:
+  generate-routing-config:
     runs-on: ubuntu-latest
     needs: generate-srs
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Pull latest changes
-        run: git pull origin main
+        run: git pull origin HEAD:main
 
-      - name: Generate routing config JSON
-        run: |
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-          rm -f categories/Rulesets/nekoray-mahdi.json
-          mkdir -p categories/Rulesets
+      - name: Run generate-routing-config script
+        run: python scripts/generate-routing-config.py
 
-          domains=$(jq -R . < domains.lst | jq -s .)
-          cidrs=$(jq -R . < categories/CIDR4/summary.lst | jq -s .)
-
-          jq -n --argjson domains "$domains" --argjson cidrs "$cidrs" '
-            {
-              id: 222222223,
-              name: "routing",
-              rules: [
-                {
-                  actionType: "hijack-dns",
-                  invert: false,
-                  ip_is_private: false,
-                  ip_version: "",
-                  name: "rule_1",
-                  network: "",
-                  noDrop: false,
-                  outboundID: -2,
-                  override_address: "",
-                  override_port: 0,
-                  protocol: "dns",
-                  rejectMethod: "",
-                  simple_action: 0,
-                  sniffOverrideDest: false,
-                  source_ip_is_private: false,
-                  strategy: "",
-                  type: 0
-                },
-                {
-                  actionType: "route",
-                   domain_suffix: ($domains | map(select(. != "") | if . == "ua" then ".ua" else . end)),
-                  invert: false,
-                  ip_is_private: false,
-                  ip_version: "",
-                  name: "rule_2",
-                  network: "",
-                  noDrop: false,
-                  outboundID: -1,
-                  override_address: "",
-                  override_port: 0,
-                  protocol: "",
-                  rejectMethod: "",
-                  simple_action: 0,
-                  sniffOverrideDest: false,
-                  source_ip_is_private: false,
-                  strategy: "",
-                  type: 0
-                },
-                {
-                  actionType: "route",
-                  ip_cidr: $cidrs,
-                  invert: false,
-                  ip_is_private: false,
-                  ip_version: "",
-                  name: "rule_3",
-                  network: "",
-                  noDrop: false,
-                  outboundID: -1,
-                  override_address: "",
-                  override_port: 0,
-                  protocol: "",
-                  rejectMethod: "",
-                  simple_action: 1600940404,
-                  sniffOverrideDest: false,
-                  source_ip_is_private: false,
-                  strategy: "",
-                  type: 0
-                },
-                {
-                  actionType: "route",
-                  invert: false,
-                  ip_is_private: false,
-                  ip_version: "",
-                  name: "rule_4",
-                  network: "",
-                  noDrop: false,
-                  outboundID: -2,
-                  override_address: "",
-                  override_port: 0,
-                  process_name: ["Discord.exe"],
-                  protocol: "",
-                  rejectMethod: "",
-                  simple_action: 0,
-                  sniffOverrideDest: false,
-                  source_ip_is_private: false,
-                  strategy: "",
-                  type: 0
-                }
-              ]
-            }' | jq --indent 2 . > categories/Rulesets/nekoray-mahdi.json
-
-      - name: Commit nekoray changes
+      - name: Commit and push routing config
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add categories/Rulesets/nekoray-mahdi.json
-          git commit -m "Update nekoray config" || echo "No changes"
-          git push origin main
+          git commit -m "Update routing config" || echo "No changes"
+          git push origin HEAD:main
 
   update-block-lists:
-    name: update-block-lists
     runs-on: ubuntu-latest
-    needs: generate-routing-nekobox-config
+    needs: generate-routing-config
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main
           fetch-depth: 0
 
       - name: Pull latest changes
-        run: git pull origin main
+        run: git pull origin HEAD:main
 
-      - name: Prepare environment
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run update-block-lists script
+        run: python scripts/update-block-lists.py
+
+      - name: Commit and push block lists
         run: |
-          mkdir -p categories/Block sources
-          cd categories/Block
-          touch block-ips.lst block-domains.lst
-          rm -f ../temp.* *.tmp
-
-      - name: Validate and fix entries
-        run: |
-          cd categories/Block
-           
-          grep -v '^[[:space:]]*#' block-ips.lst | grep -v '^[[:space:]]*$' > original-ips.tmp
-          grep -v '^[[:space:]]*#' block-domains.lst | grep -v '^[[:space:]]*$' > original-domains.tmp
-           
-          sed -i -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]*//g' original-ips.tmp original-domains.tmp
-           
-          > valid-ips.tmp
-          > valid-domains.tmp
-           
-          ip_regex='^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$'
-
-           while IFS= read -r entry; do
-            if [[ -n "$entry" ]]; then
-              if echo "$entry" | grep -qE "$ip_regex"; then
-                echo "$entry" >> valid-ips.tmp
-              else
-                echo "$entry" >> valid-domains.tmp
-              fi
-            fi
-          done < original-ips.tmp
-
-           while IFS= read -r entry; do
-            if [[ -n "$entry" ]]; then
-              if echo "$entry" | grep -qE "$ip_regex"; then
-                echo "$entry" >> valid-ips.tmp
-              else
-                echo "$entry" >> valid-domains.tmp
-              fi
-            fi
-          done < original-domains.tmp
-           
-          cat valid-ips.tmp > block-ips.lst
-          cat valid-domains.tmp > block-domains.lst
-           
-          rm -f original-ips.tmp original-domains.tmp valid-ips.tmp valid-domains.tmp
-
-      - name: Fetch external data
-        run: |
-          temp_file="$GITHUB_WORKSPACE/temp.txt"
-          > "$temp_file"
-
-          while IFS= read -r line || [ -n "$line" ]; do
-            [[ "$line" =~ ^[[:space:]]*# || -z "$line" ]] && continue
-            line=$(echo "$line" | xargs)
-
-            echo "Processing URL: $line"
-            curl -sSfL "$line" | \
-              grep -v '^#' | \
-              sed -E 's/^(0\.0\.0\.0|127\.0\.0\.1)[[:space:]]+//' | \
-              grep -v '^[[:space:]]*$' >> "$temp_file" || true
-          done < sources/sources-block.txt
-
-      - name: Update lists
-        run: |
-          cd categories/Block
-           
-          grep -E '^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$' \
-            "$GITHUB_WORKSPACE/temp.txt" >> block-ips.lst
-
-          grep -vFf block-ips.lst "$GITHUB_WORKSPACE/temp.txt" >> block-domains.lst
-
-      - name: Final processing
-        run: |
-          cd categories/Block
-           
-          filter_subdomains() {
-            local input_file=$1
-            local output_file=$2
-            
-            get_parents() {
-              local domain=$1
-              local parents=()
-              while [[ "$domain" == *.* ]]; do
-                domain="${domain#*.}"
-                parents+=("$domain")
-              done
-              echo "${parents[@]}"
-            }
-
-            mapfile -t domains < "$input_file"
-            IFS=$'\n' sorted=($(printf '%s\n' "${domains[@]}" | awk -F. '{print NF-1, $0}' | sort -n | cut -d' ' -f2-))
-            unset IFS
-
-            declare -A kept
-            > temp_filtered.txt
-
-            for domain in "${sorted[@]}"; do
-              skip=false
-              for p in $(get_parents "$domain"); do
-                if [[ -n "${kept["$p"]}" ]]; then
-                  skip=true
-                  break
-                fi
-              done
-              if ! $skip; then
-                echo "$domain" >> temp_filtered.txt
-                kept["$domain"]=1
-              fi
-            done
-
-            sort -u temp_filtered.txt -o "$output_file"
-            rm -f temp_filtered.txt
-          }
-
-          if [[ -s block-domains.lst ]]; then
-            echo "Фильтрация субдоменов..."
-            filter_subdomains block-domains.lst filtered-domains.lst
-            mv filtered-domains.lst block-domains.lst
-          fi
-
-          sort -u block-ips.lst -o block-ips.lst
-          sort -u block-domains.lst -o block-domains.lst
-
-          {
-            echo "# Auto-generated hosts"
-            echo -e "\n# IP addresses"
-            awk '{print "0.0.0.0 "$0}' block-ips.lst
-            echo -e "\n# Domains"
-            awk '{print "0.0.0.0 "$0}' block-domains.lst
-          } > hosts
-
-      - name: Cleanup
-        run: |
-          rm -f "$GITHUB_WORKSPACE/temp.txt"
-
-      - name: Commit changes
-        run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-          git add categories/Block/
-          git commit -m "Update block lists" || exit 0
-          git push origin main
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add categories/Block/**
+          git commit -m "Update block lists" || echo "No changes"
+          git push origin HEAD:main
