@@ -94,6 +94,7 @@
 - clash.com
 - clashmini.com
 - clashroyale.com
+- claudeusercontent.com
 - cloudflare-dns.com
 - cloudflare-ech.com
 - copilot-proxy.githubusercontent.com
@@ -450,6 +451,7 @@
 - self.events.data.microsoft.com
 - serpstat.com
 - serv01001.xyz
+- servd-anthropic-website.b-cdn.net
 - services.bingapis.com
 - sf1-ttcdn-tos.pstatp.com
 - sf16-ttcdn-tos.ipstatp.com
@@ -803,6 +805,7 @@
 - clashofclans.com
 - clashroyale.com
 - clashroyaleapp.com
+- claudeusercontent.com
 - clickup.com
 - clip.opus.pro
 - cms-twdigitalassets.com
@@ -1488,6 +1491,7 @@
 - sephora.com
 - serv01001.xyz
 - servarr.com
+- servd-anthropic-website.b-cdn.net
 - services.bingapis.com
 - severreal.org
 - sf1-ttcdn-tos.pstatp.com
@@ -1987,6 +1991,7 @@
 - clashofclans.com
 - clashroyale.com
 - clashroyaleapp.com
+- claudeusercontent.com
 - clickup.com
 - clip.opus.pro
 - cloudflare-ech.com
@@ -2654,6 +2659,7 @@
 - sephora.com
 - serv01001.xyz
 - servarr.com
+- servd-anthropic-website.b-cdn.net
 - services.bingapis.com
 - severreal.org
 - sf1-ttcdn-tos.pstatp.com
