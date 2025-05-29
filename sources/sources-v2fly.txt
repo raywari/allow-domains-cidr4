@@ -1,3 +1,4 @@
+anthropic
 category-media-ru
 google-deepmind
 spotify
