@@ -1,9 +1,10 @@
 anthropic
 category-media-ru
-google-deepmind
-spotify
 discord
-soundcloud
+google-deepmind
 instagram
 openai
+soundcloud
+spotify
 x
+youtube

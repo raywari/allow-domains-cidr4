@@ -40,12 +40,18 @@ jobs:
       - name: Run process-domains script
         run: python scripts/process-domains.py
 
+      - name: Sort sources/sources-v2fly.txt
+        run: sort -u sources/sources-v2fly.txt -o sources/sources-v2fly.txt
+
       - name: Commit and push domains/compare results
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add domains.lst domains-without-yt.lst categories/Compared-Domains
           git commit -m "Update domains lists" || echo "No changes"
+          git push origin HEAD:main
+          git add sources/sources-v2fly.txt
+          git commit -m "Sort sources-v2fly.txt" || echo "No changes"
           git push origin HEAD:main
 
   process-subnets:
