@@ -81,7 +81,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add categories/CIDR4 categories/CIDR6 categories/CIDR4/summary.lst categories/CIDR6/summary.lst
+          git add categories/CIDRs/*
           git commit -m "Update CIDR lists" || echo "No changes"
           git push origin HEAD:main
 
