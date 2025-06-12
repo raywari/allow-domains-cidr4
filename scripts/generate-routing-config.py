@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 DOMAINS_FILE = Path("domains.lst")
-CIDR_FILE = Path("categories/CIDR4/summary.lst")
+CIDR_FILE = Path("categories/CIDRs/CIDR4/summary-cidr4.lst")
 OUTPUT_JSON = Path("categories/Rulesets/nekoray-mahdi.json")
 
 def load_list(path):
@@ -12,7 +12,7 @@ def load_list(path):
 
 def main():
     if not DOMAINS_FILE.exists() or not CIDR_FILE.exists():
-        print("domains.lst или summary.lst не найдены")
+        print("domains.lst или summary-cidr4.lst не найдены")
         return
 
     domains = load_list(DOMAINS_FILE)

@@ -17,7 +17,7 @@ DOWNLOAD_URL = (
 )
 TARBALL = WORK_DIR / f"sing-box-{SING_BOX_VERSION}-linux-amd64.tar.gz"
 EXTRACT_DIR = WORK_DIR / f"sing-box-{SING_BOX_VERSION}-linux-amd64"
-CIDR_FILE = Path("categories/CIDR4/summary.lst")
+CIDR_FILE = Path("categories/CIDRs/CIDR4/summary-cidr4.lst")
 DOMAINS_FILE = Path("domains.lst")
 RULES_JSON = WORK_DIR / "rules.json"
 OUTPUT_SRS = Path("categories/Rulesets/domains-cidr4.srs")
@@ -42,7 +42,7 @@ def download_and_extract():
 
 def build_rules_json():
     if not CIDR_FILE.exists() or not DOMAINS_FILE.exists():
-        print("Отсутствуют категории/Rulesets/summary.lst или domains.lst", file=sys.stderr)
+        print("Отсутствуют categories/Rulesets/summary-cidr4.lst или domains.lst", file=sys.stderr)
         sys.exit(1)
 
     print("Генерируем rules.json")
