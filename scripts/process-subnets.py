@@ -12,6 +12,7 @@ SERVICES = {
     'Twitter': ('asn', 13414),
     'Hetzner': ('asn', 24940),
     'OVH': ('asn', 16276),
+    'Amazon': ('asn', 16509),
 }
 
 SUMMARY = ['Cloudflare-ECH', 'Meta', 'Twitter']
