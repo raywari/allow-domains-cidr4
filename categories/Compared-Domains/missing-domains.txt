@@ -1,4 +1,22 @@
 # Missing domains
+# Source: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
+
+- bosch.com
+- boschaftermarket.com
+- boschautoparts.com
+- flyertalk.com
+- fxnetworks.com
+- global.platform.seconddinnertech.com
+- insearch.site
+- langdock.com
+- mailinator.com
+- marvelsnap.com
+- nhentai.net
+- riseup.net
+- techbargains.com
+- xhcdn.com
+
+# Missing domains
 # Source: https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst
 
 - gvt1.com
