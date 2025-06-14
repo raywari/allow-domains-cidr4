@@ -480,6 +480,7 @@
 - sotaproject.com
 - soundcloud.cloud
 - sovanews.tv
+- spicetify.app
 - spiegel.de
 - spoti.fi
 - spotify-everywhere.com
@@ -1685,6 +1686,7 @@
 - sovetromantica.com
 - spacelift.io
 - spektr.press
+- spicetify.app
 - spiceworks.com
 - spiegel.de
 - spitfireaudio.com
@@ -3005,6 +3007,7 @@
 - sovetromantica.com
 - spacelift.io
 - spektr.press
+- spicetify.app
 - spiceworks.com
 - spiegel.de
 - spitfireaudio.com
