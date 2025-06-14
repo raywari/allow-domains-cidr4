@@ -19,7 +19,11 @@
 # Missing domains
 # Source: https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst
 
+- adafruit.com
+- fastpic.org
 - gvt1.com
+- pbs.twimg.com.cdn.cloudflare.net
+- video.twimg.com.cdn.cloudflare.net
 
 # Missing domains
 # Source: https://community.antifilter.download/list/domains.lst

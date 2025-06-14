@@ -946,8 +946,6 @@
 - ce1-048-404gv.video-ik-ok-ii.xyz
 - censortracker.org
 - chaos.com
-- chat.com
-- chatgpt.livekit.cloud
 - cherta.media
 - chickstagram.com
 - chronicles.media
@@ -998,7 +996,6 @@
 - dev.to
 - developer.nvidia.com
 - digash.live
-- digikey.com
 - digitalcontent.sky
 - discordapp.io
 - discordapp.org
@@ -1156,7 +1153,6 @@
 - holod.media
 - home-connect.com
 - honeywell.com
-- host.livekit.cloud
 - hostgator.com
 - hostinger.com
 - hotels.com
@@ -1332,7 +1328,6 @@
 - mailfence.com
 - mailo.com
 - makersuite.google.com
-- mangadex.org
 - mangahub.ru
 - mangapark.net
 - manus.im
@@ -1439,7 +1434,6 @@
 - ntp.msn.com
 - nxp.com
 - nyaa.land
-- oaiusercontent.com
 - ocstore.com
 - oculus.com
 - ohmyswift.ru
@@ -1459,7 +1453,6 @@
 - openai.fund
 - openai.org
 - openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
-- openaicom.imgix.net
 - openmedia.io
 - opensanctions.org
 - opensea.io
@@ -1495,7 +1488,6 @@
 - pcmag.com
 - periscope.tv
 - pexels.com
-- phncdn.com
 - phncdn.com.sds.rncdn7.com
 - phoenixcontact.com
 - pimpletv.ru
@@ -1687,7 +1679,6 @@
 - sobesednik.ru
 - sobytiya.info
 - solarwinds.com
-- sora.com
 - sota.vision
 - sotaproject.com
 - soundcloud.cloud
@@ -1832,7 +1823,6 @@
 - ttoverseaus.net
 - ttwstatic.com
 - turbobit.net
-- turn.livekit.cloud
 - tuta.com
 - tuta.io
 - tvfreedom.io
