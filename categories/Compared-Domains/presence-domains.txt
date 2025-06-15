@@ -185,7 +185,6 @@
 - huawei.com
 - hwbot.org
 - ibyteimg.com
-- ic-vt-nss.xhcdn.com
 - igcdn.com
 - igsonar.com
 - igtv.com
@@ -497,8 +496,6 @@
 - squadbusters.com
 - srv.voidnetwork.cloud
 - stalker2.com
-- static-ah.xhcdn.com
-- static-nss.xhcdn.com
 - static.voidboost.com
 - static.whatsapp.net
 - statichdrezka.ac
@@ -589,7 +586,6 @@
 - votvot.tv
 - voynaplemyon.com
 - vp.externulls.com
-- vrmedia-nss.xhcdn.com
 - vroid.com
 - vroid.pixiv.help
 - vrv.co
@@ -910,6 +906,9 @@
 - bookstagram.com
 - boombeach.com
 - booth.pm
+- bosch.com
+- boschaftermarket.com
+- boschautoparts.com
 - botnadzor.org
 - brave.com
 - brawlstars.com
@@ -1072,6 +1071,7 @@
 - flourish.studio
 - fls.guru
 - flukenetworks.com
+- flyertalk.com
 - fn-volga.ru
 - fonge.org
 - footballapi.pulselive.com
@@ -1087,6 +1087,7 @@
 - freedomletters.org
 - freeimages.com
 - freemedia.io
+- fxnetworks.com
 - gagadget.com
 - gamedistribution.com
 - gamesfirsthelsinki.com
@@ -1108,6 +1109,7 @@
 - ghostrc.game.idtech.services
 - gitlab.com
 - global.fncstatic.com
+- global.platform.seconddinnertech.com
 - glpals.com
 - godaddy.com
 - gofile.io
@@ -1168,7 +1170,6 @@
 - ibm.com
 - ibytedtos.com
 - ibyteimg.com
-- ic-vt-nss.xhcdn.com
 - idelreal.org
 - iedb.org
 - ig.me
@@ -1186,6 +1187,7 @@
 - indiehackers.com
 - infineon.com
 - infinitenovel.eu
+- insearch.site
 - instaadder.com
 - instachecker.com
 - instafallow.com
@@ -1294,6 +1296,7 @@
 - lambdalabs.com
 - lamcdn.net
 - lampa.mx
+- langdock.com
 - ldoceonline.com
 - le-production.tv
 - leafletjs.com
@@ -1327,11 +1330,13 @@
 - lucid.app
 - m3u.in
 - mailfence.com
+- mailinator.com
 - mailo.com
 - makersuite.google.com
 - mangahub.ru
 - mangapark.net
 - manus.im
+- marvelsnap.com
 - mashable.com
 - mbed.com
 - mdza.io
@@ -1411,6 +1416,7 @@
 - nflxvideo.net
 - ngrok.com
 - nhentai.com
+- nhentai.net
 - nhl.com
 - nike.com
 - nippon.com
@@ -1582,6 +1588,7 @@
 - riafan.ru
 - ridl.io
 - riperam.org
+- riseup.net
 - roar-review.com
 - root-nation.com
 - roskomsvoboda.org
@@ -1710,8 +1717,6 @@
 - squietpc.com
 - srv.voidnetwork.cloud
 - startpage.com
-- static-ah.xhcdn.com
-- static-nss.xhcdn.com
 - static.voidboost.com
 - static.whatsapp.net
 - statichdrezka.ac
@@ -1748,6 +1753,7 @@
 - tayga.info
 - te-st.org
 - teamviewer.com
+- techbargains.com
 - techpowerup.com
 - telegraf.by
 - telegraf.news
@@ -1888,7 +1894,6 @@
 - vpngen.org
 - vpnlove.me
 - vpnpay.io
-- vrmedia-nss.xhcdn.com
 - vroid.com
 - vroid.pixiv.help
 - w.atwiki.jp
@@ -1917,6 +1922,7 @@
 - x.com
 - xdaforums.com
 - xerox.com
+- xhcdn.com
 - xnxx-cdn.com
 - xnxx-ru.com
 - xnxx.com
@@ -2238,6 +2244,9 @@
 - bookstagram.com
 - boombeach.com
 - booth.pm
+- bosch.com
+- boschaftermarket.com
+- boschautoparts.com
 - botnadzor.org
 - brave.com
 - brawlstars.com
@@ -2411,6 +2420,7 @@
 - flourish.studio
 - fls.guru
 - flukenetworks.com
+- flyertalk.com
 - fn-volga.ru
 - fonge.org
 - footballapi.pulselive.com
@@ -2426,6 +2436,7 @@
 - freedomletters.org
 - freeimages.com
 - freemedia.io
+- fxnetworks.com
 - g2a.com
 - gagadget.com
 - gamedistribution.com
@@ -2450,6 +2461,7 @@
 - githubcopilot.com
 - gitlab.com
 - global.fncstatic.com
+- global.platform.seconddinnertech.com
 - glpals.com
 - godaddy.com
 - gofile.io
@@ -2510,7 +2522,6 @@
 - ibm.com
 - ibytedtos.com
 - ibyteimg.com
-- ic-vt-nss.xhcdn.com
 - idelreal.org
 - iedb.org
 - ig.me
@@ -2528,6 +2539,7 @@
 - indiehackers.com
 - infineon.com
 - infinitenovel.eu
+- insearch.site
 - instaadder.com
 - instachecker.com
 - instafallow.com
@@ -2625,6 +2637,7 @@
 - lambdalabs.com
 - lamcdn.net
 - lampa.mx
+- langdock.com
 - ldoceonline.com
 - le-production.tv
 - leafletjs.com
@@ -2654,12 +2667,14 @@
 - lucid.app
 - m3u.in
 - mailfence.com
+- mailinator.com
 - mailo.com
 - makersuite.google.com
 - mangadex.org
 - mangahub.ru
 - mangapark.net
 - manus.im
+- marvelsnap.com
 - mashable.com
 - max.com
 - mbed.com
@@ -2731,6 +2746,7 @@
 - nflxvideo.net
 - ngrok.com
 - nhentai.com
+- nhentai.net
 - nhl.com
 - nike.com
 - nippon.com
@@ -2907,6 +2923,7 @@
 - rferl.org
 - riafan.ru
 - riperam.org
+- riseup.net
 - roar-review.com
 - root-nation.com
 - roskomsvoboda.org
@@ -3031,8 +3048,6 @@
 - squietpc.com
 - srv.voidnetwork.cloud
 - startpage.com
-- static-ah.xhcdn.com
-- static-nss.xhcdn.com
 - static.voidboost.com
 - static.whatsapp.net
 - statichdrezka.ac
@@ -3069,6 +3084,7 @@
 - talosintelligence.com
 - te-st.org
 - teamviewer.com
+- techbargains.com
 - techpowerup.com
 - telegraf.by
 - telegraf.news
@@ -3204,7 +3220,6 @@
 - vpngen.org
 - vpnlove.me
 - vpnpay.io
-- vrmedia-nss.xhcdn.com
 - vroid.com
 - vroid.pixiv.help
 - w.atwiki.jp
@@ -3233,6 +3248,7 @@
 - wstracker.online
 - wwwinstagram.com
 - xdaforums.com
+- xhcdn.com
 - xnxx-cdn.com
 - xnxx-ru.com
 - xnxx.net
