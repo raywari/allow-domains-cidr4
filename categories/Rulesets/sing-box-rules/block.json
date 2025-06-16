@@ -1,4 +1,5 @@
 {
+  "version": 3,
   "rules": [
     {
       "domain_suffix": [
@@ -161,6 +162,7 @@
         "qoxcfxk2qj.68gqg.hstatic.io",
         "qzm9ffgdq29q.7kdvx.hstatic.io",
         "r2yhtz834aso.7kdvx.hstatic.io",
+        "r8y0sctr.bmysp.hstatic.io",
         "rpf9vp92.7kdvx.hstatic.io",
         "s-2.adobe.com",
         "s-3.adobe.com",
