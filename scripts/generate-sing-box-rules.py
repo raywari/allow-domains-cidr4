@@ -10,13 +10,12 @@ OUTPUT_MAIN = 'categories/Rulesets/sing-box-rules/domains-cidr4.json'
 OUTPUT_BLOCK = 'categories/Rulesets/sing-box-rules/block.json'
 
 def read_lines(file_path):
-
     with open(file_path, 'r', encoding='utf-8') as f:
         return [line.strip() for line in f if line.strip()]
 
 def create_rules(domains, cidrs):
-
     return {
+        "version": 3,
         "rules": [
             {
                 "domain_suffix": domains,
@@ -26,13 +25,11 @@ def create_rules(domains, cidrs):
     }
 
 def save_json(data, output_path):
-
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 def main():
-
     domains = read_lines(DOMAINS_FILE)
     cidrs = read_lines(CIDR4_FILE)
     main_data = create_rules(domains, cidrs)
