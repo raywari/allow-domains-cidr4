@@ -4,9 +4,9 @@ deviantart
 discord
 google-deepmind
 instagram
+intel
 openai
 soundcloud
 spotify
 x
 youtube
-intel
