@@ -101,11 +101,13 @@
 - copilot-telemetry.githubusercontent.com
 - cub.rip
 - czx.to
+- da-files.com
 - deepmind.com
 - deepmind.google
 - deezer.com
 - delfi.ee
 - dev.to
+- deviantart.net
 - devops.com
 - discordapp.io
 - discordapp.org
@@ -980,6 +982,7 @@
 - cvedetails.com
 - cyberghostvpn.com
 - cyxymu.info
+- da-files.com
 - daemon-tools.cc
 - data-cdn.mbamupdates.com
 - decrypt.day
@@ -995,6 +998,7 @@
 - designify.com
 - dev.to
 - developer.nvidia.com
+- deviantart.net
 - digash.live
 - digitalcontent.sky
 - discordapp.io
@@ -2320,6 +2324,7 @@
 - cvedetails.com
 - cyberghostvpn.com
 - cyxymu.info
+- da-files.com
 - daemon-tools.cc
 - decrypt.day
 - deepmind.com
@@ -2334,6 +2339,7 @@
 - designify.com
 - dev.to
 - developer.nvidia.com
+- deviantart.net
 - digash.live
 - digikey.com
 - digitalcontent.sky
