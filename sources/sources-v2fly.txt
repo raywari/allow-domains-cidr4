@@ -1,5 +1,6 @@
 anthropic
 category-media-ru
+deviantart
 discord
 google-deepmind
 instagram
