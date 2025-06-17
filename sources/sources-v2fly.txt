@@ -9,3 +9,4 @@ soundcloud
 spotify
 x
 youtube
+intel
