@@ -10,5 +10,6 @@
 # Missing domains
 # Source: https://community.antifilter.download/list/domains.lst
 
+- deepl.com
 - pepperl-fuchs.com
 
