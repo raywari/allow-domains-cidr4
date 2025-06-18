@@ -8,5 +8,6 @@ intel
 openai
 soundcloud
 spotify
+supercell
 x
 youtube
