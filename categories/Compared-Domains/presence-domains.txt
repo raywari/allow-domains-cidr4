@@ -48,6 +48,7 @@
 - amd.com
 - androidpolice.com
 - anidub.pro
+- anilibria.wtf
 - animestars.org
 - antiwar.in
 - api.github.com
@@ -128,6 +129,7 @@
 - cub.rip
 - czx.to
 - da-files.com
+- deepl.com
 - deepmind.com
 - deepmind.google
 - deezer.com
@@ -845,6 +847,7 @@
 - vroid.pixiv.help
 - vrv.co
 - watchanimeattheoffice.com
+- wattpad.com
 - web-instagram.net
 - webchannel-alkalimakersuite-pa.clients6.google.com
 - wetransfer.com
@@ -858,6 +861,7 @@
 - withyoutube.com
 - wixmp.com
 - wk.cz
+- wp-e.net
 - wstracker.online
 - wunderground.com
 - wwwinstagram.com
@@ -1112,6 +1116,7 @@
 - anidub.com
 - anidub.pro
 - anilibria.uno
+- anilibria.wtf
 - animaunt.org
 - anime-portal.su
 - animebest.org
@@ -1268,6 +1273,7 @@
 - daemon-tools.cc
 - data-cdn.mbamupdates.com
 - decrypt.day
+- deepl.com
 - deepmind.com
 - deepmind.google
 - deepstatemap.live
@@ -2413,6 +2419,7 @@
 - walmart.com
 - watchanimeattheoffice.com
 - watermarkremover.io
+- wattpad.com
 - web-instagram.net
 - webchannel-alkalimakersuite-pa.clients6.google.com
 - webnames.ca
@@ -2429,6 +2436,7 @@
 - withyoutube.com
 - wk.cz
 - wonderzine.com
+- wp-e.net
 - wpengine.com
 - wstracker.online
 - wwwinstagram.com
@@ -2712,6 +2720,7 @@
 - anidub.com
 - anidub.pro
 - anilibria.uno
+- anilibria.wtf
 - animaunt.org
 - anime-portal.su
 - animebest.org
@@ -3997,6 +4006,7 @@
 - walmart.com
 - watchanimeattheoffice.com
 - watermarkremover.io
+- wattpad.com
 - web-instagram.net
 - webchannel-alkalimakersuite-pa.clients6.google.com
 - webnames.ca
@@ -4015,6 +4025,7 @@
 - withyoutube.com
 - wk.cz
 - wonderzine.com
+- wp-e.net
 - wpengine.com
 - wstracker.online
 - wwwinstagram.com
