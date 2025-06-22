@@ -1,0 +1,15 @@
+{
+    "SERVICES": {
+        "Cloudflare-ECH": ["url", "https://www.cloudflare.com/ips-v4", "https://www.cloudflare.com/ips-v6"],
+        "Discord": ["url", "https://iplist.opencck.org/?format=text&data=cidr4&site=discord.gg&site=discord.media", "https://iplist.opencck.org/?format=text&data=cidr6&site=discord.gg&site=discord.media"],
+        "Telegram": ["single_url", "https://core.telegram.org/resources/cidr.txt"],
+        "Meta": ["asn", 32934],
+        "X-Twitter": ["asn", 13414],
+        "Hetzner": ["asn", 24940],
+        "OVH": ["asn", 16276],
+        "Amazon": ["asn", 16509]
+    },
+    "SUMMARY": ["Cloudflare-ECH", "Meta", "X-Twitter"],
+    "USER_AGENT": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "BGP_URL": "https://bgp.tools/table.txt"
+}

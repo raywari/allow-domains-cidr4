@@ -22,17 +22,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
-      - name: Pull latest changes
-        run: git pull origin HEAD:main
-        
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install requests
+        run: pip install requests aiohttp
 
       - name: Run v2fly-domains script
         run: python scripts/v2fly-domains.py
@@ -50,29 +47,12 @@ jobs:
           git add domains.lst domains-without-yt.lst categories/Compared-Domains
           git commit -m "Update domains lists" || echo "No changes"
           git push origin HEAD:main
+          git pull origin HEAD:main
+
           git add sources/sources-v2fly.txt
           git commit -m "Sort sources-v2fly.txt" || echo "No changes"
           git push origin HEAD:main
-
-  process-subnets:
-    runs-on: ubuntu-latest
-    needs: process-domains
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Pull latest changes
-        run: git pull origin HEAD:main
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: pip install requests
+          git pull origin HEAD:main
 
       - name: Run process-subnets script
         run: python scripts/process-subnets.py
@@ -84,28 +64,7 @@ jobs:
           git add categories/CIDRs/*
           git commit -m "Update CIDR lists" || echo "No changes"
           git push origin HEAD:main
-
-  generate-srs:
-    runs-on: ubuntu-latest
-    needs: process-subnets
-    env:
-      SING_BOX_VERSION: '1.11.11'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Pull latest changes
-        run: git pull origin HEAD:main
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: pip install requests
+          git pull origin HEAD:main
 
       - name: Run generate-srs script
         run: python scripts/generate-srs.py
@@ -117,23 +76,7 @@ jobs:
           git add categories/Rulesets/domains-cidr4.srs
           git commit -m "Update SRS ruleset" || echo "No changes"
           git push origin HEAD:main
-
-  generate-routing-config:
-    runs-on: ubuntu-latest
-    needs: generate-srs
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Pull latest changes
-        run: git pull origin HEAD:main
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+          git pull origin HEAD:main
 
       - name: Run generate-routing-config script
         run: python scripts/generate-routing-config.py
@@ -145,26 +88,7 @@ jobs:
           git add categories/Rulesets/nekoray-mahdi.json
           git commit -m "Update routing config" || echo "No changes"
           git push origin HEAD:main
-
-  update-block-lists:
-    runs-on: ubuntu-latest
-    needs: generate-routing-config
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Pull latest changes
-        run: git pull origin HEAD:main
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: pip install requests
+          git pull origin HEAD:main
 
       - name: Run update-block-lists script
         run: python scripts/update-block-lists.py
@@ -176,31 +100,16 @@ jobs:
           git add categories/Block/**
           git commit -m "Update block lists" || echo "No changes"
           git push origin HEAD:main
-
-  generate-sing-box-rules:
-    runs-on: ubuntu-latest
-    needs: update-block-lists
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Pull latest changes
-        run: git pull origin HEAD:main
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+          git pull origin HEAD:main
 
       - name: Run generate-sing-box-rules script
         run: python scripts/generate-sing-box-rules.py
 
-      - name: Commit and push block lists
+      - name: Commit and push sing-box-rules
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add categories/Rulesets/sing-box-rules/**
           git commit -m "Update sing-box-rules" || echo "No changes"
           git push origin HEAD:main
+          git pull origin HEAD:main
