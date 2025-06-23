@@ -1,64 +1,128 @@
+################
+###          ###
+### SERVICES ###
+###          ###
+################
+
+[services.Google-AI]
+v2fly = ["google-deepmind", "google-gemini"]
+[services.Copilot]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=copilot"
+
+[services.ElevenLabs]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=elevenlabs.io"
+
 [services.Telegram]
 v2fly = "telegram"
 general = "false"
+
 [services.YouTube]
 url = ["https://iplist.opencck.org/?format=text&data=domains&site=youtube.com", "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Services/youtube.lst"]
 v2fly = "youtube"
+
 [services.TikTok]
 v2fly = "tiktok"
+
 [services."X"]
 url = "https://iplist.opencck.org/?format=text&data=domains&site=x.com&site=x.com"
 v2fly = "twitter"
+
 [services.Grok]
 v2fly = "xai"
 url= "https://iplist.opencck.org/?format=text&data=domains&site=grok.com"
+
 [services."Discord"]
 url = "https://iplist.opencck.org/?format=text&data=domains&site=discord.com&site=discord.gg&site=discord.media"
 v2fly = "discord"
+
 [services.SuperCell]
 v2fly = "supercell"
+
 [services.OpenAI]
 v2fly = "openai"
+url = "https://iplist.opencck.org/?format=text&data=domains&site=chatgpt.com"
+
 [services.Anthropic]
 v2fly = "anthropic"
+
 [services.Meta]
 v2fly = "meta"
+
 [services.Instagram]
 v2fly = "instagram"
 url= "https://iplist.opencck.org/?format=text&data=domains&site=instagram.com"
+
 [services.Facebook]
 v2fly = ["facebook", "facebook-dev"]
 url= "https://iplist.opencck.org/?format=text&data=domains&site=facebook.com"
+
 [services.Threads]
 v2fly = "threads"
+
 [services.Quora]
 v2fly = "quora"
+
 [services.LinkedIn]
 v2fly = "linkedin"
+
 [services.Messenger]
 v2fly = "messenger"
+
 [services.Signal]
 v2fly= "signal"
+
 [services.WhatsApp]
 v2fly = "whatsapp"
 general = "false"
+
 [services.Spotify]
 v2fly = "spotify"
+
 [services.SoundCloud]
 v2fly = "SoundCloud"
+
 [services.HDRezka]
 url = "https://iplist.opencck.org/?format=text&data=domains&site=hdrezka.ag"
+
 [services.AWS]
 v2fly = "aws"
 general = "false"
+
 [services.Viber]
 url = "https://iplist.opencck.org/?format=text&data=domains&site=viber.com"
 v2fly = "viber"
 general = "false"
+
 [services.Twitch]
 v2fly = "twitch"
+
+[services.DeepSeek]
+domains = "deepseek.com"
+general = "false"
+
+[services.Perplexity]
+v2fly = "perplexity"
+general = "false"
+
+[services.HuggingFace]
+v2fly = "huggingface"
+general = "false"
+
+##############
+###        ###
+### GROUPS ###
+###        ###
+##############
+
 [groups.Social]
 include = ["discord", "telegram", "viber", "instagram", "facebook", "threads", "x", "tiktok", "linkedin", "messenger", "signal"]
+[groups.AI]
+include = ["google-ai", "elevenlabs", "copilot", "openai", "grok", "deepseek", "perplexity", "huggingface", "anthropic"]
+domains = ["meta.ai"]
+
+[groups.Ads]
+v2fly = "category-ads-all"
+
 [groups.RU-Media]
 url = ["https://iplist.opencck.org/?format=text&data=domains&site=agents.media&site=agentura.ru&site=bbc.com&site=bellingcat.com&site=cherta.media&site=colta.ru&site=currenttime.tv&site=dept.one&site=doxa.team&site=dw.com&site=echofm.online&site=ehorussia.com&site=ej.ru&site=euronews.com&site=exler.ru&site=golosameriki.com&site=gordonua.com&site=gulagu.net&site=holod.media&site=hrw.org&site=istories.media&site=kasparov.ru&site=kavkaz-uzel.eu&site=korrespondent.net&site=krymr.com&site=meduza.io&site=memohrc.org&site=moscowtimes.ru&site=navalny.com&site=newtimes.ru&site=novayagazeta.ru&site=ovd.info&site=paperpaper.ru&site=polit.ru&site=proekt.media&site=prostovpn.org&site=radiosvoboda.org&site=semnasem.org&site=svoboda.org&site=tayga.info&site=the-village.ru&site=theins.ru&site=thetruestory.news&site=tvrain.ru&site=unian.net&site=verstka.media&site=vot-tak.tv&site=zona.media", "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Categories/news.lst"]
 v2fly = "category-media-ru"
