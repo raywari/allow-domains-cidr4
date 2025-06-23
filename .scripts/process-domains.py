@@ -181,7 +181,7 @@ def main():
     )
     comparator.process_sources(filtered_domains)
     
-    yt_domains = processor.read_lines('categories/Services/youtube/youtube-domains.lst')
+    yt_domains = processor.read_lines('categories/Services/YouTube/YouTube.lst')
     non_yt = [d for d in filtered_domains if d not in yt_domains]
     processor.write_lines('domains-without-yt.lst', non_yt)
 
