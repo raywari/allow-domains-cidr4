@@ -97,16 +97,14 @@ def clean_domain_line(line):
         return None
 
 def filter_subdomains():
-    """Удаляет поддомены из основного файла доменов"""
     if not os.path.exists(DOMAINS_FILE):
         return
-        
+
     with open(DOMAINS_FILE, "r") as f:
         domains = [line.strip() for line in f if line.strip()]
-    
+
     filtered_domains = filter_domains_list(domains)
-    
-    # Записываем отфильтрованные домены обратно в файл
+
     with open(DOMAINS_FILE, "w") as f:
         f.write("\n".join(filtered_domains) + "\n")
 
@@ -186,29 +184,24 @@ def process_v2fly_categories(categories):
     return category_data
 
 def filter_domains_list(domains):
-    """Фильтрует список доменов, удаляя поддомены"""
     if not domains:
         return []
-    
-    # Сортируем домены по количеству точек (от меньшего к большему)
+
     sorted_domains = sorted(set(domains), key=lambda x: x.count('.'))
-    
+
     filtered_domains = []
-    
+
     for domain in sorted_domains:
-        # Проверяем, не является ли текущий домен поддоменом уже добавленного
         is_subdomain = False
-        
+
         for existing_domain in filtered_domains:
-            # Если домен заканчивается на "." + существующий_домен, то это поддомен
             if domain.endswith('.' + existing_domain):
                 is_subdomain = True
                 break
-        
-        # Если это не поддомен, добавляем в результат
+
         if not is_subdomain:
             filtered_domains.append(domain)
-    
+
     return sorted(filtered_domains)
 
 def save_service_domains(service_name, domains):
@@ -220,10 +213,9 @@ def save_service_domains(service_name, domains):
         with open(service_file, 'r') as f:
             existing_domains = set(line.strip() for line in f if line.strip())
     all_domains = existing_domains | domains
-    
-    # Фильтруем поддомены для сервисного файла
+
     filtered_domains = filter_domains_list(list(all_domains))
-    
+
     with open(service_file, 'w') as f:
         f.write("\n".join(filtered_domains) + "\n")
     return set(filtered_domains)
@@ -233,27 +225,55 @@ def main():
         raise FileNotFoundError(f"Config file not found: {CONFIG_PATH}")
     with open(CONFIG_PATH, 'rb') as f:
         config = tomllib.load(f)
-    v2fly_categories = set()
+    
     services = config.get('services', {})
+    
+    excluded_services = set()
     for service_name, service_config in services.items():
-        if 'v2fly' in service_config:
+        add_to_general = service_config.get('general', True)
+        if isinstance(add_to_general, str):
+            add_to_general = add_to_general.lower() != 'false'
+        if not add_to_general:
+            excluded_services.add(service_name)
+    
+    v2fly_categories = set()
+    for service_name, service_config in services.items():
+        if service_name not in excluded_services and 'v2fly' in service_config:
             categories = service_config['v2fly']
             if isinstance(categories, str):
                 v2fly_categories.add(categories)
             elif isinstance(categories, list):
                 v2fly_categories.update(categories)
-    v2fly_data = process_v2fly_categories(v2fly_categories) if v2fly_categories else {}
-    all_domains = set()
-    domains_to_exclude = set()
     
+    v2fly_data = process_v2fly_categories(v2fly_categories) if v2fly_categories else {}
+    
+    excluded_v2fly_categories = set()
+    for service_name, service_config in services.items():
+        if service_name in excluded_services and 'v2fly' in service_config:
+            categories = service_config['v2fly']
+            if isinstance(categories, str):
+                excluded_v2fly_categories.add(categories)
+            elif isinstance(categories, list):
+                excluded_v2fly_categories.update(categories)
+    
+    excluded_v2fly_data = process_v2fly_categories(excluded_v2fly_categories) if excluded_v2fly_categories else {}
+    
+    all_excluded_domains = set()
+    for domains in excluded_v2fly_data.values():
+        all_excluded_domains.update(domains)
+
+    all_domains = set()
+
     for service_name, service_config in services.items():
         service_domains = set()
+        
         urls = service_config.get('url', [])
         if isinstance(urls, str):
             urls = [urls]
         for url in urls:
             domains = process_domain_source(url)
             service_domains |= domains
+        
         domains_list = service_config.get('domains', [])
         if isinstance(domains_list, str):
             domains_list = [domains_list]
@@ -263,54 +283,52 @@ def main():
                 service_domains.update(result)
             elif result:
                 service_domains.add(result)
-        if 'v2fly' in service_config:
+        
+        if service_name not in excluded_services and 'v2fly' in service_config:
             categories = service_config['v2fly']
             if isinstance(categories, str):
                 categories = [categories]
             for category in categories:
                 if category in v2fly_data:
-                    service_domains |= v2fly_data[category]
-        
+                    category_domains = v2fly_data[category] - all_excluded_domains
+                    service_domains |= category_domains
+        elif service_name in excluded_services and 'v2fly' in service_config:
+            categories = service_config['v2fly']
+            if isinstance(categories, str):
+                categories = [categories]
+            for category in categories:
+                if category in excluded_v2fly_data:
+                    service_domains |= excluded_v2fly_data[category]
+
         if service_domains:
             filtered_service_domains = save_service_domains(service_name, service_domains)
-            
-            # Проверяем настройку general (по умолчанию true)
-            add_to_general = service_config.get('general', True)
-            if isinstance(add_to_general, str):
-                add_to_general = add_to_general.lower() != 'false'
-            
-            if add_to_general:
+
+            if service_name not in excluded_services:
                 all_domains |= filtered_service_domains
-                with open(DOMAINS_FILE, 'a') as f:
-                    f.write("\n".join(sorted(filtered_service_domains)) + "\n")
-            else:
-                # Если general = false, собираем домены для исключения
-                domains_to_exclude |= filtered_service_domains
-    
-    if all_domains:
-        filter_subdomains()
-    
-    # Удаляем домены с general = false из domains.lst
-    if domains_to_exclude and os.path.exists(DOMAINS_FILE):
+
+    existing_domains = set()
+    if os.path.exists(DOMAINS_FILE):
         with open(DOMAINS_FILE, 'r') as f:
-            existing_domains = [line.strip() for line in f if line.strip()]
+            existing_domains = set(line.strip() for line in f if line.strip())
+
+    filtered_existing_domains = set()
+    for domain in existing_domains:
+        should_exclude = False
+        for exclude_domain in all_excluded_domains:
+            if domain == exclude_domain or domain.endswith('.' + exclude_domain):
+                should_exclude = True
+                break
+        if not should_exclude:
+            filtered_existing_domains.add(domain)
+
+    all_domains |= filtered_existing_domains
+
+    if all_domains:
+        filtered_all_domains = filter_domains_list(list(all_domains))
         
-        # Фильтруем существующие домены, удаляя те, что в списке исключений
-        filtered_existing = []
-        for domain in existing_domains:
-            should_exclude = False
-            # Проверяем точное совпадение или является ли поддоменом исключаемого домена
-            for exclude_domain in domains_to_exclude:
-                if domain == exclude_domain or domain.endswith('.' + exclude_domain):
-                    should_exclude = True
-                    break
-            if not should_exclude:
-                filtered_existing.append(domain)
-        
-        # Перезаписываем файл без исключенных доменов
         with open(DOMAINS_FILE, 'w') as f:
-            f.write("\n".join(sorted(set(filtered_existing))) + "\n")
-    
+            f.write("\n".join(sorted(filtered_all_domains)) + "\n")
+
     if os.path.exists(V2FLY_CLONE_DIR):
         shutil.rmtree(V2FLY_CLONE_DIR)
 
