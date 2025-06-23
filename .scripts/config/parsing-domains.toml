@@ -4,6 +4,70 @@
 ###          ###
 ################
 
+[services.HBO]
+v2fly = hbo
+
+[services.Hulu]
+v2fly = hulu
+
+[services.PrimeVideo]
+v2fly = primevideo
+
+[services.Netflix]
+v2fly = netflix
+
+[services.Intel]
+v2fly = intel
+
+[services.LostFilm]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=lostfilm.tv"
+
+[services.RuTracker]
+v2fly = rutracker
+url = "https://iplist.opencck.org/?format=text&data=domains&site=rutracker.org"
+
+[services.1337x]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=1337x.to"
+
+[services.BookTracker]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=booktracker.org"
+
+[services.FilmiTorrent]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=filmitorrent.net"
+
+[services.Kinozal]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=kinozal.me"
+
+[services.NewStudio]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=newstudio.tv"
+
+[services.NNMClub]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=nnmclub.to"
+
+[services.Rustorka]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=rustorka.com"
+
+[services.RuTor]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=rutor.info"
+
+[services.ThePirateBay]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=thepiratebay.org"
+
+[services.TorrentBy]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=torrent.by"
+
+[services.OpenStreetMap]
+v2fly = openstreetmap
+
+[services.OpenWeather]
+v2fly = openweather
+
+[services.Notion]
+v2fly = notion
+
+[services.Flibusta]
+v2fly = flibusta
+
 [services.Google-AI]
 v2fly = ["google-deepmind", "google-gemini"]
 [services.Copilot]
@@ -114,8 +178,15 @@ general = "false"
 ###        ###
 ##############
 
+[groups.Torrent-Trackers]
+include = ["1337x", "booktracker", "filmitorrent", "kinozal", "newstudio", "nnmclub", "rustorka", "rutor", "rutracker", "thepiratebay", "torrentby", "flibusta", "lostfilm"]
+
+[groups.Streaming-Services]
+include = ["netflix", "hulu", "primevideo", "hbo"]
+
 [groups.Social]
 include = ["discord", "telegram", "viber", "instagram", "facebook", "threads", "x", "tiktok", "linkedin", "messenger", "signal"]
+
 [groups.AI]
 include = ["google-ai", "elevenlabs", "copilot", "openai", "grok", "deepseek", "perplexity", "huggingface", "anthropic"]
 domains = ["meta.ai"]
