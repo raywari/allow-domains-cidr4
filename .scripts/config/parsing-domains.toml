@@ -59,7 +59,7 @@ general = "false"
 v2fly = "twitch"
 general = "false"
 [groups.Social]
-include: "discord", "telegram", "viber", "instagram", "facebook", "threads", "x", "tiktok", "linkedin", "messenger", "signal"
+include: ["discord", "telegram", "viber", "instagram", "facebook", "threads", "x", "tiktok", "linkedin", "messenger", "signal"]
 [groups.RU-Media]
 url = ["https://iplist.opencck.org/?format=text&data=domains&site=agents.media&site=agentura.ru&site=bbc.com&site=bellingcat.com&site=cherta.media&site=colta.ru&site=currenttime.tv&site=dept.one&site=doxa.team&site=dw.com&site=echofm.online&site=ehorussia.com&site=ej.ru&site=euronews.com&site=exler.ru&site=golosameriki.com&site=gordonua.com&site=gulagu.net&site=holod.media&site=hrw.org&site=istories.media&site=kasparov.ru&site=kavkaz-uzel.eu&site=korrespondent.net&site=krymr.com&site=meduza.io&site=memohrc.org&site=moscowtimes.ru&site=navalny.com&site=newtimes.ru&site=novayagazeta.ru&site=ovd.info&site=paperpaper.ru&site=polit.ru&site=proekt.media&site=prostovpn.org&site=radiosvoboda.org&site=semnasem.org&site=svoboda.org&site=tayga.info&site=the-village.ru&site=theins.ru&site=thetruestory.news&site=tvrain.ru&site=unian.net&site=verstka.media&site=vot-tak.tv&site=zona.media", "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Categories/news.lst"]
 v2fly = "category-media-ru"
