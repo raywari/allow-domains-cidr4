@@ -11,4 +11,5 @@
 # Source: https://community.antifilter.download/list/domains.lst
 
 - pepperl-fuchs.com
+- s3-1.amazonaws.com
 

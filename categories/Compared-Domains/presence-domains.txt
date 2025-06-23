@@ -50,7 +50,6 @@
 - alterauserforum.net
 - alterauserforums.com
 - alterauserforums.net
-- amazonaws.com
 - amd.com
 - androidpolice.com
 - anidub.pro
@@ -1582,7 +1581,6 @@
 - alterauserforums.net
 - alza.hu
 - amazfitwatchfaces.com
-- amazonaws.com
 - amd.com
 - amdm.ru
 - amedia.site
@@ -3658,7 +3656,6 @@
 - alterauserforums.net
 - alza.hu
 - amazfitwatchfaces.com
-- amazonaws.com
 - amd.com
 - amdm.ru
 - amedia.site
