@@ -1,3 +1,8 @@
+[settings]
+summary = ["Cloudflare-ECH", "Meta", "X-Twitter"]
+user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+bgp_url = "https://bgp.tools/table.txt"
+
 [services.Cloudflare-ECH]
 type = "url"
 v4_url = "https://www.cloudflare.com/ips-v4"
@@ -31,8 +36,3 @@ asn = 16276
 [services.Amazon]
 type = "asn"
 asn = 16509
-
-[settings]
-summary = ["Cloudflare-ECH", "Meta", "X-Twitter"]
-bgp_url = "https://bgp.tools/table.txt"
-user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
