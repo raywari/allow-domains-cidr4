@@ -176,7 +176,7 @@ async def process_v2fly_categories(categories):
     if not categories:
         return {}
     if os.path.exists(V2FLY_CLONE_DIR):
-        shutil.rmtree(V2FLY_CLONE_DIR)
+        shutil.rmtree(V2FLY_CLONE_DIR, ignore_errors=True)
     os.makedirs(os.path.dirname(V2FLY_CLONE_DIR), exist_ok=True)
 
     try:
@@ -576,7 +576,7 @@ async def async_main():
 async def main_async():
     await async_main()
     if os.path.exists(V2FLY_CLONE_DIR):
-        shutil.rmtree(V2FLY_CLONE_DIR)
+        shutil.rmtree(V2FLY_CLONE_DIR, ignore_errors=True)
 
 if __name__ == "__main__":
     asyncio.run(main_async())
