@@ -5,25 +5,25 @@
 ################
 
 [services.HBO]
-v2fly = hbo
+v2fly = "hbo"
 
 [services.Hulu]
-v2fly = hulu
+v2fly = "hulu"
 
 [services.PrimeVideo]
-v2fly = primevideo
+v2fly = "primevideo"
 
 [services.Netflix]
-v2fly = netflix
+v2fly = "netflix"
 
 [services.Intel]
-v2fly = intel
+v2fly = "intel"
 
 [services.LostFilm]
 url = "https://iplist.opencck.org/?format=text&data=domains&site=lostfilm.tv"
 
 [services.RuTracker]
-v2fly = rutracker
+v2fly = "rutracker"
 url = "https://iplist.opencck.org/?format=text&data=domains&site=rutracker.org"
 
 [services.1337x]
@@ -57,16 +57,16 @@ url = "https://iplist.opencck.org/?format=text&data=domains&site=thepiratebay.or
 url = "https://iplist.opencck.org/?format=text&data=domains&site=torrent.by"
 
 [services.OpenStreetMap]
-v2fly = openstreetmap
+v2fly = "openstreetmap"
 
 [services.OpenWeather]
-v2fly = openweather
+v2fly = "openweather"
 
 [services.Notion]
-v2fly = notion
+v2fly = "notion"
 
 [services.Flibusta]
-v2fly = flibusta
+v2fly = "flibusta"
 
 [services.Google-AI]
 v2fly = ["google-deepmind", "google-gemini"]
