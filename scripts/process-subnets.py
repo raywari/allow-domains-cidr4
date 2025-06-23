@@ -159,7 +159,7 @@ async def main():
                 tasks.append(process_service(session, name, service_config))
                 
         await asyncio.gather(*tasks)
-        await process_asns(session))
+        await process_asns(session)
         
     make_summary()
 
