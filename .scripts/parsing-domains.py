@@ -259,8 +259,38 @@ def main():
     excluded_v2fly_data = process_v2fly_categories(excluded_v2fly_categories) if excluded_v2fly_categories else {}
     
     all_excluded_domains = set()
-    for domains in excluded_v2fly_data.values():
-        all_excluded_domains.update(domains)
+    for service_name, service_config in services.items():
+        if service_name not in excluded_services:
+            continue
+            
+        service_excluded_domains = set()
+        
+        urls = service_config.get('url', [])
+        if isinstance(urls, str):
+            urls = [urls]
+        for url in urls:
+            domains = process_domain_source(url)
+            service_excluded_domains |= domains
+        
+        domains_list = service_config.get('domains', [])
+        if isinstance(domains_list, str):
+            domains_list = [domains_list]
+        for domain in domains_list:
+            result = clean_domain_line(domain)
+            if isinstance(result, list):
+                service_excluded_domains.update(result)
+            elif result:
+                service_excluded_domains.add(result)
+        
+        if 'v2fly' in service_config:
+            categories = service_config['v2fly']
+            if isinstance(categories, str):
+                categories = [categories]
+            for category in categories:
+                if category in excluded_v2fly_data:
+                    service_excluded_domains |= excluded_v2fly_data[category]
+        
+        all_excluded_domains |= service_excluded_domains
 
     all_domains = set()
 
