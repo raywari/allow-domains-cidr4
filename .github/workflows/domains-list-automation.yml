@@ -41,7 +41,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add domains.lst domains-without-yt.lst categories/Compared-Domains
+          git add domains.lst domains-without-yt.lst categories/Compared-Domains categories/Services
           git commit -m "Update domains lists" || echo "No changes"
           git push origin HEAD:main
           git pull origin HEAD:main
