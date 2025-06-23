@@ -12,7 +12,7 @@ with open(CONFIG_FILE) as f:
     config = toml.load(f)
 
 SERVICES = config["services"]
-SUMMARY = config["summary"]
+SUMMARY = config["settings"]["summary"]
 USER_AGENT = config["settings"]["user_agent"]
 BGP_URL = config["settings"]["bgp_url"]
 # ===== END SETTINGS =====
