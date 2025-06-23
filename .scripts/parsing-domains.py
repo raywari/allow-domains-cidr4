@@ -219,6 +219,25 @@ async def save_service_domains(service_name, domains):
     
     return set(filtered_domains)
 
+async def save_group_domains(group_name, domains):
+    group_dir = os.path.join(GROUPS_DIR, group_name)
+    group_file = os.path.join(group_dir, f"{group_name}.lst")
+    os.makedirs(group_dir, exist_ok=True)
+    
+    existing_domains = set()
+    if os.path.exists(group_file):
+        async with aiofiles.open(group_file, 'r') as f:
+            content = await f.read()
+            existing_domains = set(line.strip() for line in content.splitlines() if line.strip())
+    
+    all_domains = existing_domains | domains
+    filtered_domains = filter_domains_list(list(all_domains))
+    
+    async with aiofiles.open(group_file, 'w') as f:
+        await f.write("\n".join(filtered_domains) + "\n")
+    
+    return set(filtered_domains)
+
 async def process_excluded_service(service_name, service_config):
     service_excluded_domains = set()
     
@@ -453,10 +472,6 @@ async def async_main():
         async with aiofiles.open(DOMAINS_FILE, 'w') as f:
             await f.write("\n".join(sorted(filtered_all_domains)) + "\n")
 
-    # Cleanup
-    if os.path.exists(V2FLY_CLONE_DIR):
-        shutil.rmtree(V2FLY_CLONE_DIR)
-
 async def process_create_groups_config():
     groups_config_path = ".scripts/config/create-groups.toml"
     if not os.path.exists(groups_config_path):
@@ -470,10 +485,25 @@ async def process_create_groups_config():
     groups = config.get('groups', {})
     all_general_domains = set()
     
+    # Collect all v2fly categories for groups
+    v2fly_categories = set()
+    for group_config in groups.values():
+        if 'v2fly' in group_config:
+            categories = group_config['v2fly']
+            if isinstance(categories, str):
+                v2fly_categories.add(categories)
+            elif isinstance(categories, list):
+                v2fly_categories.update(categories)
+    
+    # Process v2fly categories for groups
+    v2fly_data = {}
+    if v2fly_categories:
+        v2fly_data = await process_v2fly_categories(list(v2fly_categories))
+    
     # Process groups in parallel
     group_tasks = []
     for group_name, group_config in groups.items():
-        group_tasks.append(process_group(group_name, group_config))
+        group_tasks.append(process_group(group_name, group_config, v2fly_data))
     
     group_results = await asyncio.gather(*group_tasks)
     
@@ -495,10 +525,10 @@ async def process_create_groups_config():
     async with aiofiles.open(DOMAINS_FILE, 'w') as f:
         await f.write("\n".join(sorted(filtered_domains)) + "\n")
 
-async def process_group(group_name, group_config):
+async def process_group(group_name, group_config, v2fly_data):
     group_domains = set()
     
-    # Process direct domains
+    # 1. Process direct domains
     domains_list = group_config.get('domains', [])
     if isinstance(domains_list, str):
         domains_list = [domains_list]
@@ -509,7 +539,26 @@ async def process_group(group_name, group_config):
         elif result:
             group_domains.add(result)
     
-    # Process include files
+    # 2. Process URLs
+    urls = group_config.get('url', [])
+    if isinstance(urls, str):
+        urls = [urls]
+    
+    url_tasks = [process_domain_source(url) for url in urls]
+    url_results = await asyncio.gather(*url_tasks)
+    for domains in url_results:
+        group_domains |= domains
+    
+    # 3. Process v2fly categories
+    if 'v2fly' in group_config:
+        categories = group_config['v2fly']
+        if isinstance(categories, str):
+            categories = [categories]
+        for category in categories:
+            if category in v2fly_data:
+                group_domains |= v2fly_data[category]
+    
+    # 4. Process include files
     include_list = group_config.get('include', [])
     if isinstance(include_list, str):
         include_list = [include_list]
@@ -539,12 +588,7 @@ async def process_group(group_name, group_config):
     
     # Filter and save group domains
     filtered_domains = filter_domains_list(list(group_domains))
-    group_category_dir = os.path.join(GROUPS_DIR, group_name)
-    os.makedirs(group_category_dir, exist_ok=True)
-    group_file_path = os.path.join(group_category_dir, f"{group_name}.lst")
-    
-    async with aiofiles.open(group_file_path, 'w') as f:
-        await f.write("\n".join(filtered_domains) + "\n")
+    await save_group_domains(group_name, filtered_domains)
     
     # Check general flag
     general = group_config.get('general', True)
@@ -556,6 +600,9 @@ async def process_group(group_name, group_config):
 async def main_async():
     await async_main()
     await process_create_groups_config()
+    # Cleanup v2fly clone at the very end
+    if os.path.exists(V2FLY_CLONE_DIR):
+        shutil.rmtree(V2FLY_CLONE_DIR)
 
 if __name__ == "__main__":
     asyncio.run(main_async())
