@@ -228,6 +228,7 @@ def main():
     
     services = config.get('services', {})
     
+    # Определяем исключённые сервисы
     excluded_services = set()
     for service_name, service_config in services.items():
         add_to_general = service_config.get('general', True)
@@ -236,6 +237,56 @@ def main():
         if not add_to_general:
             excluded_services.add(service_name)
     
+    # Собираем все домены исключённых сервисов для последующего исключения
+    all_excluded_domains = set()
+    
+    # Сначала обрабатываем исключённые сервисы и собираем их домены
+    for service_name in excluded_services:
+        if service_name not in services:
+            continue
+            
+        service_config = services[service_name]
+        service_excluded_domains = set()
+        
+        # Обрабатываем URL источники
+        urls = service_config.get('url', [])
+        if isinstance(urls, str):
+            urls = [urls]
+        for url in urls:
+            domains = process_domain_source(url)
+            service_excluded_domains |= domains
+        
+        # Обрабатываем прямые домены
+        domains_list = service_config.get('domains', [])
+        if isinstance(domains_list, str):
+            domains_list = [domains_list]
+        for domain in domains_list:
+            result = clean_domain_line(domain)
+            if isinstance(result, list):
+                service_excluded_domains.update(result)
+            elif result:
+                service_excluded_domains.add(result)
+        
+        # Обрабатываем v2fly категории для исключённых сервисов
+        if 'v2fly' in service_config:
+            categories = service_config['v2fly']
+            if isinstance(categories, str):
+                categories = [categories]
+            
+            # Получаем домены из v2fly категорий для исключённого сервиса
+            excluded_v2fly_data = process_v2fly_categories(categories)
+            for category in categories:
+                if category in excluded_v2fly_data:
+                    service_excluded_domains |= excluded_v2fly_data[category]
+        
+        # Сохраняем домены исключённого сервиса в его файл
+        if service_excluded_domains:
+            save_service_domains(service_name, service_excluded_domains)
+        
+        # Добавляем к общему списку исключений
+        all_excluded_domains |= service_excluded_domains
+    
+    # Теперь обрабатываем обычные сервисы (не исключённые)
     v2fly_categories = set()
     for service_name, service_config in services.items():
         if service_name not in excluded_services and 'v2fly' in service_config:
@@ -247,56 +298,16 @@ def main():
     
     v2fly_data = process_v2fly_categories(v2fly_categories) if v2fly_categories else {}
     
-    excluded_v2fly_categories = set()
-    for service_name, service_config in services.items():
-        if service_name in excluded_services and 'v2fly' in service_config:
-            categories = service_config['v2fly']
-            if isinstance(categories, str):
-                excluded_v2fly_categories.add(categories)
-            elif isinstance(categories, list):
-                excluded_v2fly_categories.update(categories)
-    
-    excluded_v2fly_data = process_v2fly_categories(excluded_v2fly_categories) if excluded_v2fly_categories else {}
-    
-    all_excluded_domains = set()
-    for service_name, service_config in services.items():
-        if service_name not in excluded_services:
-            continue
-            
-        service_excluded_domains = set()
-        
-        urls = service_config.get('url', [])
-        if isinstance(urls, str):
-            urls = [urls]
-        for url in urls:
-            domains = process_domain_source(url)
-            service_excluded_domains |= domains
-        
-        domains_list = service_config.get('domains', [])
-        if isinstance(domains_list, str):
-            domains_list = [domains_list]
-        for domain in domains_list:
-            result = clean_domain_line(domain)
-            if isinstance(result, list):
-                service_excluded_domains.update(result)
-            elif result:
-                service_excluded_domains.add(result)
-        
-        if 'v2fly' in service_config:
-            categories = service_config['v2fly']
-            if isinstance(categories, str):
-                categories = [categories]
-            for category in categories:
-                if category in excluded_v2fly_data:
-                    service_excluded_domains |= excluded_v2fly_data[category]
-        
-        all_excluded_domains |= service_excluded_domains
-
     all_domains = set()
 
+    # Обрабатываем только НЕ исключённые сервисы для общего списка
     for service_name, service_config in services.items():
+        if service_name in excluded_services:
+            continue  # Пропускаем исключённые сервисы
+            
         service_domains = set()
         
+        # Обрабатываем URL источники
         urls = service_config.get('url', [])
         if isinstance(urls, str):
             urls = [urls]
@@ -304,6 +315,7 @@ def main():
             domains = process_domain_source(url)
             service_domains |= domains
         
+        # Обрабатываем прямые домены
         domains_list = service_config.get('domains', [])
         if isinstance(domains_list, str):
             domains_list = [domains_list]
@@ -314,47 +326,113 @@ def main():
             elif result:
                 service_domains.add(result)
         
-        if service_name not in excluded_services and 'v2fly' in service_config:
+        # Обрабатываем v2fly категории только для НЕ исключённых сервисов
+        if 'v2fly' in service_config:
             categories = service_config['v2fly']
             if isinstance(categories, str):
                 categories = [categories]
             for category in categories:
                 if category in v2fly_data:
+                    # КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: исключаем домены из исключённых сервисов
                     category_domains = v2fly_data[category] - all_excluded_domains
                     service_domains |= category_domains
-        elif service_name in excluded_services and 'v2fly' in service_config:
-            categories = service_config['v2fly']
-            if isinstance(categories, str):
-                categories = [categories]
-            for category in categories:
-                if category in excluded_v2fly_data:
-                    service_domains |= excluded_v2fly_data[category]
+
+        # Исключаем домены из исключённых сервисов
+        service_domains = service_domains - all_excluded_domains
 
         if service_domains:
             filtered_service_domains = save_service_domains(service_name, service_domains)
+            all_domains |= filtered_service_domains
 
-            if service_name not in excluded_services:
-                all_domains |= filtered_service_domains
-
+    # Обрабатываем существующие домены
     existing_domains = set()
     if os.path.exists(DOMAINS_FILE):
         with open(DOMAINS_FILE, 'r') as f:
             existing_domains = set(line.strip() for line in f if line.strip())
 
-    filtered_existing_domains = set()
-    for domain in existing_domains:
+    # Определяем какие домены из existing_domains являются "личными" (не автоматически добавленными)
+    # Для этого сравниваем с доменами, которые могли быть добавлены автоматически
+    all_auto_generated_domains = set()
+    
+    # Собираем все домены, которые могли быть автоматически добавлены ранее
+    # (включая домены из всех сервисов, в том числе исключённых)
+    for service_name, service_config in services.items():
+        auto_domains = set()
+        
+        # URL источники
+        urls = service_config.get('url', [])
+        if isinstance(urls, str):
+            urls = [urls]
+        for url in urls:
+            domains = process_domain_source(url)
+            auto_domains |= domains
+        
+        # Прямые домены
+        domains_list = service_config.get('domains', [])
+        if isinstance(domains_list, str):
+            domains_list = [domains_list]
+        for domain in domains_list:
+            result = clean_domain_line(domain)
+            if isinstance(result, list):
+                auto_domains.update(result)
+            elif result:
+                auto_domains.add(result)
+        
+        # V2fly категории (все, включая исключённые)
+        if 'v2fly' in service_config:
+            categories = service_config['v2fly']
+            if isinstance(categories, str):
+                categories = [categories]
+            
+            # Получаем домены из всех категорий для определения автоматически добавленных
+            temp_v2fly_data = process_v2fly_categories(categories)
+            for category in categories:
+                if category in temp_v2fly_data:
+                    auto_domains |= temp_v2fly_data[category]
+        
+        all_auto_generated_domains |= auto_domains
+    
+    # Личные домены = существующие домены - автоматически сгенерированные домены
+    personal_domains = existing_domains - all_auto_generated_domains
+    
+    # Дополнительная фильтрация личных доменов: исключаем те, которые являются
+    # поддоменами или суперменами исключённых доменов
+    filtered_personal_domains = set()
+    for domain in personal_domains:
         should_exclude = False
         for exclude_domain in all_excluded_domains:
+            # Проверяем точное совпадение или является ли поддоменом исключённого
             if domain == exclude_domain or domain.endswith('.' + exclude_domain):
                 should_exclude = True
                 break
+            # Проверяем является ли исключённый домен поддоменом личного домена
+            if exclude_domain.endswith('.' + domain):
+                should_exclude = True
+                break
         if not should_exclude:
-            filtered_existing_domains.add(domain)
+            filtered_personal_domains.add(domain)
+    
+    # Объединяем с новыми доменами
+    all_domains |= filtered_personal_domains
 
-    all_domains |= filtered_existing_domains
+    # ЖЁСТКОЕ ИСКЛЮЧЕНИЕ: удаляем все домены исключённых сервисов из финального списка
+    final_domains = set()
+    for domain in all_domains:
+        should_exclude = False
+        for exclude_domain in all_excluded_domains:
+            # Проверяем точное совпадение или является ли поддоменом исключённого
+            if domain == exclude_domain or domain.endswith('.' + exclude_domain):
+                should_exclude = True
+                break
+            # Проверяем является ли исключённый домен поддоменом текущего домена
+            if exclude_domain.endswith('.' + domain):
+                should_exclude = True
+                break
+        if not should_exclude:
+            final_domains.add(domain)
 
-    if all_domains:
-        filtered_all_domains = filter_domains_list(list(all_domains))
+    if final_domains:
+        filtered_all_domains = filter_domains_list(list(final_domains))
         
         with open(DOMAINS_FILE, 'w') as f:
             f.write("\n".join(sorted(filtered_all_domains)) + "\n")
