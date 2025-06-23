@@ -36,7 +36,7 @@ def validate_entries():
 def fetch_external_data():
     temp_file = NamedTemporaryFile(delete=False, mode="w+", encoding='utf-8')
 
-    with open("../../sources/sources-block.txt", "r", encoding='utf-8') as sources:
+    with open("../../.scripts/sources/sources-block.txt", "r", encoding='utf-8') as sources:
         for url in sources:
             url = url.strip()
             if not url or url.startswith('#'):

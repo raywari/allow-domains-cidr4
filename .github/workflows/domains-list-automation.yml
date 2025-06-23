@@ -6,9 +6,9 @@ on:
   push:
     paths:
       - 'domains.lst'
-      - 'sources/**'
+      - '.scripts/sources/**'
       - 'categories/**'
-      - 'scripts/**'
+      - '.scripts/config/**'
   workflow_dispatch:
 
 permissions:
@@ -31,14 +31,11 @@ jobs:
       - name: Install dependencies
         run: pip install requests aiohttp toml
 
-      - name: Run v2fly-domains script
-        run: python scripts/v2fly-domains.py
+      - name: Run parsing-domains script
+        run: python .scripts/parsing-domains.py
 
       - name: Run process-domains script
-        run: python scripts/process-domains.py
-
-      - name: Sort sources/sources-v2fly.txt
-        run: sort -u sources/sources-v2fly.txt -o sources/sources-v2fly.txt
+        run: python .scripts/process-domains.py
 
       - name: Commit and push domains/compare results
         run: |
@@ -49,13 +46,8 @@ jobs:
           git push origin HEAD:main
           git pull origin HEAD:main
 
-          git add sources/sources-v2fly.txt
-          git commit -m "Sort sources-v2fly.txt" || echo "No changes"
-          git push origin HEAD:main
-          git pull origin HEAD:main
-
       - name: Run process-subnets script
-        run: python scripts/process-subnets.py
+        run: python .scripts/process-subnets.py
 
       - name: Commit and push CIDR changes
         run: |
@@ -67,7 +59,7 @@ jobs:
           git pull origin HEAD:main
 
       - name: Run generate-srs script
-        run: python scripts/generate-srs.py
+        run: python .scripts/generate-srs.py
 
       - name: Commit and push SRS ruleset
         run: |
@@ -79,7 +71,7 @@ jobs:
           git pull origin HEAD:main
 
       - name: Run generate-routing-config script
-        run: python scripts/generate-routing-config.py
+        run: python .scripts/generate-routing-config.py
 
       - name: Commit and push routing config
         run: |
@@ -91,7 +83,7 @@ jobs:
           git pull origin HEAD:main
 
       - name: Run update-block-lists script
-        run: python scripts/update-block-lists.py
+        run: python .scripts/update-block-lists.py
 
       - name: Commit and push block lists
         run: |
@@ -103,7 +95,7 @@ jobs:
           git pull origin HEAD:main
 
       - name: Run generate-sing-box-rules script
-        run: python scripts/generate-sing-box-rules.py
+        run: python .scripts/generate-sing-box-rules.py
 
       - name: Commit and push sing-box-rules
         run: |

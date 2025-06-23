@@ -7,7 +7,7 @@ import ipaddress
 from pathlib import Path
 
 # ===== LOAD CONFIG =====
-CONFIG_FILE = "scripts/config/process-subnets.toml"
+CONFIG_FILE = ".scripts/config/process-subnets.toml"
 with open(CONFIG_FILE) as f:
     config = toml.load(f)
 

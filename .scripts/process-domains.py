@@ -176,7 +176,7 @@ def main():
     processor.write_lines('domains.lst', filtered_domains)
     
     comparator = DomainComparator(
-        'sources/sources-domains.txt',
+        '.scripts/sources/sources-domains.txt',
         'categories/Compared-Domains'
     )
     comparator.process_sources(filtered_domains)
