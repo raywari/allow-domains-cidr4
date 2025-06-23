@@ -29,3 +29,6 @@ v2fly = "spotify"
 v2fly = "SoundCloud"
 [services.HDRezka]
 url = "https://iplist.opencck.org/?format=text&data=domains&site=hdrezka.ag"
+[services.AWS]
+v2fly = "aws"
+general = "false"
