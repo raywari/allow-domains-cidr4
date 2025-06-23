@@ -18,8 +18,11 @@ v2fly = "supercell"
 v2fly = "openai"
 [services.Anthropic]
 v2fly = "anthropic"
-[services.Instagram]
-v2fly = "instagram"
+[services.Meta]
+v2fly = "meta"
+[services.WhatsApp]
+v2fly = "whatsapp"
+general = "false"
 [services.Spotify]
 v2fly = "spotify"
 [services.SoundCloud]
