@@ -502,6 +502,7 @@
 - lgincdnmsftuswe2.azureedge.net
 - lgincdnvzeuno.azureedge.net
 - lh3.googleusercontent.com
+- lh5.googleusercontent.com
 - libgen.rs
 - linuxiac.com
 - live.net
@@ -1825,6 +1826,7 @@
 - lgincdnmsftuswe2.azureedge.net
 - lgincdnvzeuno.azureedge.net
 - lh3.googleusercontent.com
+- lh5.googleusercontent.com
 - libgen.li
 - licdn.com
 - lidarr.audio
@@ -3447,6 +3449,7 @@
 - lgincdnmsftuswe2.azureedge.net
 - lgincdnvzeuno.azureedge.net
 - lh3.googleusercontent.com
+- lh5.googleusercontent.com
 - libgen.li
 - licdn.com
 - lidarr.audio
