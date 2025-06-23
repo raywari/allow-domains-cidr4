@@ -8,6 +8,10 @@ type = "url"
 v4_url = "https://www.cloudflare.com/ips-v4"
 v6_url = "https://www.cloudflare.com/ips-v6"
 
+[services.Cloudflare-ALL]
+type = "asn"
+asn = [13335, 132892, 209242, 139242, 203898, 394536, 395747, 14789, 12731, 174, 18450, 23352, 36351, 133877, 202623]
+
 [services.Discord]
 type = "url"
 v4_url = "https://iplist.opencck.org/?format=text&data=cidr4&site=discord.gg&site=discord.media"
@@ -36,3 +40,11 @@ asn = 16276
 [services.Amazon]
 type = "asn"
 asn = 16509
+
+[services.DigitalOcean]
+type = "asn"
+asn = 14061
+
+[services.Akamai]
+type = "asn"
+asn = [36183, 26008, 20940, 393560, 393234, 18717, 43639, 24319]
