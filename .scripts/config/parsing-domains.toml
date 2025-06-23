@@ -57,7 +57,6 @@ v2fly = "viber"
 general = "false"
 [services.Twitch]
 v2fly = "twitch"
-general = "false"
 [groups.Social]
 include = ["discord", "telegram", "viber", "instagram", "facebook", "threads", "x", "tiktok", "linkedin", "messenger", "signal"]
 [groups.RU-Media]
