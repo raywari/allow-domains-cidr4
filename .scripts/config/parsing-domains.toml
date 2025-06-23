@@ -27,7 +27,7 @@ v2fly = "meta"
 v2fly = "instagram"
 url= "https://iplist.opencck.org/?format=text&data=domains&site=instagram.com"
 [services.Facebook]
-v2fly = "facebook", "facebook-dev"
+v2fly = ["facebook", "facebook-dev"]
 url= "https://iplist.opencck.org/?format=text&data=domains&site=facebook.com"
 [services.Threads]
 v2fly = "threads"
