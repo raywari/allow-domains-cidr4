@@ -4,7 +4,6 @@
 - 01.org
 - 2ip.io
 - 4pda.ru
-- 4pda.ws
 - a-msedge.net
 - aboutfacebook.com
 - accessfacebookfromschool.com
@@ -53,7 +52,6 @@
 - amd.com
 - androidpolice.com
 - anidub.pro
-- anilibria.wtf
 - animestars.org
 - antiwar.in
 - api.github.com
@@ -130,7 +128,6 @@
 - chronicles.media
 - cilk.com
 - cilk.net
-- citrix.com
 - clash.com
 - clashmini.com
 - clashroyale.com
@@ -154,7 +151,6 @@
 - czx.to
 - da-files.com
 - dacebook.com
-- deepl.com
 - deepmind.com
 - deepmind.google
 - deezer.com
@@ -596,7 +592,6 @@
 - hacklang.org
 - hath.network
 - hayday.com
-- haydaygame.com
 - hdrezka.cm
 - hdrezka.fm
 - heads-ak-spotify-com.akamaized.net
@@ -1167,7 +1162,6 @@
 - snap-telemetry.io
 - snapmagic.com
 - snd.sc
-- sndcdn.com
 - snob.ru
 - soapui.org
 - sobes.press
@@ -1176,7 +1170,6 @@
 - software-static.download.prss.microsoft.com
 - sota.vision
 - sotaproject.com
-- soundcloud.cloud
 - sovanews.tv
 - spiegel.de
 - sportsfacebook.com
