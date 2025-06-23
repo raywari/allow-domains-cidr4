@@ -164,4 +164,4 @@ async def main():
     make_summary()
 
 if __name__ == '__main__':
-    asyncio.run(main()
+    asyncio.run(main())
