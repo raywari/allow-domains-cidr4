@@ -566,4 +566,24 @@ async def async_main():
         should_exclude = False
         for exclude_domain in all_excluded_domains:
             if (domain == exclude_domain or 
-                domain.endswith('.' + exclude_do
+                domain.endswith('.' + exclude_domain) or 
+                exclude_domain.endswith('.' + domain)):
+                should_exclude = True
+                break
+        if not should_exclude:
+            final_domains.add(domain)
+
+    # Сохраняем финальные домены
+    if final_domains:
+        filtered_all_domains = filter_domains_list(list(final_domains))
+        async with aiofiles.open(DOMAINS_FILE, 'w') as f:
+            await f.write("\n".join(sorted(filtered_all_domains)) + "\n")
+
+async def main_async():
+    await async_main()
+    # Очищаем временные файлы
+    if os.path.exists(V2FLY_CLONE_DIR):
+        shutil.rmtree(V2FLY_CLONE_DIR)
+
+if __name__ == "__main__":
+    asyncio.run(main_async())
