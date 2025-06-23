@@ -84,12 +84,10 @@ async def process_service(session, name, service_config):
             Path(f'categories/CIDRs/CIDR6/services/{name}/{name.lower()}.lst').write_text('\n'.join(merged_v6))
 
 async def process_asns(session):
-    # Собираем все ASN для каждого сервиса
     asn_services = {}
     for name, service_config in SERVICES.items():
         if service_config["type"] == "asn" and "asn" in service_config:
             asn_list = service_config["asn"]
-            # Обрабатываем как одиночный ASN, так и список
             if isinstance(asn_list, int):
                 asn_services[name] = [asn_list]
             else:
@@ -115,14 +113,12 @@ async def process_asns(session):
             except ValueError:
                 continue
                 
-            # Проверяем принадлежность ASN к любому из сервисов
             for service, service_asns in asn_services.items():
                 if asn_value in service_asns:
                     cidrs.setdefault(service, {'v4': set(), 'v6': set()})
                     target = 'v4' if '.' in cidr else 'v6'
                     cidrs[service][target].add(cidr)
 
-        # Сохраняем результаты
         for service, ips in cidrs.items():
             if ips['v4']:
                 merged_v4, _ = merge_networks(sorted(ips['v4']))
@@ -168,4 +164,4 @@ async def main():
     make_summary()
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.run(main()
