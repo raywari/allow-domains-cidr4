@@ -230,7 +230,8 @@ async def save_group_domains(group_name, domains):
             content = await f.read()
             existing_domains = set(line.strip() for line in content.splitlines() if line.strip())
     
-    all_domains = existing_domains | domains
+    # Исправление: преобразуем domains в set перед объединением
+    all_domains = existing_domains | set(domains)
     filtered_domains = filter_domains_list(list(all_domains))
     
     async with aiofiles.open(group_file, 'w') as f:
