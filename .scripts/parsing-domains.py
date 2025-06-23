@@ -153,7 +153,7 @@ async def parse_v2fly_file(filename, visited=None):
     path = os.path.join(V2FLY_DATA_DIR, filename)
     if not os.path.isfile(path):
         return set()
-    
+
     domains = set()
     async with aiofiles.open(path, 'r', encoding='utf-8') as f:
         for raw_line in await f.readlines():
@@ -178,7 +178,7 @@ async def process_v2fly_categories(categories):
     if os.path.exists(V2FLY_CLONE_DIR):
         shutil.rmtree(V2FLY_CLONE_DIR)
     os.makedirs(os.path.dirname(V2FLY_CLONE_DIR), exist_ok=True)
-    
+
     try:
         process = await asyncio.create_subprocess_exec(
             "git", "clone", "--depth", "1", V2FLY_REPO_URL, V2FLY_CLONE_DIR,
@@ -190,10 +190,10 @@ async def process_v2fly_categories(categories):
             return {}
     except Exception:
         return {}
-    
+
     tasks = [parse_v2fly_file(category) for category in categories]
     results = await asyncio.gather(*tasks)
-    
+
     category_data = {}
     for i, category in enumerate(categories):
         if results[i]:
@@ -204,55 +204,52 @@ async def save_service_domains(service_name, domains):
     service_dir = os.path.join(CATEGORIES_DIR, service_name)
     service_file = os.path.join(service_dir, f"{service_name}.lst")
     os.makedirs(service_dir, exist_ok=True)
-    
+
     existing_domains = set()
     if os.path.exists(service_file):
         async with aiofiles.open(service_file, 'r') as f:
             content = await f.read()
             existing_domains = set(line.strip() for line in content.splitlines() if line.strip())
-    
+
     all_domains = existing_domains | domains
     filtered_domains = filter_domains_list(list(all_domains))
-    
+
     async with aiofiles.open(service_file, 'w') as f:
         await f.write("\n".join(filtered_domains) + "\n")
-    
+
     return set(filtered_domains)
 
 async def save_group_domains(group_name, domains):
     group_dir = os.path.join(GROUPS_DIR, group_name)
     group_file = os.path.join(group_dir, f"{group_name}.lst")
     os.makedirs(group_dir, exist_ok=True)
-    
+
     existing_domains = set()
     if os.path.exists(group_file):
         async with aiofiles.open(group_file, 'r') as f:
             content = await f.read()
             existing_domains = set(line.strip() for line in content.splitlines() if line.strip())
-    
-    # Исправление: преобразуем domains в set перед объединением
+
     all_domains = existing_domains | set(domains)
     filtered_domains = filter_domains_list(list(all_domains))
-    
+
     async with aiofiles.open(group_file, 'w') as f:
         await f.write("\n".join(filtered_domains) + "\n")
-    
+
     return set(filtered_domains)
 
 async def process_excluded_service(service_name, service_config):
     service_excluded_domains = set()
-    
-    # Process URLs
+
     urls = service_config.get('url', [])
     if isinstance(urls, str):
         urls = [urls]
-    
+
     url_tasks = [process_domain_source(url) for url in urls]
     url_results = await asyncio.gather(*url_tasks)
     for domains in url_results:
         service_excluded_domains |= domains
-    
-    # Process direct domains
+
     domains_list = service_config.get('domains', [])
     if isinstance(domains_list, str):
         domains_list = [domains_list]
@@ -262,38 +259,34 @@ async def process_excluded_service(service_name, service_config):
             service_excluded_domains.update(result)
         elif result:
             service_excluded_domains.add(result)
-    
-    # Process v2fly categories
+
     if 'v2fly' in service_config:
         categories = service_config['v2fly']
         if isinstance(categories, str):
             categories = [categories]
-        
+
         excluded_v2fly_data = await process_v2fly_categories(categories)
         for category in categories:
             if category in excluded_v2fly_data:
                 service_excluded_domains |= excluded_v2fly_data[category]
-    
-    # Save domains
+
     if service_excluded_domains:
         await save_service_domains(service_name, service_excluded_domains)
-    
+
     return service_excluded_domains
 
 async def process_non_excluded_service(service_name, service_config, v2fly_data, all_excluded_domains):
     service_domains = set()
-    
-    # Process URLs
+
     urls = service_config.get('url', [])
     if isinstance(urls, str):
         urls = [urls]
-    
+
     url_tasks = [process_domain_source(url) for url in urls]
     url_results = await asyncio.gather(*url_tasks)
     for domains in url_results:
         service_domains |= domains
-    
-    # Process direct domains
+
     domains_list = service_config.get('domains', [])
     if isinstance(domains_list, str):
         domains_list = [domains_list]
@@ -303,8 +296,7 @@ async def process_non_excluded_service(service_name, service_config, v2fly_data,
             service_domains.update(result)
         elif result:
             service_domains.add(result)
-    
-    # Process v2fly categories
+
     if 'v2fly' in service_config:
         categories = service_config['v2fly']
         if isinstance(categories, str):
@@ -313,28 +305,23 @@ async def process_non_excluded_service(service_name, service_config, v2fly_data,
             if category in v2fly_data:
                 category_domains = v2fly_data[category] - all_excluded_domains
                 service_domains |= category_domains
-    
-    # Exclude domains from excluded services
+
     service_domains = service_domains - all_excluded_domains
-    
+
     if service_domains:
         filtered_service_domains = await save_service_domains(service_name, service_domains)
         return filtered_service_domains
     return set()
 
-async def read_service_file(file_path):
-    domains = set()
-    async with aiofiles.open(file_path, 'r') as f:
-        content = await f.read()
-        for line in content.splitlines():
-            domain = line.strip()
-            if domain and not domain.startswith('#'):
-                domains.add(domain)
-    return domains
+# Централизованная функция для проверки включаемости сервиса в группу
+def should_include_service(service_general, group_general):
+    if group_general:
+        return service_general
+    return True
 
-async def process_group(group_name, group_config, v2fly_data):
+async def process_group(group_name, group_config, v2fly_data, service_domains_dict, service_general_dict):
     group_domains = set()
-    
+
     # 1. Process direct domains
     domains_list = group_config.get('domains', [])
     if isinstance(domains_list, str):
@@ -345,17 +332,17 @@ async def process_group(group_name, group_config, v2fly_data):
             group_domains.update(result)
         elif result:
             group_domains.add(result)
-    
+
     # 2. Process URLs
     urls = group_config.get('url', [])
     if isinstance(urls, str):
         urls = [urls]
-    
+
     url_tasks = [process_domain_source(url) for url in urls]
     url_results = await asyncio.gather(*url_tasks)
     for domains in url_results:
         group_domains |= domains
-    
+
     # 3. Process v2fly categories
     if 'v2fly' in group_config:
         categories = group_config['v2fly']
@@ -364,59 +351,51 @@ async def process_group(group_name, group_config, v2fly_data):
         for category in categories:
             if category in v2fly_data:
                 group_domains |= v2fly_data[category]
-    
-    # 4. Process include files
+
+    # 4. Process include с учетом флагов general
     include_list = group_config.get('include', [])
     if isinstance(include_list, str):
         include_list = [include_list]
-    
-    # Case-insensitive file search
-    service_files = {}
-    if os.path.exists(CATEGORIES_DIR):
-        for filename in os.listdir(CATEGORIES_DIR):
-            if filename.endswith('.lst'):
-                base_name = os.path.splitext(filename)[0].lower()
-                service_files[base_name] = filename
-    
-    # Read included files
-    include_tasks = []
+
+    # Получаем флаг группы
+    group_general = group_config.get('general', True)
+    if isinstance(group_general, str):
+        group_general = group_general.lower() == 'true'
+
     for service_name in include_list:
-        key = service_name.lower()
-        if key in service_files:
-            file_path = os.path.join(CATEGORIES_DIR, service_files[key])
-            if os.path.exists(file_path):
-                include_tasks.append(read_service_file(file_path))
+        # Проверяем наличие сервиса в словарях
+        if service_name in service_domains_dict and service_name in service_general_dict:
+            service_domains = service_domains_dict[service_name]
+            service_general = service_general_dict[service_name]
+            
+            # Проверяем условия включения
+            if should_include_service(service_general, group_general):
+                group_domains |= service_domains
         else:
-            print(f"Warning: Service file not found for '{service_name}'")
-    
-    if include_tasks:
-        include_results = await asyncio.gather(*include_tasks)
-        for domains in include_results:
-            group_domains |= domains
-    
+            print(f"Warning: Service '{service_name}' not found or not processed")
+
     # Filter and save group domains
     filtered_domains = filter_domains_list(list(group_domains))
     await save_group_domains(group_name, filtered_domains)
-    
-    # Check general flag
-    general = group_config.get('general', True)
-    if isinstance(general, str):
-        general = general.lower() == 'true'
-    
-    return filtered_domains, general
+
+    return filtered_domains, group_general
 
 async def async_main():
     if not os.path.exists(CONFIG_PATH):
         raise FileNotFoundError(f"Config file not found: {CONFIG_PATH}")
-    
+
     async with aiofiles.open(CONFIG_PATH, 'rb') as f:
         content = await f.read()
         config = tomllib.loads(content.decode('utf-8'))
 
     services = config.get('services', {})
-    groups = config.get('groups', {})  # Группы из основного конфига
+    groups = config.get('groups', {})
 
-    # Собираем все v2fly категории из сервисов и групп
+    # Словари для хранения данных сервисов
+    service_domains_dict = {}
+    service_general_dict = {}
+
+    # Собираем все v2fly категории
     v2fly_categories = set()
     for service_config in services.values():
         if 'v2fly' in service_config:
@@ -438,14 +417,14 @@ async def async_main():
     if v2fly_categories:
         v2fly_data = await process_v2fly_categories(list(v2fly_categories))
 
-    # Определяем исключённые сервисы
-    excluded_services = set()
+    # Определяем флаги general для сервисов
     for service_name, service_config in services.items():
-        add_to_general = service_config.get('general', True)
-        if isinstance(add_to_general, str):
-            add_to_general = add_to_general.lower() != 'false'
-        if not add_to_general:
-            excluded_services.add(service_name)
+        flag = service_config.get('general', True)
+        if isinstance(flag, str):
+            flag = flag.strip().lower() != 'false'
+        service_general_dict[service_name] = flag
+
+    excluded_services = {name for name, flag in service_general_dict.items() if not flag}
 
     # Обрабатываем исключённые сервисы
     all_excluded_domains = set()
@@ -455,16 +434,18 @@ async def async_main():
             if service_name in services:
                 service_config = services[service_name]
                 excluded_tasks.append(process_excluded_service(service_name, service_config))
-        
+
         excluded_results = await asyncio.gather(*excluded_tasks)
-        for domains in excluded_results:
+        for service_name, domains in zip(excluded_services, excluded_results):
+            service_domains_dict[service_name] = domains
             all_excluded_domains |= domains
 
-    # Обрабатываем обычные сервисы (не исключённые)
-    all_domains = set()
-    non_excluded_tasks = []
-    for service_name, service_config in services.items():
-        if service_name not in excluded_services:
+    # Обрабатываем обычные сервисы
+    non_excluded_services = [name for name in services if name not in excluded_services]
+    if non_excluded_services:
+        non_excluded_tasks = []
+        for service_name in non_excluded_services:
+            service_config = services[service_name]
             non_excluded_tasks.append(
                 process_non_excluded_service(
                     service_name, 
@@ -473,10 +454,10 @@ async def async_main():
                     all_excluded_domains
                 )
             )
-    
-    non_excluded_results = await asyncio.gather(*non_excluded_tasks)
-    for domains in non_excluded_results:
-        all_domains |= domains
+
+        non_excluded_results = await asyncio.gather(*non_excluded_tasks)
+        for service_name, domains in zip(non_excluded_services, non_excluded_results):
+            service_domains_dict[service_name] = domains
 
     # Обрабатываем существующие домены
     existing_domains = set()
@@ -490,15 +471,13 @@ async def async_main():
     auto_gen_tasks = []
     for service_name, service_config in services.items():
         auto_domains = set()
-        
-        # URLs
+
         urls = service_config.get('url', [])
         if isinstance(urls, str):
             urls = [urls]
         for url in urls:
             auto_gen_tasks.append(process_domain_source(url))
-        
-        # Прямые домены
+
         domains_list = service_config.get('domains', [])
         if isinstance(domains_list, str):
             domains_list = [domains_list]
@@ -508,8 +487,7 @@ async def async_main():
                 auto_domains.update(result)
             elif result:
                 auto_domains.add(result)
-        
-        # v2fly категории
+
         if 'v2fly' in service_config:
             categories = service_config['v2fly']
             if isinstance(categories, str):
@@ -517,10 +495,9 @@ async def async_main():
             for category in categories:
                 if category in v2fly_data:
                     auto_domains |= v2fly_data[category]
-        
+
         all_auto_generated_domains |= auto_domains
-    
-    # Обрабатываем URL задачи
+
     if auto_gen_tasks:
         url_domains = await asyncio.gather(*auto_gen_tasks)
         for domains in url_domains:
@@ -543,6 +520,9 @@ async def async_main():
             filtered_personal_domains.add(domain)
 
     # Объединяем домены
+    all_domains = set()
+    for domains in service_domains_dict.values():
+        all_domains |= domains
     all_domains |= filtered_personal_domains
 
     # Обрабатываем группы
@@ -550,10 +530,16 @@ async def async_main():
     if groups:
         group_tasks = []
         for group_name, group_config in groups.items():
-            group_tasks.append(process_group(group_name, group_config, v2fly_data))
-        
+            group_tasks.append(process_group(
+                group_name, 
+                group_config, 
+                v2fly_data,
+                service_domains_dict,
+                service_general_dict
+            ))
+
         group_results = await asyncio.gather(*group_tasks)
-        
+
         for domains, general in group_results:
             if general:
                 all_general_domains.update(domains)
@@ -582,7 +568,6 @@ async def async_main():
 
 async def main_async():
     await async_main()
-    # Очищаем временные файлы
     if os.path.exists(V2FLY_CLONE_DIR):
         shutil.rmtree(V2FLY_CLONE_DIR)
 
