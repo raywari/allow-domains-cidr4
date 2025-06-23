@@ -313,7 +313,6 @@ async def process_non_excluded_service(service_name, service_config, v2fly_data,
         return filtered_service_domains
     return set()
 
-# Централизованная функция для проверки включаемости сервиса в группу
 def should_include_service(service_general, group_general):
     if group_general:
         return service_general
@@ -357,21 +356,21 @@ async def process_group(group_name, group_config, v2fly_data, service_domains_di
     if isinstance(include_list, str):
         include_list = [include_list]
 
-    # Получаем флаг группы
+    # Get group flag
     group_general = group_config.get('general', True)
     if isinstance(group_general, str):
         group_general = group_general.lower() == 'true'
 
     for service_name in include_list:
-        # Проверяем наличие сервиса в словарях
-        if service_name in service_domains_dict and service_name in service_general_dict:
-            service_domains = service_domains_dict[service_name]
-            service_general = service_general_dict[service_name]
-            
-            # Проверяем условия включения
+        key = service_name.lower()  # Нормализуем регистр для поиска
+        if key in service_domains_dict and key in service_general_dict:
+            service_domains = service_domains_dict[key]
+            service_general = service_general_dict[key]
+
             if should_include_service(service_general, group_general):
                 group_domains |= service_domains
         else:
+            # Сообщаем об исходном имени из конфига
             print(f"Warning: Service '{service_name}' not found or not processed")
 
     # Filter and save group domains
@@ -390,6 +389,11 @@ async def async_main():
 
     services = config.get('services', {})
     groups = config.get('groups', {})
+
+    # Словарь для нормализации регистра имён сервисов
+    service_name_mapping = {}
+    for name in services:
+        service_name_mapping[name.lower()] = name
 
     # Словари для хранения данных сервисов
     service_domains_dict = {}
@@ -422,33 +426,36 @@ async def async_main():
         flag = service_config.get('general', True)
         if isinstance(flag, str):
             flag = flag.strip().lower() != 'false'
-        service_general_dict[service_name] = flag
+        # Сохраняем по нормализованному ключу
+        service_general_dict[service_name.lower()] = flag
 
-    excluded_services = {name for name, flag in service_general_dict.items() if not flag}
+    excluded_services = {name.lower() for name, flag in service_general_dict.items() if not flag}
 
     # Обрабатываем исключённые сервисы
     all_excluded_domains = set()
     if excluded_services:
         excluded_tasks = []
-        for service_name in excluded_services:
-            if service_name in services:
-                service_config = services[service_name]
-                excluded_tasks.append(process_excluded_service(service_name, service_config))
+        for service_name_lower in excluded_services:
+            # Получаем оригинальное имя для сохранения
+            orig_name = service_name_mapping.get(service_name_lower, service_name_lower)
+            service_config = services.get(orig_name, {})
+            excluded_tasks.append(process_excluded_service(orig_name, service_config))
 
         excluded_results = await asyncio.gather(*excluded_tasks)
-        for service_name, domains in zip(excluded_services, excluded_results):
-            service_domains_dict[service_name] = domains
+        for service_name_lower, domains in zip(excluded_services, excluded_results):
+            service_domains_dict[service_name_lower] = domains
             all_excluded_domains |= domains
 
     # Обрабатываем обычные сервисы
-    non_excluded_services = [name for name in services if name not in excluded_services]
+    non_excluded_services = [name.lower() for name in services if name.lower() not in excluded_services]
     if non_excluded_services:
         non_excluded_tasks = []
-        for service_name in non_excluded_services:
-            service_config = services[service_name]
+        for service_name_lower in non_excluded_services:
+            orig_name = service_name_mapping.get(service_name_lower, service_name_lower)
+            service_config = services.get(orig_name, {})
             non_excluded_tasks.append(
                 process_non_excluded_service(
-                    service_name, 
+                    orig_name, 
                     service_config, 
                     v2fly_data, 
                     all_excluded_domains
@@ -456,8 +463,8 @@ async def async_main():
             )
 
         non_excluded_results = await asyncio.gather(*non_excluded_tasks)
-        for service_name, domains in zip(non_excluded_services, non_excluded_results):
-            service_domains_dict[service_name] = domains
+        for service_name_lower, domains in zip(non_excluded_services, non_excluded_results):
+            service_domains_dict[service_name_lower] = domains
 
     # Обрабатываем существующие домены
     existing_domains = set()
