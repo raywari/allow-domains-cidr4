@@ -32,3 +32,7 @@ url = "https://iplist.opencck.org/?format=text&data=domains&site=hdrezka.ag"
 [services.AWS]
 v2fly = "aws"
 general = "false"
+[services.Viber]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=viber.com"
+v2fly = "viber"
+general = "false"
