@@ -2,6 +2,7 @@
 v2fly = "telegram"
 general = "false"
 [services.YouTube]
+url = "https://iplist.opencck.org/?format=text&data=domains&site=youtube.com"
 v2fly = "youtube"
 [services.TikTok]
 v2fly = "tiktok"
