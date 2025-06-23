@@ -29,7 +29,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install requests aiohttp toml
+        run: pip install requests aiohttp aiofiles toml
 
       - name: Run parsing-domains script
         run: python .scripts/parsing-domains.py
