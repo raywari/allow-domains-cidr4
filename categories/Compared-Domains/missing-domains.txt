@@ -4,7 +4,6 @@
 - anilibria.org
 - eporner.com
 - supersliv.biz
-- viber.com
 - youtrack.cloud
 
 # Missing domains
@@ -14,7 +13,6 @@
 - fastpic.org
 - gvt1.com
 - pbs.twimg.com.cdn.cloudflare.net
-- viber.com
 - video.twimg.com.cdn.cloudflare.net
 
 # Missing domains
@@ -22,5 +20,4 @@
 
 - pepperl-fuchs.com
 - s3-1.amazonaws.com
-- viber.com
 

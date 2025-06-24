@@ -1861,6 +1861,7 @@
 - rutracker.ru
 - rutrecker.net
 - rutrk.org
+- s-bid.rmp.rakuten.com
 - s.360.cn
 - s.baidu.com
 - s.img.mix.sina.com.cn
@@ -2149,9 +2150,13 @@
 - v6-adashx.ut.ele.me
 - v6-adashx.ut.taobao.com
 - val.api.youku.com
+- vbcdn.com
+- vbcdn.net
 - vectorworks.net
 - velocidrone.com
 - veritas.com
+- viber.co
+- viber.me
 - video-akpcw-cdn-spotify-com.akamaized.net
 - video-analytics.google.com
 - video.externulls.com
@@ -4692,6 +4697,7 @@
 - rutracker.wiki
 - rutrecker.net
 - rutrk.org
+- s-bid.rmp.rakuten.com
 - s.360.cn
 - s.baidu.com
 - s.img.mix.sina.com.cn
@@ -5099,11 +5105,15 @@
 - v6-adashx.ut.taobao.com
 - vagrantcloud.com
 - val.api.youku.com
+- vbcdn.com
+- vbcdn.net
 - veeam.com
 - verstka.media
 - vesma.one
 - vesma.today
 - vesty.co.il
+- viber.co
+- viber.me
 - vice.com
 - video-akpcw-cdn-spotify-com.akamaized.net
 - video-analytics.google.com
@@ -7676,6 +7686,7 @@
 - rutracker.wiki
 - rutrecker.net
 - rutrk.org
+- s-bid.rmp.rakuten.com
 - s.360.cn
 - s.baidu.com
 - s.img.mix.sina.com.cn
@@ -8082,9 +8093,13 @@
 - v6-adashx.ut.taobao.com
 - vagrantcloud.com
 - val.api.youku.com
+- vbcdn.com
+- vbcdn.net
 - vesma.one
 - vesma.today
 - vesty.co.il
+- viber.co
+- viber.me
 - vice.com
 - video-akpcw-cdn-spotify-com.akamaized.net
 - video-analytics.google.com
