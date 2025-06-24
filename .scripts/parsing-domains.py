@@ -311,21 +311,16 @@ async def process_non_excluded_service(service_name, service_config, v2fly_data,
     return set()
 
 def should_include_service(service_general, group_general):
-    # Если сервис явно отключен - не включать
     if service_general is False:
         return False
-    # Если сервис включен - включать
     if service_general is True:
         return True
-    # По умолчанию (если не указан) - сервис включен
     if service_general is None:
         service_general = True
 
-    # По умолчанию (если не указан) - группа включена
     if group_general is None:
         group_general = True
 
-    # Сервис включается только если и сервис и группа включены
     return service_general and group_general
 
 async def process_group(group_name, group_config, v2fly_data, service_domains_dict, service_general_dict):
@@ -365,28 +360,29 @@ async def process_group(group_name, group_config, v2fly_data, service_domains_di
     if isinstance(include_list, str):
         include_list = [include_list]
 
-    # group_general: если отсутствует - True по умолчанию
     group_general = group_config.get('general')
     if group_general is None:
         group_general = True
     elif isinstance(group_general, str):
         group_general = group_general.lower() == 'true'
 
+    # Создаем нормализованный словарь для сервисов
+    normalized_service_general_dict = {k.lower(): v for k, v in service_general_dict.items()}
+    normalized_service_domains_dict = {k.lower(): v for k, v in service_domains_dict.items()}
+
     for service_name in include_list:
-        key = service_name.lower()
-        if key in service_domains_dict and key in service_general_dict:
-            service_domains = service_domains_dict[key]
-            service_general = service_general_dict.get(key)
+        key = service_name.strip().lower()
+        if key in normalized_service_general_dict:
+            service_domains = normalized_service_domains_dict.get(key, set())
+            service_general = normalized_service_general_dict[key]
 
             if should_include_service(service_general, group_general):
                 group_domains |= service_domains
         else:
-            print(f"Warning: Service '{service_name}' not found or not processed")
+            print(f"Warning: Service '{service_name}' not found in configuration")
 
-    # Фильтрация доменов
     filtered_domains = filter_domains_list(list(group_domains))
 
-    # Сохраняем группу только если она включена
     if group_general:
         await save_group_domains(group_name, filtered_domains)
 
@@ -403,14 +399,10 @@ async def async_main():
     services = config.get('services', {})
     groups = config.get('groups', {})
 
-    # Словарь для нормализации регистра имён сервисов
-    service_name_mapping = {}
-    for name in services:
-        service_name_mapping[name.lower()] = name
-
     # Словари для хранения данных сервисов
     service_domains_dict = {}
     service_general_dict = {}
+    all_excluded_domains = set()
 
     # Собираем все v2fly категории
     v2fly_categories = set()
@@ -434,49 +426,87 @@ async def async_main():
     if v2fly_categories:
         v2fly_data = await process_v2fly_categories(list(v2fly_categories))
 
-    # Определяем флаги general для сервисов
+    # Определяем флаги general для сервисов (регистронезависимо)
     for service_name, service_config in services.items():
         flag = service_config.get('general', True)
         if isinstance(flag, str):
             flag = flag.strip().lower() != 'false'
         service_general_dict[service_name.lower()] = flag
 
-    # Определяем исключённые сервисы
-    excluded_services = {name.lower() for name, flag in service_general_dict.items() if not flag}
+    # Собираем домены всех исключенных сервисов
+    for service_name, service_config in services.items():
+        service_name_lower = service_name.lower()
+        if not service_general_dict.get(service_name_lower, True):
+            # Обрабатываем URL
+            urls = service_config.get('url', [])
+            if isinstance(urls, str):
+                urls = [urls]
+            url_tasks = [process_domain_source(url) for url in urls]
+            url_results = await asyncio.gather(*url_tasks)
+            for domains in url_results:
+                all_excluded_domains |= domains
 
-    # Обрабатываем исключённые сервисы
-    all_excluded_domains = set()
-    if excluded_services:
-        excluded_tasks = []
-        for service_name_lower in excluded_services:
-            orig_name = service_name_mapping.get(service_name_lower, service_name_lower)
-            service_config = services.get(orig_name, {})
-            excluded_tasks.append(process_excluded_service(orig_name, service_config))
+            # Обрабатываем явные домены
+            domains_list = service_config.get('domains', [])
+            if isinstance(domains_list, str):
+                domains_list = [domains_list]
+            for domain in domains_list:
+                result = clean_domain_line(domain)
+                if isinstance(result, list):
+                    all_excluded_domains.update(result)
+                elif result:
+                    all_excluded_domains.add(result)
 
-        excluded_results = await asyncio.gather(*excluded_tasks)
-        for service_name_lower, domains in zip(excluded_services, excluded_results):
-            service_domains_dict[service_name_lower] = domains
-            all_excluded_domains |= domains
+            # Обрабатываем v2fly категории
+            if 'v2fly' in service_config:
+                categories = service_config['v2fly']
+                if isinstance(categories, str):
+                    categories = [categories]
+                for category in categories:
+                    if category in v2fly_data:
+                        all_excluded_domains |= v2fly_data[category]
 
-    # Обрабатываем обычные сервисы
-    non_excluded_services = [name.lower() for name in services if name.lower() not in excluded_services]
-    if non_excluded_services:
-        non_excluded_tasks = []
-        for service_name_lower in non_excluded_services:
-            orig_name = service_name_mapping.get(service_name_lower, service_name_lower)
-            service_config = services.get(orig_name, {})
-            non_excluded_tasks.append(
-                process_non_excluded_service(
-                    orig_name, 
-                    service_config, 
-                    v2fly_data, 
-                    all_excluded_domains
-                )
-            )
+    # Обрабатываем обычные сервисы (non-excluded)
+    for service_name, service_config in services.items():
+        service_name_lower = service_name.lower()
+        if service_general_dict.get(service_name_lower, True):
+            service_domains = set()
 
-        non_excluded_results = await asyncio.gather(*non_excluded_tasks)
-        for service_name_lower, domains in zip(non_excluded_services, non_excluded_results):
-            service_domains_dict[service_name_lower] = domains
+            # Обрабатываем URL
+            urls = service_config.get('url', [])
+            if isinstance(urls, str):
+                urls = [urls]
+            url_tasks = [process_domain_source(url) for url in urls]
+            url_results = await asyncio.gather(*url_tasks)
+            for domains in url_results:
+                service_domains |= domains
+
+            # Обрабатываем явные домены
+            domains_list = service_config.get('domains', [])
+            if isinstance(domains_list, str):
+                domains_list = [domains_list]
+            for domain in domains_list:
+                result = clean_domain_line(domain)
+                if isinstance(result, list):
+                    service_domains.update(result)
+                elif result:
+                    service_domains.add(result)
+
+            # Обрабатываем v2fly категории
+            if 'v2fly' in service_config:
+                categories = service_config['v2fly']
+                if isinstance(categories, str):
+                    categories = [categories]
+                for category in categories:
+                    if category in v2fly_data:
+                        service_domains |= v2fly_data[category]
+
+            # Исключаем домены из excluded сервисов
+            service_domains -= all_excluded_domains
+
+            if service_domains:
+                filtered_domains = await save_service_domains(service_name, service_domains)
+                service_domains_dict[service_name_lower] = filtered_domains
 
     # Обрабатываем существующие домены
     existing_domains = set()
@@ -485,57 +515,16 @@ async def async_main():
             content = await f.read()
             existing_domains = set(line.strip() for line in content.splitlines() if line.strip())
 
-    # Определяем автоматически сгенерированные домены
-    all_auto_generated_domains = set()
-    auto_gen_tasks = []
-    for service_name, service_config in services.items():
-        auto_domains = set()
+    # Фильтруем существующие домены
+    filtered_personal_domains = existing_domains - all_excluded_domains
 
-        urls = service_config.get('url', [])
-        if isinstance(urls, str):
-            urls = [urls]
-        for url in urls:
-            auto_gen_tasks.append(process_domain_source(url))
-
-        domains_list = service_config.get('domains', [])
-        if isinstance(domains_list, str):
-            domains_list = [domains_list]
-        for domain in domains_list:
-            result = clean_domain_line(domain)
-            if isinstance(result, list):
-                auto_domains.update(result)
-            elif result:
-                auto_domains.add(result)
-
-        if 'v2fly' in service_config:
-            categories = service_config['v2fly']
-            if isinstance(categories, str):
-                categories = [categories]
-            for category in categories:
-                if category in v2fly_data:
-                    auto_domains |= v2fly_data[category]
-
-        all_auto_generated_domains |= auto_domains
-
-    if auto_gen_tasks:
-        url_domains = await asyncio.gather(*auto_gen_tasks)
-        for domains in url_domains:
-            all_auto_generated_domains |= domains
-
-    # Определяем личные домены
-    personal_domains = existing_domains - all_auto_generated_domains
-
-    # Фильтруем личные домены - исключаем все что связано с excluded
-    filtered_personal_domains = personal_domains - all_excluded_domains
-
-    # Объединяем домены (только из non-excluded сервисов)
-    all_domains = set()
-    for service_name_lower in non_excluded_services:
-        all_domains |= service_domains_dict.get(service_name_lower, set())
-    all_domains |= filtered_personal_domains
+    # Собираем все разрешенные домены
+    all_allowed_domains = set()
+    for domains in service_domains_dict.values():
+        all_allowed_domains |= domains
+    all_allowed_domains |= filtered_personal_domains
 
     # Обрабатываем группы
-    all_general_domains = set()
     if groups:
         group_tasks = []
         for group_name, group_config in groups.items():
@@ -549,21 +538,29 @@ async def async_main():
 
         group_results = await asyncio.gather(*group_tasks)
 
-        for domains, general in group_results:
-            if general:
-                all_general_domains |= domains
+        for domains, group_general in group_results:
+            if group_general:
+                all_allowed_domains |= domains
 
-    # Добавляем домены групп (только включенных)
-    all_domains |= all_general_domains
-
-    # Финальное исключение всех excluded доменов
-    final_domains = all_domains - all_excluded_domains
+    # ЖЕСТКАЯ ФИЛЬТРАЦИЯ В КОНЦЕ
+    final_domains = set()
+    for domain in all_allowed_domains:
+        # Проверяем, не является ли домен поддоменом исключенного
+        is_excluded = False
+        for excluded_domain in all_excluded_domains:
+            if (domain == excluded_domain or 
+                domain.endswith('.' + excluded_domain) or 
+                excluded_domain.endswith('.' + domain)):
+                is_excluded = True
+                break
+        if not is_excluded:
+            final_domains.add(domain)
 
     # Сохраняем финальные домены
     if final_domains:
-        filtered_all_domains = filter_domains_list(list(final_domains))
+        filtered_final_domains = filter_domains_list(list(final_domains))
         async with aiofiles.open(DOMAINS_FILE, 'w') as f:
-            await f.write("\n".join(sorted(filtered_all_domains)) + "\n")
+            await f.write("\n".join(sorted(filtered_final_domains)) + "\n")
 
 async def main_async():
     await async_main()
