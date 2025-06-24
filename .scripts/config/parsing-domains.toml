@@ -193,6 +193,7 @@ domains = ["meta.ai"]
 
 [groups.Ads]
 v2fly = "category-ads-all"
+domains = ["ad.cub.red"]
 general = "false"
 
 [groups.RU-Media]

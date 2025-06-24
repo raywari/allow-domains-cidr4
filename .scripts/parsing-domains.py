@@ -314,14 +314,26 @@ async def process_non_excluded_service(service_name, service_config, v2fly_data,
     return set()
 
 def should_include_service(service_general, group_general):
-    if group_general:
-        return service_general
-    return True
+    # Отсутствие general = True по умолчанию
+    if service_general is False:
+        return False
+    if service_general is True:
+        return True
+    # Если general не указан (None) → считаем True
+    if service_general is None:
+        service_general = True
+
+    if group_general is None:
+        group_general = True
+
+    # Если сервис general не указан или True → проверяем группу
+    return group_general
+
 
 async def process_group(group_name, group_config, v2fly_data, service_domains_dict, service_general_dict):
     group_domains = set()
 
-    # 1. Process direct domains
+    # Direct domains
     domains_list = group_config.get('domains', [])
     if isinstance(domains_list, str):
         domains_list = [domains_list]
@@ -332,17 +344,16 @@ async def process_group(group_name, group_config, v2fly_data, service_domains_di
         elif result:
             group_domains.add(result)
 
-    # 2. Process URLs
+    # URLs
     urls = group_config.get('url', [])
     if isinstance(urls, str):
         urls = [urls]
-
     url_tasks = [process_domain_source(url) for url in urls]
     url_results = await asyncio.gather(*url_tasks)
     for domains in url_results:
         group_domains |= domains
 
-    # 3. Process v2fly categories
+    # v2fly
     if 'v2fly' in group_config:
         categories = group_config['v2fly']
         if isinstance(categories, str):
@@ -351,31 +362,36 @@ async def process_group(group_name, group_config, v2fly_data, service_domains_di
             if category in v2fly_data:
                 group_domains |= v2fly_data[category]
 
-    # 4. Process include с учетом флагов general
+    # include сервисы
     include_list = group_config.get('include', [])
     if isinstance(include_list, str):
         include_list = [include_list]
 
-    # Get group flag
-    group_general = group_config.get('general', True)
-    if isinstance(group_general, str):
+    # group_general: если отсутствует — True по умолчанию
+    group_general = group_config.get('general')
+    if group_general is None:
+        group_general = True
+    elif isinstance(group_general, str):
         group_general = group_general.lower() == 'true'
 
     for service_name in include_list:
-        key = service_name.lower()  # Нормализуем регистр для поиска
+        key = service_name.lower()
         if key in service_domains_dict and key in service_general_dict:
             service_domains = service_domains_dict[key]
-            service_general = service_general_dict[key]
+            service_general = service_general_dict.get(key)
 
+            # None = True по умолчанию
             if should_include_service(service_general, group_general):
                 group_domains |= service_domains
         else:
-            # Сообщаем об исходном имени из конфига
             print(f"Warning: Service '{service_name}' not found or not processed")
 
-    # Filter and save group domains
-    filtered_domains = filter_domains_list(list(group_domains))
-    await save_group_domains(group_name, filtered_domains)
+    # Если group_general = True → сохраняем файл группы
+    if group_general:
+        filtered_domains = filter_domains_list(list(group_domains))
+        await save_group_domains(group_name, filtered_domains)
+    else:
+        filtered_domains = set()
 
     return filtered_domains, group_general
 
