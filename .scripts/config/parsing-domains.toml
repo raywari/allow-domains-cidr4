@@ -109,8 +109,12 @@ url = "https://iplist.opencck.org/?format=text&data=domains&site=chatgpt.com"
 [services.Anthropic]
 v2fly = "anthropic"
 
-[services.Meta]
-v2fly = "meta"
+[services.Oculus]
+v2fly = "oculus"
+general = "false"
+
+[services.Meta-AI]
+domains = ["meta.ai", "meta.com"]
 
 [services.Instagram]
 v2fly = "instagram"
@@ -155,7 +159,6 @@ general = "false"
 [services.Viber]
 url = "https://iplist.opencck.org/?format=text&data=domains&site=viber.com"
 v2fly = "viber"
-general = "false"
 
 [services.Twitch]
 v2fly = "twitch"
@@ -190,6 +193,9 @@ include = ["discord", "telegram", "viber", "instagram", "facebook", "threads", "
 [groups.AI]
 include = ["google-ai", "elevenlabs", "copilot", "openai", "grok", "deepseek", "perplexity", "huggingface", "anthropic"]
 domains = ["meta.ai"]
+
+[groups.Meta]
+v2fly = "meta"
 
 [groups.Ads]
 v2fly = "category-ads-all"
