@@ -113,7 +113,7 @@ v2fly = "anthropic"
 v2fly = "oculus"
 general = "false"
 
-[services.Meta-AI]
+[services.Meta]
 domains = ["meta.ai", "meta.com"]
 
 [services.Instagram]
@@ -194,7 +194,7 @@ include = ["discord", "telegram", "viber", "instagram", "facebook", "threads", "
 include = ["google-ai", "elevenlabs", "copilot", "openai", "grok", "deepseek", "perplexity", "huggingface", "anthropic"]
 domains = ["meta.ai"]
 
-[groups.Meta]
+[groups.Meta-All]
 v2fly = "meta"
 
 [groups.Ads]
