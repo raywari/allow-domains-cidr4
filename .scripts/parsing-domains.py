@@ -31,7 +31,7 @@ def generate_from_regex(regex_pattern):
                 parts.append('|')
             else:
                 parts.append(part)
-        variants = ['']
+        variants = [''] if not regex.startswith('|') else []
         i = 0
         while i < len(parts):
             part = parts[i]
@@ -100,17 +100,14 @@ def filter_domains_list(domains):
         return []
 
     sorted_domains = sorted(set(domains), key=lambda x: x.count('.'))
-
     filtered_domains = []
 
     for domain in sorted_domains:
         is_subdomain = False
-
         for existing_domain in filtered_domains:
             if domain.endswith('.' + existing_domain):
                 is_subdomain = True
                 break
-
         if not is_subdomain:
             filtered_domains.append(domain)
 
@@ -314,21 +311,22 @@ async def process_non_excluded_service(service_name, service_config, v2fly_data,
     return set()
 
 def should_include_service(service_general, group_general):
-    # Отсутствие general = True по умолчанию
+    # Если сервис явно отключен - не включать
     if service_general is False:
         return False
+    # Если сервис включен - включать
     if service_general is True:
         return True
-    # Если general не указан (None) → считаем True
+    # По умолчанию (если не указан) - сервис включен
     if service_general is None:
         service_general = True
 
+    # По умолчанию (если не указан) - группа включена
     if group_general is None:
         group_general = True
 
-    # Если сервис general не указан или True → проверяем группу
-    return group_general
-
+    # Сервис включается только если и сервис и группа включены
+    return service_general and group_general
 
 async def process_group(group_name, group_config, v2fly_data, service_domains_dict, service_general_dict):
     group_domains = set()
@@ -367,7 +365,7 @@ async def process_group(group_name, group_config, v2fly_data, service_domains_di
     if isinstance(include_list, str):
         include_list = [include_list]
 
-    # group_general: если отсутствует — True по умолчанию
+    # group_general: если отсутствует - True по умолчанию
     group_general = group_config.get('general')
     if group_general is None:
         group_general = True
@@ -380,20 +378,19 @@ async def process_group(group_name, group_config, v2fly_data, service_domains_di
             service_domains = service_domains_dict[key]
             service_general = service_general_dict.get(key)
 
-            # None = True по умолчанию
             if should_include_service(service_general, group_general):
                 group_domains |= service_domains
         else:
             print(f"Warning: Service '{service_name}' not found or not processed")
 
-    # Если group_general = True → сохраняем файл группы
-    if group_general:
-        filtered_domains = filter_domains_list(list(group_domains))
-        await save_group_domains(group_name, filtered_domains)
-    else:
-        filtered_domains = set()
+    # Фильтрация доменов
+    filtered_domains = filter_domains_list(list(group_domains))
 
-    return filtered_domains, group_general
+    # Сохраняем группу только если она включена
+    if group_general:
+        await save_group_domains(group_name, filtered_domains)
+
+    return set(filtered_domains), group_general
 
 async def async_main():
     if not os.path.exists(CONFIG_PATH):
@@ -442,9 +439,9 @@ async def async_main():
         flag = service_config.get('general', True)
         if isinstance(flag, str):
             flag = flag.strip().lower() != 'false'
-        # Сохраняем по нормализованному ключу
         service_general_dict[service_name.lower()] = flag
 
+    # Определяем исключённые сервисы
     excluded_services = {name.lower() for name, flag in service_general_dict.items() if not flag}
 
     # Обрабатываем исключённые сервисы
@@ -452,7 +449,6 @@ async def async_main():
     if excluded_services:
         excluded_tasks = []
         for service_name_lower in excluded_services:
-            # Получаем оригинальное имя для сохранения
             orig_name = service_name_mapping.get(service_name_lower, service_name_lower)
             service_config = services.get(orig_name, {})
             excluded_tasks.append(process_excluded_service(orig_name, service_config))
@@ -529,23 +525,13 @@ async def async_main():
     # Определяем личные домены
     personal_domains = existing_domains - all_auto_generated_domains
 
-    # Фильтруем личные домены
-    filtered_personal_domains = set()
-    for domain in personal_domains:
-        should_exclude = False
-        for exclude_domain in all_excluded_domains:
-            if (domain == exclude_domain or 
-                domain.endswith('.' + exclude_domain) or 
-                exclude_domain.endswith('.' + domain)):
-                should_exclude = True
-                break
-        if not should_exclude:
-            filtered_personal_domains.add(domain)
+    # Фильтруем личные домены - исключаем все что связано с excluded
+    filtered_personal_domains = personal_domains - all_excluded_domains
 
-    # Объединяем домены
+    # Объединяем домены (только из non-excluded сервисов)
     all_domains = set()
-    for domains in service_domains_dict.values():
-        all_domains |= domains
+    for service_name_lower in non_excluded_services:
+        all_domains |= service_domains_dict.get(service_name_lower, set())
     all_domains |= filtered_personal_domains
 
     # Обрабатываем группы
@@ -565,23 +551,13 @@ async def async_main():
 
         for domains, general in group_results:
             if general:
-                all_general_domains.update(domains)
+                all_general_domains |= domains
 
-    # Добавляем домены групп
+    # Добавляем домены групп (только включенных)
     all_domains |= all_general_domains
 
-    # Финальное исключение
-    final_domains = set()
-    for domain in all_domains:
-        should_exclude = False
-        for exclude_domain in all_excluded_domains:
-            if (domain == exclude_domain or 
-                domain.endswith('.' + exclude_domain) or 
-                exclude_domain.endswith('.' + domain)):
-                should_exclude = True
-                break
-        if not should_exclude:
-            final_domains.add(domain)
+    # Финальное исключение всех excluded доменов
+    final_domains = all_domains - all_excluded_domains
 
     # Сохраняем финальные домены
     if final_domains:
