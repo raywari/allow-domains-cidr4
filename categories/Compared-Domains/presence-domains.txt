@@ -300,7 +300,6 @@
 - brightline.tv
 - browser-intake-datadoghq.com
 - browser.events.data.microsoft.com
-- bt.booktracker.work
 - btlaunch.baidu.com
 - btrace.qq.com
 - buck.build
@@ -1633,7 +1632,6 @@
 - onlineinstagram.com
 - onlineradiobox.com
 - onlinesim.ru
-- open.stealth.si
 - openai.com.cdn.cloudflare.net
 - openai.fund
 - openai.org
@@ -1854,7 +1852,6 @@
 - rulate.ru
 - rus-media.org
 - rus.ec
-- rustorka.com
 - rutracker.cr
 - rutracker.me
 - rutracker.nl
@@ -2080,17 +2077,13 @@
 - toolbar.baidu.com
 - top.gg
 - toplayerserver.com
-- torrent.by
 - torrindex.net
 - tpucdn.com
 - tr.libria.fun
-- tr.ysagin.top
-- tr3.ysagin.top
 - trace.qq.com
 - track.sohu.com
 - tracker.ai.xiaomi.com
 - tracker.baidu.com
-- tracker.torrent.eu.org
 - tracker.wf
 - tracking.miui.com
 - trae.ai
@@ -2794,7 +2787,6 @@
 - broncosportforum.com
 - browser-intake-datadoghq.com
 - browser.events.data.microsoft.com
-- bt.booktracker.work
 - btdig.com
 - btlaunch.baidu.com
 - btod.com
@@ -3094,7 +3086,6 @@
 - ekhokavkaza.com
 - elastic.co
 - element14.com
-- elevenlabs.io
 - em.baidu.com
 - emogi.com
 - emoticon.sns.iqiyi.com
@@ -3459,7 +3450,6 @@
 - fgacebook.com
 - ficbook.net
 - ficeboock.com
-- filmitorrent.net
 - filmix.ac
 - filmix.day
 - filmix.fm
@@ -4406,7 +4396,6 @@
 - onlineinstagram.com
 - onlinesim.io
 - onshape.com
-- open.stealth.si
 - openai.fund
 - openai.org
 - openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
@@ -4680,7 +4669,6 @@
 - rule34.xxx
 - rus-media.org
 - rus.ec
-- rustorka.com
 - rutor.org
 - rutracker.cc
 - rutracker.cr
@@ -5004,13 +4992,10 @@
 - torrindex.net
 - tpucdn.com
 - tr.libria.fun
-- tr.ysagin.top
-- tr3.ysagin.top
 - trace.qq.com
 - track.sohu.com
 - tracker.ai.xiaomi.com
 - tracker.baidu.com
-- tracker.torrent.eu.org
 - tracker.wf
 - tracking.miui.com
 - trafficfactory.biz
@@ -5787,7 +5772,6 @@
 - broncosportforum.com
 - browser-intake-datadoghq.com
 - browser.events.data.microsoft.com
-- bt.booktracker.work
 - btdig.com
 - btlaunch.baidu.com
 - btod.com
@@ -6104,7 +6088,6 @@
 - ekhokavkaza.com
 - elastic.co
 - element14.com
-- elevenlabs.io
 - em.baidu.com
 - emogi.com
 - emoticon.sns.iqiyi.com
@@ -6463,7 +6446,6 @@
 - fgacebook.com
 - ficbook.net
 - ficeboock.com
-- filmitorrent.net
 - filmix.ac
 - filmix.biz
 - filmix.day
@@ -7391,7 +7373,6 @@
 - onlineinstagram.com
 - onlinesim.io
 - onshape.com
-- open.stealth.si
 - openai.com
 - openai.com.cdn.cloudflare.net
 - openai.fund
@@ -7984,13 +7965,10 @@
 - torrindex.net
 - tpucdn.com
 - tr.libria.fun
-- tr.ysagin.top
-- tr3.ysagin.top
 - trace.qq.com
 - track.sohu.com
 - tracker.ai.xiaomi.com
 - tracker.baidu.com
-- tracker.torrent.eu.org
 - tracker.wf
 - tracking.miui.com
 - trae.ai
