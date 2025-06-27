@@ -1,9 +1,24 @@
 # Missing domains
 # Source: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
 
+- andrevi.ch
 - anilibria.org
+- audiobookbay.lu
+- boominfo.org
+- bt4gprx.com
+- cisecurity.org
+- cloudtorrents.com
 - eporner.com
+- filebin.net
+- home.by.me
+- ikea.com
+- kinozaltv.life
+- metopera.org
 - oculus.com
+- penguin.com
+- penguinrandomhouse.com
+- semrush.com
+- slifki.biz
 - supersliv.biz
 - youtrack.cloud
 

@@ -1663,7 +1663,6 @@
 - pay.mobile.sina.cn
 - payhulu.com
 - paypal.com
-- pb.wtf
 - pbmp.ali213.net
 - pbs.twimg.com.akamaized.net
 - pc.com
@@ -2001,7 +2000,6 @@
 - theintelstore.com
 - themoscowtimes.com
 - thenewtab.io
-- thepiratebay.org
 - theta.sogoucdn.com
 - threads.com
 - thumbs.externulls.com
