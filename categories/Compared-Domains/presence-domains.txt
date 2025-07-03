@@ -1908,7 +1908,6 @@
 - sotaproject.com
 - sovanews.tv
 - spcode.baidu.com
-- spiegel.de
 - splash-ads.cdn.unity.cn
 - splash-ads.unitychina.cn
 - sportsfacebook.com
