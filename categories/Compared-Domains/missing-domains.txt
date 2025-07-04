@@ -13,6 +13,7 @@
 - home.by.me
 - ikea.com
 - kinozaltv.life
+- make.com
 - metopera.org
 - oculus.com
 - penguin.com

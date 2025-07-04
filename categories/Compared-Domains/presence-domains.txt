@@ -1761,6 +1761,7 @@
 - qualcomm.com
 - quic-tiktok-core-proxy-i18n-gcpva.byteoversea.net
 - quic-tiktok-proxy-i18n-gcpva.byteoversea.net
+- quickconnect.to
 - quietpc.com
 - quoracdn.com
 - quoracdn.net
