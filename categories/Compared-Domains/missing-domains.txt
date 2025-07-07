@@ -35,6 +35,7 @@
 # Missing domains
 # Source: https://community.antifilter.download/list/domains.lst
 
+- ansys.com
 - pepperl-fuchs.com
 - s3-1.amazonaws.com
 
