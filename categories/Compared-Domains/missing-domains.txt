@@ -36,6 +36,7 @@
 # Source: https://community.antifilter.download/list/domains.lst
 
 - ansys.com
+- epg.one
 - pepperl-fuchs.com
 - s3-1.amazonaws.com
 
