@@ -1906,7 +1906,6 @@
 - socdm.com
 - software-static.download.prss.microsoft.com
 - sota.vision
-- sotaproject.com
 - sovanews.tv
 - spcode.baidu.com
 - splash-ads.cdn.unity.cn

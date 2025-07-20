@@ -2,7 +2,10 @@
 # Source: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
 
 - andrevi.ch
+- anilib.me
 - anilibria.org
+- ansys.com
+- apkmirror.com
 - audiobookbay.lu
 - boominfo.org
 - bt4gprx.com
@@ -13,6 +16,7 @@
 - home.by.me
 - ikea.com
 - kinozaltv.life
+- lostfilm.download
 - make.com
 - metopera.org
 - oculus.com
@@ -21,6 +25,7 @@
 - semrush.com
 - slifki.biz
 - supersliv.biz
+- toolbox.app
 - youtrack.cloud
 
 # Missing domains
