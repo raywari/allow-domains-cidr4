@@ -847,6 +847,7 @@
 - feed.baidu.com
 - feedback.whalecloud.com
 - feedcdn.sapphire.microsoftapp.net
+- femeretes.org
 - fenxi.com
 - feook.com
 - ferabook.com
@@ -3372,6 +3373,7 @@
 - feed.baidu.com
 - feedback.whalecloud.com
 - feedcdn.sapphire.microsoftapp.net
+- femeretes.org
 - fenxi.com
 - feook.com
 - ferabook.com
@@ -6327,6 +6329,7 @@
 - feed.baidu.com
 - feedback.whalecloud.com
 - feedcdn.sapphire.microsoftapp.net
+- femeretes.org
 - fenxi.com
 - feook.com
 - ferabook.com
