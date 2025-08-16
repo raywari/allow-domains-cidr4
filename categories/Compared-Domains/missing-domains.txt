@@ -11,8 +11,10 @@
 - bt4gprx.com
 - cisecurity.org
 - cloudtorrents.com
+- code.gist.build
 - editorx.com
 - eporner.com
+- etahub.com
 - expandrive.com
 - filebin.net
 - hc-ping.com
@@ -28,15 +30,27 @@
 - make.com
 - metopera.org
 - mw2.wiki
+- myparallels.com
 - myqrcode.com
 - oculus.com
+- openh264.org
+- openrouter.ai
+- parallels.cn
+- parallels.com
+- parallels.net
+- parallelsaccess.com
 - penguin.com
 - penguinrandomhouse.com
+- redislabs.com
 - semrush.com
+- sentry.dev
 - slifki.biz
 - speedtest.net
 - supersliv.biz
+- tiptop-vpn.com
 - toolbox.app
+- wbgames.com
+- yande.re
 - youtrack.cloud
 
 # Missing domains

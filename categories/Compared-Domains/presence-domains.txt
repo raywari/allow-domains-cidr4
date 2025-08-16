@@ -422,7 +422,6 @@
 - decide.mixpanel.com
 - deepmind.com
 - deepmind.google
-- deezer.com
 - delfi.ee
 - demdex.net
 - dept.one
@@ -1722,7 +1721,6 @@
 - primevideo.tv
 - pro.hoye.letv.com
 - pro.letv.com
-- production-openaicom-storage.azureedge.net
 - promote.biz.weibo.cn
 - prosleduet.media
 - protonmail.ch
@@ -2051,7 +2049,6 @@
 - tracker.torrent.eu.org
 - tracker.wf
 - tracking.miui.com
-- trae.ai
 - trafficfactory.biz
 - translyaciya.com
 - trends.mobile.sina.cn
@@ -2173,7 +2170,6 @@
 - worldhack.com
 - wp-e.net
 - wstracker.online
-- wunderground.com
 - wwads.cn
 - www-facebook.com
 - wwwfacebok.com
@@ -2190,7 +2186,6 @@
 - xscale.com
 - xy-log.tagtic.cn
 - yaoilib.me
-- yeggi.com
 - yektanet.com
 - yfanads.cn
 - yfanads.com
