@@ -181,6 +181,7 @@
 - ai.google.dev
 - airhorn.solutions
 - airhornbot.com
+- aisandbox-pa.googleapis.com
 - aistudio.google.com
 - aiv-cdn.net
 - alberta.ca
@@ -1391,6 +1392,7 @@
 - l-0005.dc-msedge.net
 - l-0005.l-msedge.net
 - l.ykimg.com
+- labs.google
 - ladsp.com
 - lampa.mx
 - latencytop.com
@@ -2575,6 +2577,7 @@
 - ai.google.dev
 - airhorn.solutions
 - airhornbot.com
+- aisandbox-pa.googleapis.com
 - aiv-cdn.net
 - alipaylog.com
 - alitui.weibo.com
@@ -4027,6 +4030,7 @@
 - l-0005.dc-msedge.net
 - l-0005.l-msedge.net
 - l.ykimg.com
+- labs.google
 - ladsp.com
 - lambdalabs.com
 - lamcdn.net
@@ -5528,6 +5532,7 @@
 - ai.google.dev
 - airhorn.solutions
 - airhornbot.com
+- aisandbox-pa.googleapis.com
 - aistudio.google.com
 - aiv-cdn.net
 - alipaylog.com
@@ -6974,6 +6979,7 @@
 - l-0005.dc-msedge.net
 - l-0005.l-msedge.net
 - l.ykimg.com
+- labs.google
 - ladsp.com
 - lambdalabs.com
 - lamcdn.net
