@@ -285,7 +285,6 @@
 - bing.com
 - bitbucket.org
 - bitcoin.org
-- bitru.org
 - biz.weibo.com
 - bizographics.com
 - bluekai.com
@@ -1697,7 +1696,6 @@
 - pinggai9.caixin.com
 - pingjs.qq.com
 - pintool.com
-- pixabay.com
 - pixiv.co.jp
 - pixiv.me
 - pixiv.net
