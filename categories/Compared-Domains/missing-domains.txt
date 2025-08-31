@@ -84,10 +84,18 @@
 # Missing domains
 # Source: https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst
 
+- a360.co
 - adafruit.com
+- autocad.com
+- autodesk.io
+- autodesk.net
+- autodesk360.com
 - fastpic.org
 - gvt1.com
+- omtrdc.net
 - pbs.twimg.com.cdn.cloudflare.net
+- sendgrid.net
+- tinkercad.com
 - video.twimg.com.cdn.cloudflare.net
 
 # Missing domains
