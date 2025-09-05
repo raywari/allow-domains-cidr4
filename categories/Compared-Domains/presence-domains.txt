@@ -219,7 +219,6 @@
 - api-adservices.apple.com
 - api.apps.sina.cn
 - api.game.letvstore.com
-- api.github.com
 - api.mobula.sdk.duapps.com
 - api.tuisong.baidu.com
 - api.wapa.taobao.com
@@ -930,7 +929,6 @@
 - ggpht.cn
 - gia.jd.com
 - gimg.baidu.com
-- githubcopilot.com
 - gitlab.com
 - gitlab.io
 - gma.alicdn.com

@@ -12,10 +12,13 @@
 - cisecurity.org
 - cloudtorrents.com
 - code.gist.build
+- data.cline.bot
 - editorx.com
 - eporner.com
 - etahub.com
+- exchanger.bits.media
 - expandrive.com
+- fansly.com
 - filebin.net
 - grizzlysms.com
 - hc-ping.com
@@ -35,6 +38,7 @@
 - lu4.org
 - mailerlite.com
 - make.com
+- manyvids.com
 - metopera.org
 - miracleptr.wordpress.com
 - mw2.wiki
