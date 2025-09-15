@@ -7293,7 +7293,6 @@
 - p3-tt-ipv6.byteimg.com
 - p4p.sina.com.cn
 - p9-tt.byteimg.com
-- pages.dev
 - palmnews.sina.cn
 - pangolin-dsp-toutiao-b.com
 - pangolin-dsp-toutiao.com
