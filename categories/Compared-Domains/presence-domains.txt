@@ -353,6 +353,8 @@
 - clash.com
 - clashmini.com
 - clashroyale.com
+- claude.com
+- claudemcpclient.com
 - claudeusercontent.com
 - cleaner.baidu.com
 - clearlinux.org
@@ -2814,6 +2816,8 @@
 - clashofclans.com
 - clashroyale.com
 - clashroyaleapp.com
+- claude.com
+- claudemcpclient.com
 - claudeusercontent.com
 - cleaner.baidu.com
 - clearlinux.org
@@ -5747,6 +5751,8 @@
 - clashofclans.com
 - clashroyale.com
 - clashroyaleapp.com
+- claude.com
+- claudemcpclient.com
 - claudeusercontent.com
 - cleaner.baidu.com
 - clearlinux.org
