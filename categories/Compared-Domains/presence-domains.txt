@@ -2043,6 +2043,7 @@
 - toplayerserver.com
 - torrent.by
 - torrindex.net
+- tospotify.com
 - tpucdn.com
 - tr.libria.fun
 - tr.ysagin.top
@@ -4901,6 +4902,7 @@
 - torrenteditor.com
 - torrentgalaxy.to
 - torrindex.net
+- tospotify.com
 - tpucdn.com
 - tr.libria.fun
 - tr.ysagin.top
@@ -7833,6 +7835,7 @@
 - torrenteditor.com
 - torrentgalaxy.to
 - torrindex.net
+- tospotify.com
 - tpucdn.com
 - tr.libria.fun
 - tr.ysagin.top
