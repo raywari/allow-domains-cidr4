@@ -106,6 +106,7 @@
 # Source: https://community.antifilter.download/list/domains.lst
 
 - ansys.com
+- cdn2site.com
 - epg.one
 - lostfilm.today
 - melord.net
