@@ -192,6 +192,7 @@
 - alog.umeng.com
 - alog.umengcloud.com
 - als.baidu.com
+- altera.co.jp
 - altera.com
 - alteraforum.com
 - alteraforums.com
@@ -376,6 +377,7 @@
 - cm.ipinyou.com
 - cm.passport.iqiyi.com
 - cnaa123.com
+- comm-verse.com
 - como-hackearfacebook.com
 - componentkit.org
 - contentabc.com
@@ -467,6 +469,7 @@
 - dlsw.br.baidu.com
 - dlswbr.baidu.com
 - dmapp.youku.com
+- dml-lang.org
 - dmp.sina.cn
 - dn-growing.qbox.me
 - dobrochan.net
@@ -968,6 +971,7 @@
 - gpt3-openai.com
 - grammarly.com
 - graniru.org
+- granulate.io
 - grazie.ai
 - groups.com
 - groza.media
@@ -993,6 +997,7 @@
 - hackerfacebook.com
 - hackfacebook.com
 - hackfacebookid.com
+- hackharassment.com
 - hacklang.org
 - hao123union.baidu.com
 - hath.network
@@ -1123,6 +1128,7 @@
 - inner-active.mobi
 - innovid.com
 - insidefilms.com
+- insight.tech
 - instaadder.com
 - instachecker.com
 - instafallow.com
@@ -1199,6 +1205,7 @@
 - intel.cl
 - intel.cm
 - intel.cn
+- intel.co
 - intel.co.ae
 - intel.co.cr
 - intel.co.id
@@ -1229,6 +1236,7 @@
 - intel.cr
 - intel.cu
 - intel.cz
+- intel.dev
 - intel.dk
 - intel.dz
 - intel.ec
@@ -1241,6 +1249,7 @@
 - intel.ga
 - intel.gd
 - intel.ge
+- intel.gg
 - intel.gl
 - intel.gm
 - intel.gr
@@ -1251,6 +1260,7 @@
 - intel.hn
 - intel.ht
 - intel.hu
+- intel.id
 - intel.ie
 - intel.in
 - intel.io
@@ -1344,6 +1354,8 @@
 - intelquark.com
 - intelrealsense.cn
 - intelrealsense.com
+- intelrealsense.net
+- intelreimbursement.com
 - intelrxt.com
 - intelsalestraining.com
 - intelsecurity.com
@@ -1470,6 +1482,7 @@
 - mcrouter.org
 - mcs.snssdk.com
 - mdza.io
+- meccontroller.com
 - mediav.com
 - mediazona.online
 - mee6.xyz
@@ -1513,6 +1526,7 @@
 - mouser.com
 - movidius.com
 - movidius.net
+- movidius.org
 - mpro.baidu.com
 - mpush.qq.com
 - mrakopedia.net
@@ -1588,6 +1602,7 @@
 - omnitek.tv
 - on24.com
 - oneapi.com
+- oneapi.io
 - onelink.me
 - onesignal.com
 - onetrust.com
@@ -1606,6 +1621,7 @@
 - openaicom.imgix.net
 - openaicomproductionae4b.blob.core.windows.net
 - openamt.com
+- opencas.io
 - opencreate.org
 - opendroneid.org
 - opengraphprotocol.com
@@ -1617,6 +1633,7 @@
 - openstreetmap.org
 - openstreetmaps.org
 - opentrackr.org
+- openvino.ai
 - openvinotoolkit.org
 - openweather.co.uk
 - openweathermap.org
@@ -1663,6 +1680,7 @@
 - parse.com
 - parsec.app
 - passport-log.youku.com
+- passwordday.org
 - pastela.app
 - pay.mobile.sina.cn
 - payhulu.com
@@ -1708,6 +1726,8 @@
 - pl.youku.com
 - plab.site
 - play.google.com
+- pmem.org
+- pmem.us
 - poe.com
 - poecdn.net
 - policy.video.iqiyi.com
@@ -1725,6 +1745,7 @@
 - primevideo.tv
 - pro.hoye.letv.com
 - pro.letv.com
+- projectcircuitbreaker.com
 - promote.biz.weibo.cn
 - prosleduet.media
 - protonmail.ch
@@ -1789,6 +1810,7 @@
 - refinitiv.com
 - registerhulu.com
 - release.baidu.com
+- renderingtoolkit.org
 - res.hunantv.com
 - res.mi.baidu.com
 - research.uber.com
@@ -1886,6 +1908,9 @@
 - signal.me
 - signal.tube
 - signalusers.org
+- sigopt.com
+- silicon-mobility.com
+- siliconmobility.com
 - simaba.taobao.com
 - simba.m.taobao.com
 - siport.com
@@ -1894,6 +1919,12 @@
 - slog.sina.cn
 - slog.sina.com.cn
 - smart-edge.com
+- smart-edge.info
+- smart-edge.io
+- smart-edge.net
+- smart-edge.org
+- smart-edge.systems
+- smartedge.info
 - smashwords.com
 - snap-telemetry.io
 - snapads.com
@@ -1955,6 +1986,8 @@
 - stats.ipinyou.com
 - stitch.withgoogle.com
 - stockx.com
+- storageclassmemory.io
+- storageclassmemory.org
 - store.externulls.com
 - store.tv.api.3g.youku.com
 - store.xl.api.3g.youku.com
@@ -2004,6 +2037,7 @@
 - themoscowtimes.com
 - thenewtab.io
 - theta.sogoucdn.com
+- threadingbuildingblocks.org
 - threads.com
 - thumbs.externulls.com
 - thunderbolttechnology.net
@@ -2096,6 +2130,7 @@
 - unityads.unity.cn
 - unityads.unity3d.com
 - unityads.unitychina.cn
+- universalscalablefirmware.org
 - upapi.net
 - uranus.sogou.com
 - urchin.com
@@ -2593,6 +2628,7 @@
 - alog.umengcloud.com
 - alphacoders.com
 - als.baidu.com
+- altera.co.jp
 - altera.com
 - alteraforum.com
 - alteraforums.com
@@ -2848,6 +2884,7 @@
 - coinpayments.net
 - coinsbee.com
 - coldfilm.xyz
+- comm-verse.com
 - community.sophos.com
 - como-hackearfacebook.com
 - componentkit.org
@@ -2962,6 +2999,7 @@
 - dlsw.br.baidu.com
 - dlswbr.baidu.com
 - dmapp.youku.com
+- dml-lang.org
 - dmp.sina.cn
 - dn-growing.qbox.me
 - dobrochan.net
@@ -3535,6 +3573,7 @@
 - grafana.com
 - grani.ru
 - graniru.org
+- granulate.io
 - graty.me
 - graylog.org
 - groq.com
@@ -3565,6 +3604,7 @@
 - hackernoon.com
 - hackfacebook.com
 - hackfacebookid.com
+- hackharassment.com
 - hacklang.org
 - hackmd.io
 - halooglasi.com
@@ -3724,6 +3764,7 @@
 - innovid.com
 - insearch.site
 - insidefilms.com
+- insight.tech
 - instaadder.com
 - instachecker.com
 - instafallow.com
@@ -3801,6 +3842,7 @@
 - intel.cl
 - intel.cm
 - intel.cn
+- intel.co
 - intel.co.ae
 - intel.co.cr
 - intel.co.id
@@ -3832,6 +3874,7 @@
 - intel.cu
 - intel.cz
 - intel.de
+- intel.dev
 - intel.dk
 - intel.dz
 - intel.ec
@@ -3844,6 +3887,7 @@
 - intel.ga
 - intel.gd
 - intel.ge
+- intel.gg
 - intel.gl
 - intel.gm
 - intel.gr
@@ -3854,6 +3898,7 @@
 - intel.hn
 - intel.ht
 - intel.hu
+- intel.id
 - intel.ie
 - intel.in
 - intel.io
@@ -3949,6 +3994,8 @@
 - intelquark.com
 - intelrealsense.cn
 - intelrealsense.com
+- intelrealsense.net
+- intelreimbursement.com
 - intelrxt.com
 - intelsalestraining.com
 - intelsecurity.com
@@ -3983,7 +4030,6 @@
 - jads.co
 - jamf.com
 - jauns.lv
-- jetbrains.com
 - jetbrains.space
 - jl3.yjaxa.top
 - jnn-pa.googleapis.com
@@ -4132,6 +4178,7 @@
 - mcrouter.org
 - mcs.snssdk.com
 - mdza.io
+- meccontroller.com
 - mediav.com
 - mediazona.ca
 - mediazona.online
@@ -4185,6 +4232,7 @@
 - mouser.fi
 - movidius.com
 - movidius.net
+- movidius.org
 - mpro.baidu.com
 - mpush.qq.com
 - msg.71.am
@@ -4307,6 +4355,7 @@
 - omnitek.tv
 - on24.com
 - oneapi.com
+- oneapi.io
 - onelink.me
 - onesignal.com
 - onetrust.com
@@ -4322,6 +4371,7 @@
 - openai.org
 - openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 - openamt.com
+- opencas.io
 - opencreate.org
 - opendroneid.org
 - opengraphprotocol.com
@@ -4336,6 +4386,7 @@
 - openstreetmap.org
 - openstreetmaps.org
 - opentrackr.org
+- openvino.ai
 - openvinotoolkit.org
 - openweather.co.uk
 - openweathermap.org
@@ -4392,6 +4443,7 @@
 - parse.com
 - parsec.app
 - passport-log.youku.com
+- passwordday.org
 - pastela.app
 - pay.mobile.sina.cn
 - payhulu.com
@@ -4440,6 +4492,8 @@
 - play.google.com
 - playboy.com
 - plugshare.com
+- pmem.org
+- pmem.us
 - poe.com
 - poecdn.net
 - policy.video.iqiyi.com
@@ -4467,6 +4521,7 @@
 - pro.letv.com
 - proactivebackend-pa.googleapis.com
 - proekt.media
+- projectcircuitbreaker.com
 - promote.biz.weibo.cn
 - prosleduet.media
 - prosleduetmedia.com
@@ -4546,6 +4601,7 @@
 - remna.st
 - remove.bg
 - render-state.to
+- renderingtoolkit.org
 - rentry.co
 - rentry.org
 - res.hunantv.com
@@ -4688,6 +4744,9 @@
 - signal.link
 - signal.me
 - signal.tube
+- sigopt.com
+- silicon-mobility.com
+- siliconmobility.com
 - simaba.taobao.com
 - simba.m.taobao.com
 - simplex.chat
@@ -4706,14 +4765,19 @@
 - slog.sina.cn
 - slog.sina.com.cn
 - smart-edge.com
+- smart-edge.info
+- smart-edge.io
+- smart-edge.net
+- smart-edge.org
+- smart-edge.systems
 - smartbear.co
 - smartbear.com
 - smartdeploy.com
+- smartedge.info
 - snap-telemetry.io
 - snapads.com
 - snapmagic.com
 - snd.sc
-- sndcdn.com
 - sngmta.qq.com
 - snob.ru
 - snort.org
@@ -4785,6 +4849,8 @@
 - stats.ipinyou.com
 - steamstat.info
 - stitch.withgoogle.com
+- storageclassmemory.io
+- storageclassmemory.org
 - store.externulls.com
 - store.tv.api.3g.youku.com
 - store.xl.api.3g.youku.com
@@ -4863,6 +4929,7 @@
 - thepiratebay.org
 - theta.sogoucdn.com
 - thetruestory.news
+- threadingbuildingblocks.org
 - threads.com
 - threads.net
 - threema.ch
@@ -4978,6 +5045,7 @@
 - unityads.unity.cn
 - unityads.unity3d.com
 - unityads.unitychina.cn
+- universalscalablefirmware.org
 - unscreen.com
 - upapi.net
 - upwork.com
@@ -5531,6 +5599,7 @@
 - alog.umeng.com
 - alog.umengcloud.com
 - als.baidu.com
+- altera.co.jp
 - altera.com
 - alteraforum.com
 - alteraforums.com
@@ -5785,6 +5854,7 @@
 - coinpayments.net
 - coinsbee.com
 - coldfilm.xyz
+- comm-verse.com
 - community.sophos.com
 - como-hackearfacebook.com
 - componentkit.org
@@ -5913,6 +5983,7 @@
 - dlsw.br.baidu.com
 - dlswbr.baidu.com
 - dmapp.youku.com
+- dml-lang.org
 - dmp.sina.cn
 - dn-growing.qbox.me
 - dobrochan.net
@@ -6481,6 +6552,7 @@
 - grafana.com
 - grani.ru
 - graniru.org
+- granulate.io
 - graty.me
 - graylog.org
 - groq.com
@@ -6511,6 +6583,7 @@
 - hackernoon.com
 - hackfacebook.com
 - hackfacebookid.com
+- hackharassment.com
 - hacklang.org
 - hackmd.io
 - halooglasi.com
@@ -6670,6 +6743,7 @@
 - innovid.com
 - insearch.site
 - insidefilms.com
+- insight.tech
 - instaadder.com
 - instachecker.com
 - instafallow.com
@@ -6747,6 +6821,7 @@
 - intel.cl
 - intel.cm
 - intel.cn
+- intel.co
 - intel.co.ae
 - intel.co.cr
 - intel.co.id
@@ -6778,6 +6853,7 @@
 - intel.cu
 - intel.cz
 - intel.de
+- intel.dev
 - intel.dk
 - intel.dz
 - intel.ec
@@ -6790,6 +6866,7 @@
 - intel.ga
 - intel.gd
 - intel.ge
+- intel.gg
 - intel.gl
 - intel.gm
 - intel.gr
@@ -6800,6 +6877,7 @@
 - intel.hn
 - intel.ht
 - intel.hu
+- intel.id
 - intel.ie
 - intel.in
 - intel.io
@@ -6895,6 +6973,8 @@
 - intelquark.com
 - intelrealsense.cn
 - intelrealsense.com
+- intelrealsense.net
+- intelreimbursement.com
 - intelrxt.com
 - intelsalestraining.com
 - intelsecurity.com
@@ -7064,6 +7144,7 @@
 - mcrouter.net
 - mcrouter.org
 - mcs.snssdk.com
+- meccontroller.com
 - mediav.com
 - medicalnewstoday.com
 - mee6.xyz
@@ -7114,6 +7195,7 @@
 - mouser.fi
 - movidius.com
 - movidius.net
+- movidius.org
 - mpro.baidu.com
 - mpush.qq.com
 - msg.71.am
@@ -7234,6 +7316,7 @@
 - omnitek.tv
 - on24.com
 - oneapi.com
+- oneapi.io
 - onelink.me
 - onesignal.com
 - onetrust.com
@@ -7254,6 +7337,7 @@
 - openaicom.imgix.net
 - openaicomproductionae4b.blob.core.windows.net
 - openamt.com
+- opencas.io
 - opencreate.org
 - opendroneid.org
 - opengraphprotocol.com
@@ -7268,6 +7352,7 @@
 - openstreetmap.org
 - openstreetmaps.org
 - opentrackr.org
+- openvino.ai
 - openvinotoolkit.org
 - openweather.co.uk
 - openweathermap.org
@@ -7320,6 +7405,7 @@
 - parse.com
 - parsec.app
 - passport-log.youku.com
+- passwordday.org
 - pastela.app
 - pay.mobile.sina.cn
 - payhulu.com
@@ -7368,6 +7454,8 @@
 - play.google.com
 - playboy.com
 - plugshare.com
+- pmem.org
+- pmem.us
 - poe.com
 - poecdn.net
 - policy.video.iqiyi.com
@@ -7397,6 +7485,7 @@
 - pro.letv.com
 - proactivebackend-pa.googleapis.com
 - production-openaicom-storage.azureedge.net
+- projectcircuitbreaker.com
 - promote.biz.weibo.cn
 - prosleduet.media
 - prosleduetmedia.com
@@ -7476,6 +7565,7 @@
 - remna.st
 - remove.bg
 - render-state.to
+- renderingtoolkit.org
 - rentry.co
 - rentry.org
 - res.hunantv.com
@@ -7613,6 +7703,9 @@
 - signal.org
 - signal.tube
 - signalusers.org
+- sigopt.com
+- silicon-mobility.com
+- siliconmobility.com
 - simaba.taobao.com
 - simba.m.taobao.com
 - simplex.chat
@@ -7631,9 +7724,15 @@
 - slog.sina.cn
 - slog.sina.com.cn
 - smart-edge.com
+- smart-edge.info
+- smart-edge.io
+- smart-edge.net
+- smart-edge.org
+- smart-edge.systems
 - smartbear.co
 - smartbear.com
 - smartdeploy.com
+- smartedge.info
 - snap-telemetry.io
 - snapads.com
 - snd.sc
@@ -7711,6 +7810,8 @@
 - steamstat.info
 - stitch.withgoogle.com
 - stockx.com
+- storageclassmemory.io
+- storageclassmemory.org
 - store.externulls.com
 - store.tv.api.3g.youku.com
 - store.xl.api.3g.youku.com
@@ -7784,6 +7885,7 @@
 - thenewtab.io
 - theta.sogoucdn.com
 - thetruestory.news
+- threadingbuildingblocks.org
 - threads.com
 - threads.net
 - threema.ch
@@ -7917,6 +8019,7 @@
 - unityads.unity.cn
 - unityads.unity3d.com
 - unityads.unitychina.cn
+- universalscalablefirmware.org
 - unscreen.com
 - upapi.net
 - upwork.com

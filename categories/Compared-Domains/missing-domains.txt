@@ -94,13 +94,30 @@
 - autodesk.io
 - autodesk.net
 - autodesk360.com
+- cdn-telegram.org
 - fastpic.org
 - gvt1.com
+- jetbrains.ai
 - omtrdc.net
 - pbs.twimg.com.cdn.cloudflare.net
+- pump.fun
 - sendgrid.net
+- t.me
+- tdesktop.com
+- telega.one
+- telegra.ph
+- telegram-cdn.org
+- telegram.dog
+- telegram.me
+- telegram.org
+- telegram.space
+- telesco.pe
+- tg.dev
 - tinkercad.com
+- tx.me
 - video.twimg.com.cdn.cloudflare.net
+- whatsapp.com
+- whatsapp.net
 
 # Missing domains
 # Source: https://community.antifilter.download/list/domains.lst
