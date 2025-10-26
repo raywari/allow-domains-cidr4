@@ -21,6 +21,7 @@
 - data.cline.bot
 - devexpress.com
 - dyson.com
+- e-hentai.org
 - easydmarc.com
 - editorx.com
 - eneba.com
@@ -30,6 +31,7 @@
 - expandrive.com
 - fansly.com
 - filebin.net
+- freeones.com
 - gamestop.com
 - genspark.ai
 - gifyu.com
@@ -41,6 +43,7 @@
 - hdrezka.tv
 - hdrzk.org
 - hdstudio.org
+- hitomi.la
 - home.by.me
 - housebrand.com
 - hume.ai
@@ -73,6 +76,7 @@
 - myanimelist.net
 - myparallels.com
 - myqrcode.com
+- nude-moon.org
 - oculus.com
 - openh264.org
 - openrouter.ai
@@ -85,12 +89,14 @@
 - posthog.com
 - quicknode.com
 - qwant.com
+- realbooru.com
 - redislabs.com
 - restream.io
 - rezka.cc
 - rezka.fi
 - rezka.land
 - rezka.tv
+- rule34.us
 - ruscryde.net
 - scryde.io
 - scryde.net
@@ -116,10 +122,12 @@
 - speedtest.net
 - startmail.com
 - supersliv.biz
+- theporndude.com
 - tiptop-vpn.com
 - toolbox.app
 - tria.ge
 - uizard.io
+- ukdevilz.com
 - unsplash.com
 - wbgames.com
 - webmd.com

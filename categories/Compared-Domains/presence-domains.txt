@@ -1372,7 +1372,6 @@
 - isdspeed.qq.com
 - island-of-pleasure.site
 - isnssdk.com
-- itdog.info
 - itnel.com
 - iwanad.baidu.com
 - iyes.youku.com
@@ -2393,7 +2392,6 @@
 - youtubemobilesupport.com
 - ysm.yahoo.com
 - yt-video-upload.l.google.com
-- yt.be
 - yt1.googleusercontent.com
 - yt2.googleusercontent.com
 - ytimg.l.google.com
