@@ -252,7 +252,6 @@
 - atdmt2.com
 - atlasdmt.com
 - atlasonepoint.com
-- atlassian.com
 - atm.sina.com
 - atm.youku.com
 - atom-data.io
@@ -1372,6 +1371,7 @@
 - isdspeed.qq.com
 - island-of-pleasure.site
 - isnssdk.com
+- itdog.info
 - itnel.com
 - iwanad.baidu.com
 - iyes.youku.com
@@ -1520,7 +1520,6 @@
 - mongodb.org
 - monster.ie
 - mopub.com
-- mouser.com
 - movidius.com
 - movidius.net
 - movidius.org
@@ -1628,7 +1627,6 @@
 - openstreetmap.net
 - openstreetmap.org
 - openstreetmaps.org
-- opentrackr.org
 - openvino.ai
 - openvinotoolkit.org
 - openweather.co.uk
@@ -2190,7 +2188,6 @@
 - widget.weibo.com
 - wikiart.org
 - windguru.cz
-- wise.com
 - wisepush.video.baidu.com
 - wit.qq.com
 - withyoutube.com

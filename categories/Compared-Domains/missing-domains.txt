@@ -1,6 +1,8 @@
 # Missing domains
 # Source: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-raw.lst
 
+- aircanada.com
+- akc.org
 - andrevi.ch
 - anilib.me
 - anilibria.org
@@ -10,6 +12,7 @@
 - audiobookbay.lu
 - boominfo.org
 - bt4gprx.com
+- chesscomfiles.com
 - chub.ai
 - cisecurity.org
 - clevelandclinic.org
@@ -17,9 +20,11 @@
 - code.gist.build
 - coldfilm.city
 - coldfilm.ink
+- connect.ngrok-agent.com
 - croxyproxy.com
 - data.cline.bot
 - devexpress.com
+- diabrowser.com
 - dyson.com
 - e-hentai.org
 - easydmarc.com
@@ -51,6 +56,7 @@
 - iditelesombase.org
 - ikea.com
 - imgur.com
+- indeed.com
 - itch.io
 - jw-russia.org
 - jw.org
@@ -76,6 +82,7 @@
 - myanimelist.net
 - myparallels.com
 - myqrcode.com
+- netacad.com
 - nude-moon.org
 - oculus.com
 - openh264.org
@@ -116,16 +123,22 @@
 - scryde9.net
 - semrush.com
 - sentry.dev
+- siteground.com
 - slifki.biz
 - sms-activate.io
 - snapgene.com
+- sonara.ai
 - speedtest.net
 - startmail.com
 - supersliv.biz
 - theporndude.com
 - tiptop-vpn.com
 - toolbox.app
+- transferwise.com
 - tria.ge
+- twin.me
+- twinlife-systems.com
+- twinme.com
 - uizard.io
 - ukdevilz.com
 - unsplash.com
@@ -181,5 +194,6 @@
 - s3-1.amazonaws.com
 - vyos.net
 - wallpapercave.com
+- zimbra.com
 - zimbra.org
 
