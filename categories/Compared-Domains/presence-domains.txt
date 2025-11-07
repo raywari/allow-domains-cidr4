@@ -179,6 +179,7 @@
 - agoodm.m.taobao.com
 - agoodm.wapa.taobao.com
 - ai.google.dev
+- aida.googleapis.com
 - airhorn.solutions
 - airhornbot.com
 - aisandbox-pa.googleapis.com
@@ -2604,6 +2605,7 @@
 - agoodm.wapa.taobao.com
 - ahrefs.com
 - ai.google.dev
+- aida.googleapis.com
 - airhorn.solutions
 - airhornbot.com
 - aisandbox-pa.googleapis.com
@@ -5585,6 +5587,7 @@
 - ahrefs.com
 - ai.com
 - ai.google.dev
+- aida.googleapis.com
 - airhorn.solutions
 - airhornbot.com
 - aisandbox-pa.googleapis.com
