@@ -1108,6 +1108,9 @@
 - igtv.com
 - ikcode.baidu.com
 - im-apps.net
+- images-eu.ssl-images-amazon.com
+- images-fe.ssl-images-amazon.com
+- images-na.ssl-images-amazon.com
 - img-bss.csdn.net
 - img-x.jd.com
 - img.strpst.com
@@ -1532,6 +1535,7 @@
 - msg.video.qiyi.com
 - msg.youku.com
 - msg2.video.qiyi.com
+- msh.amazon.co.uk
 - msite.baidu.com
 - mtrace.qq.com
 - musemuse.cn
@@ -1739,6 +1743,7 @@
 - primevideo.tv
 - pro.hoye.letv.com
 - pro.letv.com
+- prod.service.minerva.devices.a2z.com
 - projectcircuitbreaker.com
 - promote.biz.weibo.cn
 - prosleduet.media
@@ -1971,6 +1976,7 @@
 - static.hotjar.com
 - static.javhd.com
 - static.sensorsdata.cn
+- static.siege-amazon.com
 - static.voidboost.com
 - staticadm.leju.sina.com.cn
 - statichdrezka.ac
@@ -3739,6 +3745,9 @@
 - ikcode.baidu.com
 - ilook.tv
 - im-apps.net
+- images-eu.ssl-images-amazon.com
+- images-fe.ssl-images-amazon.com
+- images-na.ssl-images-amazon.com
 - img-bss.csdn.net
 - img-x.jd.com
 - img.strpst.com
@@ -4238,6 +4247,7 @@
 - msg.video.qiyi.com
 - msg.youku.com
 - msg2.video.qiyi.com
+- msh.amazon.co.uk
 - msite.baidu.com
 - mssg.me
 - mtrace.qq.com
@@ -4520,6 +4530,7 @@
 - pro.hoye.letv.com
 - pro.letv.com
 - proactivebackend-pa.googleapis.com
+- prod.service.minerva.devices.a2z.com
 - proekt.media
 - projectcircuitbreaker.com
 - promote.biz.weibo.cn
@@ -4840,6 +4851,7 @@
 - static.hotjar.com
 - static.javhd.com
 - static.sensorsdata.cn
+- static.siege-amazon.com
 - static.voidboost.com
 - staticadm.leju.sina.com.cn
 - statichdrezka.ac
@@ -6729,6 +6741,9 @@
 - ikcode.baidu.com
 - ilook.tv
 - im-apps.net
+- images-eu.ssl-images-amazon.com
+- images-fe.ssl-images-amazon.com
+- images-na.ssl-images-amazon.com
 - img-bss.csdn.net
 - img-x.jd.com
 - img.strpst.com
@@ -7212,6 +7227,7 @@
 - msg.video.qiyi.com
 - msg.youku.com
 - msg2.video.qiyi.com
+- msh.amazon.co.uk
 - msite.baidu.com
 - mssg.me
 - mtrace.qq.com
@@ -7495,6 +7511,7 @@
 - pro.hoye.letv.com
 - pro.letv.com
 - proactivebackend-pa.googleapis.com
+- prod.service.minerva.devices.a2z.com
 - production-openaicom-storage.azureedge.net
 - projectcircuitbreaker.com
 - promote.biz.weibo.cn
@@ -7811,6 +7828,7 @@
 - static.hotjar.com
 - static.javhd.com
 - static.sensorsdata.cn
+- static.siege-amazon.com
 - static.voidboost.com
 - staticadm.leju.sina.com.cn
 - statichdrezka.ac
